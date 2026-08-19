@@ -11,23 +11,10 @@
 DanceHut enables:
 - **Users/Dancers**: Discover, book, and manage dance classes across multiple studios
 - **Choreographers**: Manage their availability and book slots at studios
-- **Studios**: Create events, manage bookings, track attendance, and view analytics
-
-### Tech Stack
-- **Frontend**: React 18 + TypeScript + Vite
-- **Styling**: Tailwind CSS + PostCSS
-- **Icons**: Lucide React
-- **Auth**: Supabase (not yet integrated)
-- **Backend**: Supabase (not yet integrated)
+- **Auth**: Supabase email/password sign-up and sign-in (integrated); Instagram OAuth pending
+- **Backend**: Supabase events, saved events, bookings, RLS policies, and atomic booking RPC integrated
 - **Payment**: Stripe (planned)
 
----
-
-## ✅ Implemented Features
-
-### 1. **Welcome/Onboarding**
-- [x] Role selection (Dancer / Choreographer / Studio)
-- [x] Brand identity and landing page
 - [x] Login prompts (Instagram & Phone - UI only)
 
 ### 2. **User/Dancer Dashboard**
@@ -60,22 +47,17 @@ DanceHut enables:
 ### 🔴 **Critical (Blocking MVP)**
 
 #### **1. Backend & Database**
-- [ ] Supabase setup and configuration
-- [ ] Database schema for:
-  - `users` table
-  - `events` table
-  - `bookings` table
-  - `choreographers` table
-  - `studios` table
-- [ ] Real data persistence (currently hardcoded)
-- [ ] API endpoints for CRUD operations
+- [x] Supabase setup and configuration
+- [x] Initial database schema for:
+- [x] Real event, saved-event, and booking persistence
 
 #### **2. Authentication**
 - [ ] Instagram OAuth integration
+- [x] Email/password sign-up and sign-in
 - [ ] Phone number authentication (OTP)
-- [ ] Session management
-- [ ] User state persistence
-- [ ] Role-based access control (RBAC)
+- [x] Session management
+- [x] User state persistence
+- [x] Initial profile RLS / role persistence
 
 #### **3. Search & Filters**
 - [ ] Working search across events
@@ -85,14 +67,14 @@ DanceHut enables:
 - [ ] Filter by experience level
 
 #### **4. Booking System**
-- [ ] Save bookings to database
-- [ ] Retrieve user's bookings
+- [x] Save bookings to database
+- [x] Retrieve user's bookings
 - [ ] Booking cancellation
 - [ ] Booking confirmation emails
 - [ ] Payment integration (Stripe/Razorpay)
 
 #### **5. QR Code Generation**
-- [ ] QR code generation library integration
+- [x] QR code generation for booking tickets
 - [ ] QR code scanning at venue (admin feature)
 - [ ] Attendance marking via QR code
 
@@ -215,6 +197,21 @@ npm run build         # Production build
 npm run preview       # Preview production build
 ```
 
+### Supabase Dancer Flow Setup
+
+Run [supabase/schema.sql](supabase/schema.sql) in the Supabase SQL Editor. It creates or updates the `profiles`, `events`, `saved_events`, and `bookings` tables, RLS policies, and the atomic `book_event` function. Then run [supabase/seed.sql](supabase/seed.sql) to add the MVP demo events.
+
+After authentication, the app loads events and saved events from Supabase. Bookings are created through `book_event`, which prevents duplicate bookings and overselling. Each confirmed booking displays a real QR code containing a booking reference.
+
+The seed file adds six upcoming Bengaluru events, including one sold-out event for testing. It is safe to run repeatedly because events are matched by title and date. The app shows loading, error, and empty states when appropriate.
+
+The app requires these local variables in `.env.local`:
+
+```env
+VITE_SUPABASE_URL=your_project_url
+VITE_SUPABASE_ANON_KEY=your_publishable_or_anon_key
+```
+
 ---
 
 ## 📁 Project Structure
@@ -226,6 +223,8 @@ dance-hut/
 │   ├── main.tsx             # Entry point
 │   ├── index.css            # Tailwind + custom styles
 │   └── vite-env.d.ts        # Vite type definitions
+├── supabase/
+│   └── schema.sql           # Initial tables and RLS policies
 ├── index.html               # HTML template
 ├── package.json             # Dependencies & scripts
 ├── tsconfig.json            # TypeScript config
@@ -239,7 +238,7 @@ dance-hut/
 
 ## 🔄 Current Data Structure
 
-All data is **hardcoded in App.tsx**. Example:
+Events are loaded from the Supabase `events` table through [src/services/events.ts](src/services/events.ts). Bookings and saved events are loaded per authenticated user through [src/services/bookings.ts](src/services/bookings.ts) and [src/services/savedEvents.ts](src/services/savedEvents.ts).
 
 ```typescript
 const events: EventItem[] = [
@@ -261,7 +260,7 @@ const events: EventItem[] = [
 ]
 ```
 
-This needs to be replaced with Supabase real-time queries.
+The database schema and RLS policies are defined in [supabase/schema.sql](supabase/schema.sql).
 
 ---
 
@@ -342,6 +341,7 @@ This needs to be replaced with Supabase real-time queries.
 - `react-dom` (18.3.1) - DOM rendering
 - `lucide-react` (0.446.0) - Icon library
 - `@supabase/supabase-js` (2.57.4) - Backend as a service
+- `qrcode.react` - Real QR code ticket rendering
 
 ### Development
 - `typescript` (5.5.3) - Type safety
