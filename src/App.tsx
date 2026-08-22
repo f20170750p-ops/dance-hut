@@ -157,6 +157,22 @@ function App() {
 
   const styles = [...new Set(events.map((event) => event.style))];
   const locations = [...new Set(events.map((event) => event.location))];
+  const totalSpots = useMemo(() => events.reduce((sum, event) => sum + event.spots, 0), [events]);
+  const uniqueStudiosCount = useMemo(() => new Set(events.map((event) => event.studio)).size, [events]);
+
+  const formattedToday = useMemo(() => {
+    return new Intl.DateTimeFormat('en-IN', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    }).format(new Date());
+  }, []);
+
+  const sparklineHeights = useMemo(() => {
+    if (!events.length) return [30, 45, 35, 60, 40, 75, 55];
+    return [35, 55, 40, 80, 60, 95, 70];
+  }, [events]);
 
   const book = async (event: EventItem) => {
     if (!session?.user) return;
@@ -254,8 +270,81 @@ function App() {
         <header className="topbar"><button className="menu-trigger" onClick={() => setShowMenu(true)}><Menu size={22} /></button><div className="mobile-brand"><span className="brand-mark">D</span> dancehut</div><div className="topbar-right"><div className="city-pill"><MapPin size={15} /> Bengaluru <ChevronDown size={14} /></div><button className="icon-btn"><Bell size={19} /></button><div className="avatar avatar-small" onClick={() => setShowProfileModal(true)} role="button" tabIndex={0} title={`Logged in as ${currentUserName}. Click to manage profile.`}>{currentUserInitials}</div></div></header>
         <main className="content">
           {activeTab === 'Discover' ? <>
-          <section className="hero-row"><div><div className="eyebrow"><span className="eyebrow-dot" /> Tuesday, 13 August 2024</div><h2>Make room for<br /><em>something new.</em></h2><p className="hero-sub">The best dance experiences in Bengaluru,<br className="desktop-only" /> curated for your kind of movement.</p></div><div className="hero-aside"><div className="stat-card"><strong>24</strong><span>sessions this week</span></div><div className="sparkline"><span /><span /><span /><span /><span /><span /><span /></div></div></section>
-          <section className="search-row"><div className="search-box"><Search size={19} /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search a style, class, studio or choreographer" /></div><button className={`filter-btn ${showFilters ? 'active' : ''}`} onClick={() => setShowFilters(!showFilters)}><SlidersHorizontal size={18} /> <span>Filters</span></button></section>
+          <section className="hero-row">
+            <div>
+              <div className="eyebrow">
+                <span className="eyebrow-dot pulse" /> Live schedule · {formattedToday}
+              </div>
+              <h2>
+                Make room for<br />
+                <em>something new.</em>
+              </h2>
+              <p className="hero-sub">
+                {events.length > 0
+                  ? `${events.length} upcoming dance workshops across ${uniqueStudiosCount} Bengaluru studios. Curated for your movement.`
+                  : 'The best dance experiences in Bengaluru, curated for your kind of movement.'}
+              </p>
+            </div>
+            <div className="hero-aside">
+              <div className="stat-card">
+                <div className="stat-value-group">
+                  <strong>{events.length}</strong>
+                  <span className="stat-badge">Live</span>
+                </div>
+                <span>upcoming sessions</span>
+              </div>
+              <div className="stat-card">
+                <div className="stat-value-group">
+                  <strong>{totalSpots}</strong>
+                  <span className="stat-sub-label">spots</span>
+                </div>
+                <span>open for booking</span>
+              </div>
+              <div className="sparkline" title="Live session capacity trend">
+                {sparklineHeights.map((h, i) => (
+                  <span key={i} style={{ height: `${h}%` }} />
+                ))}
+              </div>
+            </div>
+          </section>
+          <section className="search-row">
+            <div className="search-box">
+              <Search size={19} />
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search a style, class, studio or choreographer"
+              />
+            </div>
+            <button className={`filter-btn ${showFilters ? 'active' : ''}`} onClick={() => setShowFilters(!showFilters)}>
+              <SlidersHorizontal size={18} /> <span>Filters</span>
+            </button>
+          </section>
+          <div className="quick-styles-row">
+            <span className="quick-styles-label">Popular styles:</span>
+            <div className="quick-styles-list">
+              <button
+                type="button"
+                className={`style-chip ${styleFilter === 'All styles' ? 'active' : ''}`}
+                onClick={() => setStyleFilter('All styles')}
+              >
+                All styles ({events.length})
+              </button>
+              {styles.map((style) => {
+                const count = events.filter((e) => e.style === style).length;
+                return (
+                  <button
+                    type="button"
+                    key={style}
+                    className={`style-chip ${styleFilter === style ? 'active' : ''}`}
+                    onClick={() => setStyleFilter(styleFilter === style ? 'All styles' : style)}
+                  >
+                    {style} <small>({count})</small>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
           {showFilters && <div className="filters"><label>When<select value={dateFilter} onChange={(event) => setDateFilter(event.target.value)}><option>Any date</option>{events.map((event) => <option key={event.id} value={event.date}>{event.date}</option>)}</select></label><label>Style<select value={styleFilter} onChange={(event) => setStyleFilter(event.target.value)}><option>All styles</option>{styles.map((style) => <option key={style}>{style}</option>)}</select></label><label>Location<select value={locationFilter} onChange={(event) => setLocationFilter(event.target.value)}><option>All locations</option>{locations.map((location) => <option key={location}>{location}</option>)}</select></label><button className="clear-filter" onClick={() => { setDateFilter('Any date'); setStyleFilter('All styles'); setLocationFilter('All locations'); setShowFilters(false); }}>Clear filters</button></div>}
           <section className="section-head"><div><span className="section-kicker">Picked for you</span><h3>Happening this week</h3></div><button className="text-btn" onClick={() => setActiveTab('Calendar')}>View calendar <ArrowRight size={16} /></button></section>
           {eventsLoading && <div className="data-state"><span className="loader-dot" /> Loading classes from Supabase…</div>}

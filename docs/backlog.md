@@ -17,7 +17,7 @@ This document tracks all identified feedback items, UX friction points, and impl
 | 5 | **Interactive Location Selector** | 🟡 Queued | Make location selector pill clickable with active city info ("Bengaluru") and "More cities coming soon" modal/dropdown. |
 | 6 | **"Talk to our team" Support Action** | 🟡 Queued | Connect support card to direct email (`mailto:`) or WhatsApp support link. |
 | 7 | **"Your Space" Sub-links Navigation** | 🟡 Queued | Add clean tab/modal navigation for Messages, Notifications, and Preferences in workspace view. |
-| 8 | **Discover Page Top Hero Relevance** | 🟡 Queued | Streamline the Discover hero banner to show dynamic date, real-time upcoming class count, and actionable search highlights. |
+| 8 | **Discover Page Top Hero Relevance** | 🟢 Resolved | Rendered dynamic current date with live pulse, real-time class & spot metrics from Supabase, active contextual copy, and 1-click style filter shortcuts. |
 | 9 | **Explore Studios Placement & Action** | 🟡 Queued | Reposition Explore Studios CTA and connect to an informative studio discovery modal/section. |
 
 ---
@@ -50,9 +50,8 @@ This document tracks all identified feedback items, UX friction points, and impl
 * **Problem**: Messages, Notifications, and Preferences links do not navigate or perform actions.
 * **Solution**: Connect Preferences directly to the Profile Modal and provide contextual in-page views/toasts for Notifications & Messages.
 
-### 8. Discover Hero Refresh
-* **Problem**: Static banner text not providing immediate value.
-* **Solution**: Render dynamic daily workshop statistics and clear quick-filter shortcuts.
+### 8. Discover Hero Refresh [RESOLVED]
+* **Resolution**: Replaced static date and fixed copy with real-time dynamic date formatting (`Intl.DateTimeFormat`) and a glowing pulse live indicator. Computed dynamic upcoming sessions, total open spots, and unique partner studios count directly from active Supabase events. Added 1-click popular style shortcut tags under the search bar for effortless category discovery.
 
 ### 9. Explore Studios Button
 * **Problem**: CTA button is unclickable and feels misplaced.
