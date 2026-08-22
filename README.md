@@ -45,7 +45,7 @@ Identified bugs and UI improvements scoped for the current MVP iteration:
 
 | # | Item | Status | Scope / Action Plan |
 |---|---|:---:|---|
-| 1 | **Dynamic User Profile** | 🔴 In Progress | Replace hardcoded *"Aria Kapoor"* with authenticated user's actual profile/email display name. |
+| 1 | **Dynamic User Profile** | 🟢 Resolved | Replaced hardcoded *"Aria Kapoor"* with dynamic user profile (full name input during signup, Supabase profiles table sync, initials generation, and role tags). |
 | 2 | **Clickable Profile Avatars** | 🔴 In Progress | Make top-left and top-right profile icons open a user menu / profile modal with sign-out. |
 | 3 | **Complete Booking Location Info** | 🔴 In Progress | Ensure studio name, neighbourhood, and full venue details appear consistently across bookings list, calendar, and ticket modal. |
 | 4 | **Discover Hero Section Refresh** | 🔴 In Progress | Update hero row to show dynamic current date, live upcoming class count, and active copy. |

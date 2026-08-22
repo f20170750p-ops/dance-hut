@@ -23,13 +23,26 @@ import {
 } from 'lucide-react';
 import type { Session } from '@supabase/supabase-js';
 import { QRCodeSVG } from 'qrcode.react';
-import { getSession, onAuthStateChange, saveProfile, signInWithEmailPassword, signOut, signUpWithEmailPassword } from './services/auth';
+import {
+  getDisplayName,
+  getInitials,
+  getProfile,
+  getRoleBadge,
+  getSession,
+  onAuthStateChange,
+  saveProfile,
+  signInWithEmailPassword,
+  signOut,
+  signUpWithEmailPassword,
+  type UserProfile,
+  type UserRole,
+} from './services/auth';
 import { createBooking, getUserBookings, type Booking } from './services/bookings';
 import { getEvents, type EventItem } from './services/events';
 import { getSavedEventIds, saveEvent, unsaveEvent } from './services/savedEvents';
 import { isSupabaseConfigured } from './services/supabase';
 
-type Role = 'dancer' | 'choreographer' | 'studio';
+type Role = UserRole;
 const roles: { id: Role; label: string; detail: string; icon: typeof UserRound }[] = [
   { id: 'dancer', label: 'I’m a dancer', detail: 'Discover classes & book your next session', icon: UserRound },
   { id: 'choreographer', label: 'I’m a choreographer', detail: 'Find studios & manage your schedule', icon: Sparkles },
@@ -39,6 +52,7 @@ const roles: { id: Role; label: string; detail: string; icon: typeof UserRound }
 function App() {
   const [role, setRole] = useState<Role>('dancer');
   const [session, setSession] = useState<Session | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [authOpen, setAuthOpen] = useState(false);
   const [events, setEvents] = useState<EventItem[]>([]);
@@ -80,15 +94,36 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (!session?.user) return;
+    if (!session?.user) {
+      setProfile(null);
+      return;
+    }
 
-    const pendingRole = localStorage.getItem('dancehut.pendingRole') as Role | null;
-    if (!pendingRole) return;
+    const syncUserProfile = async () => {
+      const pendingRole = localStorage.getItem('dancehut.pendingRole') as Role | null;
+      const pendingName = localStorage.getItem('dancehut.pendingDisplayName');
+      const { data: existingProfile } = await getProfile(session.user.id);
 
-    saveProfile(session.user.id, pendingRole, session.user.email ?? '').then(({ error }) => {
-      if (!error) localStorage.removeItem('dancehut.pendingRole');
-    });
-  }, [session]);
+      const effectiveRole = (pendingRole || existingProfile?.role || (session.user.user_metadata?.role as Role | undefined) || role) as Role;
+      const effectiveName = pendingName || existingProfile?.display_name || (session.user.user_metadata?.display_name as string | undefined) || null;
+
+      if (!existingProfile || pendingRole || pendingName) {
+        await saveProfile(session.user.id, effectiveRole, session.user.email ?? '', effectiveName);
+        if (pendingRole) localStorage.removeItem('dancehut.pendingRole');
+        if (pendingName) localStorage.removeItem('dancehut.pendingDisplayName');
+        setProfile({
+          id: session.user.id,
+          role: effectiveRole,
+          display_name: effectiveName,
+          email: session.user.email ?? null,
+        });
+      } else {
+        setProfile(existingProfile);
+      }
+    };
+
+    syncUserProfile();
+  }, [session, role]);
 
   useEffect(() => {
     if (!session?.user) return;
@@ -158,6 +193,11 @@ function App() {
     }
   };
 
+  const currentUserName = useMemo(() => getDisplayName(profile, session?.user ?? null), [profile, session?.user]);
+  const currentUserInitials = useMemo(() => getInitials(currentUserName), [currentUserName]);
+  const currentUserRole = profile?.role ?? (session?.user?.user_metadata?.role as Role | undefined) ?? role;
+  const currentUserRoleBadge = useMemo(() => getRoleBadge(currentUserRole), [currentUserRole]);
+
   if (authLoading) {
     return <div className="auth-loading">Loading dancehut…</div>;
   }
@@ -203,13 +243,13 @@ function App() {
     <div className="app-shell">
       <aside className={`sidebar ${showMenu ? 'open' : ''}`}>
         <div className="sidebar-head"><div className="brand"><span className="brand-mark">D</span><span>dancehut</span></div><button className="close-menu" onClick={() => setShowMenu(false)}><X size={20} /></button></div>
-        <div className="profile-mini"><div className="avatar">AK</div><div><strong>Aria Kapoor</strong><span>Dance explorer</span></div><ChevronDown size={15} /></div>
+        <div className="profile-mini"><div className="avatar">{currentUserInitials}</div><div><strong>{currentUserName}</strong><span>{currentUserRoleBadge}</span></div><ChevronDown size={15} /></div>
         <div className="side-group"><span className="side-label">Workspace</span>{['Discover', 'Calendar', 'My bookings', 'Saved'].map((item, index) => { const icons = [Compass, CalendarDays, Ticket, Heart]; const Icon = icons[index]; return <button className={`side-item ${activeTab === item ? 'active' : ''}`} key={item} onClick={() => { setActiveTab(item); setShowMenu(false); }}><Icon size={19} /><span>{item}</span>{item === 'My bookings' && bookings.length > 0 && <i>{bookings.length}</i>}</button>; })}</div>
         <div className="side-group side-bottom"><span className="side-label">Your space</span><button className="side-item"><MessageCircle size={19} /><span>Messages</span><i className="message-dot" /></button><button className="side-item"><Bell size={19} /><span>Notifications</span></button><button className="side-item"><SlidersHorizontal size={19} /><span>Preferences</span></button><button className="side-item sign-out-item" onClick={() => signOut()}><X size={19} /><span>Sign out</span></button></div>
         <div className="side-footer"><div className="help-card"><span>Need a hand?</span><strong>Talk to our team <ArrowRight size={14} /></strong></div><span className="version">dancehut / 01</span></div>
       </aside>
       <div className="main-area">
-        <header className="topbar"><button className="menu-trigger" onClick={() => setShowMenu(true)}><Menu size={22} /></button><div className="mobile-brand"><span className="brand-mark">D</span> dancehut</div><div className="topbar-right"><div className="city-pill"><MapPin size={15} /> Bengaluru <ChevronDown size={14} /></div><button className="icon-btn"><Bell size={19} /></button><div className="avatar avatar-small">AK</div></div></header>
+        <header className="topbar"><button className="menu-trigger" onClick={() => setShowMenu(true)}><Menu size={22} /></button><div className="mobile-brand"><span className="brand-mark">D</span> dancehut</div><div className="topbar-right"><div className="city-pill"><MapPin size={15} /> Bengaluru <ChevronDown size={14} /></div><button className="icon-btn"><Bell size={19} /></button><div className="avatar avatar-small" title={currentUserName}>{currentUserInitials}</div></div></header>
         <main className="content">
           {activeTab === 'Discover' ? <>
           <section className="hero-row"><div><div className="eyebrow"><span className="eyebrow-dot" /> Tuesday, 13 August 2024</div><h2>Make room for<br /><em>something new.</em></h2><p className="hero-sub">The best dance experiences in Bengaluru,<br className="desktop-only" /> curated for your kind of movement.</p></div><div className="hero-aside"><div className="stat-card"><strong>24</strong><span>sessions this week</span></div><div className="sparkline"><span /><span /><span /><span /><span /><span /><span /></div></div></section>
@@ -281,6 +321,7 @@ function getMonth(date: string) {
 }
 
 function EmailAuthModal({ role, onClose }: { role: Role; onClose: () => void }) {
+  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [authMode, setAuthMode] = useState<'sign-in' | 'sign-up'>('sign-in');
@@ -294,9 +335,17 @@ function EmailAuthModal({ role, onClose }: { role: Role; onClose: () => void }) 
     setSuccessMessage('');
     setLoading(true);
     const normalizedEmail = email.trim().toLowerCase();
-    localStorage.setItem('dancehut.pendingRole', role);
+    const trimmedName = fullName.trim();
+
+    if (authMode === 'sign-up') {
+      localStorage.setItem('dancehut.pendingRole', role);
+      if (trimmedName) {
+        localStorage.setItem('dancehut.pendingDisplayName', trimmedName);
+      }
+    }
+
     const result = authMode === 'sign-up'
-      ? await signUpWithEmailPassword(normalizedEmail, password)
+      ? await signUpWithEmailPassword(normalizedEmail, password, trimmedName, role)
       : await signInWithEmailPassword(normalizedEmail, password);
     setLoading(false);
 
@@ -317,13 +366,51 @@ function EmailAuthModal({ role, onClose }: { role: Role; onClose: () => void }) 
         <span className="auth-kicker">{authMode === 'sign-up' ? 'Create your account' : 'Welcome to dancehut'}</span>
         <h2>{authMode === 'sign-up' ? 'Let’s get you moving.' : 'Welcome back.'}</h2>
         <p>Continue as a {role} with your email address.</p>
-        <div className="auth-tabs"><button className={authMode === 'sign-in' ? 'active' : ''} onClick={() => setAuthMode('sign-in')} type="button">Sign in</button><button className={authMode === 'sign-up' ? 'active' : ''} onClick={() => setAuthMode('sign-up')} type="button">Sign up</button></div>
+        <div className="auth-tabs">
+          <button className={authMode === 'sign-in' ? 'active' : ''} onClick={() => setAuthMode('sign-in')} type="button">Sign in</button>
+          <button className={authMode === 'sign-up' ? 'active' : ''} onClick={() => setAuthMode('sign-up')} type="button">Sign up</button>
+        </div>
         <form onSubmit={submitPasswordAuth}>
-          <label className="auth-field">Email address<input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" autoFocus required /></label>
-          <label className="auth-field">Password<input type="password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="At least 6 characters" minLength={6} required /></label>
+          {authMode === 'sign-up' && (
+            <label className="auth-field">
+              Full name
+              <input
+                type="text"
+                value={fullName}
+                onChange={(event) => setFullName(event.target.value)}
+                placeholder="e.g. Maya Sharma"
+                autoFocus
+                required
+              />
+            </label>
+          )}
+          <label className="auth-field">
+            Email address
+            <input
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="you@example.com"
+              autoFocus={authMode === 'sign-in'}
+              required
+            />
+          </label>
+          <label className="auth-field">
+            Password
+            <input
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="At least 6 characters"
+              minLength={6}
+              required
+            />
+          </label>
           {error && <p className="auth-error" role="alert">{error}</p>}
           {successMessage && <p className="auth-success" role="status">{successMessage}</p>}
-          <button className="primary-btn auth-submit" type="submit" disabled={loading}>{loading ? 'Please wait…' : authMode === 'sign-up' ? 'Create account' : 'Sign in'} <ArrowRight size={17} /></button>
+          <button className="primary-btn auth-submit" type="submit" disabled={loading}>
+            {loading ? 'Please wait…' : authMode === 'sign-up' ? 'Create account' : 'Sign in'} <ArrowRight size={17} />
+          </button>
         </form>
         <span className="auth-legal">Your email and password are securely managed by Supabase.</span>
       </div>
