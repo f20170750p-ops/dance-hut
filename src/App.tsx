@@ -292,159 +292,159 @@ function App() {
         <header className="topbar"><button className="menu-trigger" onClick={() => setShowMenu(true)}><Menu size={22} /></button><div className="mobile-brand"><span className="brand-mark">D</span> dancehut</div><div className="topbar-right"><div className="city-pill"><MapPin size={15} /> Bengaluru <ChevronDown size={14} /></div><button className="icon-btn"><Bell size={19} /></button><div className="avatar avatar-small" onClick={() => setShowProfileModal(true)} role="button" tabIndex={0} title={`Logged in as ${currentUserName}. Click to manage profile.`}>{currentUserInitials}</div></div></header>
         <main className="content">
           {activeTab === 'Discover' ? <>
-          <section className="hero-row">
-            <div>
-              <div className="eyebrow">
-                <span className="eyebrow-dot pulse" /> Live schedule · Bengaluru · {formattedToday}
-              </div>
-              <h2>
-                {userFirstName ? (
-                  <>
-                    {greeting}, <em>{userFirstName}.</em><br />
-                    What's your rhythm today?
-                  </>
-                ) : (
-                  <>
-                    {greeting}.<br />
-                    Find your <em>next rhythm.</em>
-                  </>
-                )}
-              </h2>
-              <p className="hero-sub">
-                {events.length > 0
-                  ? `${events.length} workshops live across ${uniqueNeighborhoods} • ${totalSpots} open spots today`
-                  : 'Discover the best dance experiences in Bengaluru, curated for your kind of movement.'}
-              </p>
-            </div>
-            <div className="hero-aside">
-              <div className="stat-card">
-                <div className="stat-value-group">
-                  <strong>{events.length}</strong>
-                  <span className="stat-badge">Live</span>
+            <section className="hero-row">
+              <div>
+                <div className="eyebrow">
+                  <span className="eyebrow-dot pulse" /> Live schedule · Bengaluru · {formattedToday}
                 </div>
-                <span>upcoming sessions</span>
+                <h2>
+                  {userFirstName ? (
+                    <>
+                      {greeting}, <em>{userFirstName}.</em><br />
+                      What's your rhythm today?
+                    </>
+                  ) : (
+                    <>
+                      {greeting}.<br />
+                      Find your <em>next rhythm.</em>
+                    </>
+                  )}
+                </h2>
+                <p className="hero-sub">
+                  {events.length > 0
+                    ? `${events.length} workshops live across ${uniqueNeighborhoods} • ${totalSpots} open spots today`
+                    : 'Discover the best dance experiences in Bengaluru, curated for your kind of movement.'}
+                </p>
               </div>
-              <div className="stat-card">
-                <div className="stat-value-group">
-                  <strong>{totalSpots}</strong>
-                  <span className="stat-sub-label">spots</span>
+              <div className="hero-aside">
+                <div className="stat-card">
+                  <div className="stat-value-group">
+                    <strong>{events.length}</strong>
+                    <span className="stat-badge">Live</span>
+                  </div>
+                  <span>upcoming sessions</span>
                 </div>
-                <span>open for booking</span>
-              </div>
-              <div className="sparkline" title="Live session capacity trend">
-                {sparklineHeights.map((h, i) => (
-                  <span key={i} style={{ height: `${h}%` }} />
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {spotlightEvent && (
-            <section className="sponsored-spotlight-banner">
-              <div className="sponsored-banner-left">
-                <div className="sponsored-tag-row">
-                  <span className="sponsored-tag">
-                    <Sparkles size={13} /> Featured Spotlight
-                  </span>
-                  <span className="sponsored-style-badge">{spotlightEvent.style}</span>
-                  <span className="sponsored-spots-badge">{spotlightEvent.spots} spots left</span>
+                <div className="stat-card">
+                  <div className="stat-value-group">
+                    <strong>{totalSpots}</strong>
+                    <span className="stat-sub-label">spots</span>
+                  </div>
+                  <span>open for booking</span>
                 </div>
-                <h3 className="sponsored-title">{spotlightEvent.title}</h3>
-                <div className="sponsored-meta-row">
-                  <span><Clock3 size={14} /> {spotlightEvent.date} · {spotlightEvent.time}</span>
-                  <span><MapPin size={14} /> {spotlightEvent.studio} · {spotlightEvent.location}</span>
-                  <span>with <strong>{spotlightEvent.host}</strong></span>
-                </div>
-                <div className="sponsored-actions">
-                  <button
-                    type="button"
-                    className="primary-btn sponsored-book-btn"
-                    onClick={() => book(spotlightEvent)}
-                    disabled={spotlightEvent.spots <= 0 || bookings.some((b) => b.event_id === spotlightEvent.id)}
-                  >
-                    {bookings.some((b) => b.event_id === spotlightEvent.id) ? (
-                      <>Booked <Check size={16} /></>
-                    ) : spotlightEvent.spots <= 0 ? (
-                      'Sold out'
-                    ) : (
-                      <>Book this session · {spotlightEvent.price} <ArrowRight size={16} /></>
-                    )}
-                  </button>
-                  <button
-                    type="button"
-                    className="sponsored-details-btn"
-                    onClick={() => {
-                      setBookingError('');
-                      setSelectedEvent(spotlightEvent);
-                    }}
-                  >
-                    View details
-                  </button>
-                </div>
-              </div>
-              <div
-                className="sponsored-banner-right"
-                onClick={() => {
-                  setBookingError('');
-                  setSelectedEvent(spotlightEvent);
-                }}
-                role="button"
-                tabIndex={0}
-                title="Click to view workshop details"
-              >
-                <img src={spotlightEvent.image} alt={spotlightEvent.title} />
-                <div className="sponsored-image-overlay">
-                  <span className="sponsored-price-pill">{spotlightEvent.price}</span>
+                <div className="sparkline" title="Live session capacity trend">
+                  {sparklineHeights.map((h, i) => (
+                    <span key={i} style={{ height: `${h}%` }} />
+                  ))}
                 </div>
               </div>
             </section>
-          )}
 
-          <section className="search-row">
-            <div className="search-box">
-              <Search size={19} />
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search a style, class, studio or choreographer"
-              />
-            </div>
-            <button className={`filter-btn ${showFilters ? 'active' : ''}`} onClick={() => setShowFilters(!showFilters)}>
-              <SlidersHorizontal size={18} /> <span>Filters</span>
-            </button>
-          </section>
-          <div className="quick-styles-row">
-            <span className="quick-styles-label">Popular styles:</span>
-            <div className="quick-styles-list">
-              <button
-                type="button"
-                className={`style-chip ${styleFilter === 'All styles' ? 'active' : ''}`}
-                onClick={() => setStyleFilter('All styles')}
-              >
-                All styles ({events.length})
+            {spotlightEvent && (
+              <section className="sponsored-spotlight-banner">
+                <div className="sponsored-banner-left">
+                  <div className="sponsored-tag-row">
+                    <span className="sponsored-tag">
+                      <Sparkles size={13} /> Featured Spotlight
+                    </span>
+                    <span className="sponsored-style-badge">{spotlightEvent.style}</span>
+                    <span className="sponsored-spots-badge">{spotlightEvent.spots} spots left</span>
+                  </div>
+                  <h3 className="sponsored-title">{spotlightEvent.title}</h3>
+                  <div className="sponsored-meta-row">
+                    <span><Clock3 size={14} /> {spotlightEvent.date} · {spotlightEvent.time}</span>
+                    <span><MapPin size={14} /> {spotlightEvent.studio} · {spotlightEvent.location}</span>
+                    <span>with <strong>{spotlightEvent.host}</strong></span>
+                  </div>
+                  <div className="sponsored-actions">
+                    <button
+                      type="button"
+                      className="primary-btn sponsored-book-btn"
+                      onClick={() => book(spotlightEvent)}
+                      disabled={spotlightEvent.spots <= 0 || bookings.some((b) => b.event_id === spotlightEvent.id)}
+                    >
+                      {bookings.some((b) => b.event_id === spotlightEvent.id) ? (
+                        <>Booked <Check size={16} /></>
+                      ) : spotlightEvent.spots <= 0 ? (
+                        'Sold out'
+                      ) : (
+                        <>Book this session · {spotlightEvent.price} <ArrowRight size={16} /></>
+                      )}
+                    </button>
+                    <button
+                      type="button"
+                      className="sponsored-details-btn"
+                      onClick={() => {
+                        setBookingError('');
+                        setSelectedEvent(spotlightEvent);
+                      }}
+                    >
+                      View details
+                    </button>
+                  </div>
+                </div>
+                <div
+                  className="sponsored-banner-right"
+                  onClick={() => {
+                    setBookingError('');
+                    setSelectedEvent(spotlightEvent);
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  title="Click to view workshop details"
+                >
+                  <img src={spotlightEvent.image} alt={spotlightEvent.title} />
+                  <div className="sponsored-image-overlay">
+                    <span className="sponsored-price-pill">{spotlightEvent.price}</span>
+                  </div>
+                </div>
+              </section>
+            )}
+
+            <section className="search-row">
+              <div className="search-box">
+                <Search size={19} />
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search a style, class, studio or choreographer"
+                />
+              </div>
+              <button className={`filter-btn ${showFilters ? 'active' : ''}`} onClick={() => setShowFilters(!showFilters)}>
+                <SlidersHorizontal size={18} /> <span>Filters</span>
               </button>
-              {styles.map((style) => {
-                const count = events.filter((e) => e.style === style).length;
-                return (
-                  <button
-                    type="button"
-                    key={style}
-                    className={`style-chip ${styleFilter === style ? 'active' : ''}`}
-                    onClick={() => setStyleFilter(styleFilter === style ? 'All styles' : style)}
-                  >
-                    {style} <small>({count})</small>
-                  </button>
-                );
-              })}
+            </section>
+            <div className="quick-styles-row">
+              <span className="quick-styles-label">Popular styles:</span>
+              <div className="quick-styles-list">
+                <button
+                  type="button"
+                  className={`style-chip ${styleFilter === 'All styles' ? 'active' : ''}`}
+                  onClick={() => setStyleFilter('All styles')}
+                >
+                  All styles ({events.length})
+                </button>
+                {styles.map((style) => {
+                  const count = events.filter((e) => e.style === style).length;
+                  return (
+                    <button
+                      type="button"
+                      key={style}
+                      className={`style-chip ${styleFilter === style ? 'active' : ''}`}
+                      onClick={() => setStyleFilter(styleFilter === style ? 'All styles' : style)}
+                    >
+                      {style} <small>({count})</small>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-          {showFilters && <div className="filters"><label>When<select value={dateFilter} onChange={(event) => setDateFilter(event.target.value)}><option>Any date</option>{events.map((event) => <option key={event.id} value={event.date}>{event.date}</option>)}</select></label><label>Style<select value={styleFilter} onChange={(event) => setStyleFilter(event.target.value)}><option>All styles</option>{styles.map((style) => <option key={style}>{style}</option>)}</select></label><label>Location<select value={locationFilter} onChange={(event) => setLocationFilter(event.target.value)}><option>All locations</option>{locations.map((location) => <option key={location}>{location}</option>)}</select></label><button className="clear-filter" onClick={() => { setDateFilter('Any date'); setStyleFilter('All styles'); setLocationFilter('All locations'); setShowFilters(false); }}>Clear filters</button></div>}
-          <section className="section-head"><div><span className="section-kicker">Picked for you</span><h3>Happening this week</h3></div><button className="text-btn" onClick={() => setActiveTab('Calendar')}>View calendar <ArrowRight size={16} /></button></section>
-          {eventsLoading && <div className="data-state"><span className="loader-dot" /> Loading classes from Supabase…</div>}
-          {eventsError && <div className="data-error" role="alert">{eventsError}</div>}
+            {showFilters && <div className="filters"><label>When<select value={dateFilter} onChange={(event) => setDateFilter(event.target.value)}><option>Any date</option>{events.map((event) => <option key={event.id} value={event.date}>{event.date}</option>)}</select></label><label>Style<select value={styleFilter} onChange={(event) => setStyleFilter(event.target.value)}><option>All styles</option>{styles.map((style) => <option key={style}>{style}</option>)}</select></label><label>Location<select value={locationFilter} onChange={(event) => setLocationFilter(event.target.value)}><option>All locations</option>{locations.map((location) => <option key={location}>{location}</option>)}</select></label><button className="clear-filter" onClick={() => { setDateFilter('Any date'); setStyleFilter('All styles'); setLocationFilter('All locations'); setShowFilters(false); }}>Clear filters</button></div>}
+            <section className="section-head"><div><span className="section-kicker">Picked for you</span><h3>Happening this week</h3></div><button className="text-btn" onClick={() => setActiveTab('Calendar')}>View calendar <ArrowRight size={16} /></button></section>
+            {eventsLoading && <div className="data-state"><span className="loader-dot" /> Loading classes from Supabase…</div>}
+            {eventsError && <div className="data-error" role="alert">{eventsError}</div>}
             {!eventsLoading && <section className="event-grid">{visibleEvents.map((event) => <EventCard event={event} saved={saved.includes(event.id)} onSave={() => toggleSaved(event.id)} onOpen={() => { setBookingError(''); setSelectedEvent(event); }} key={event.id} />)}</section>}
-          {visibleEvents.length === 0 && <div className="empty-state"><Search size={30} /><h3>No dances found</h3><p>Try a different style, studio, or neighbourhood.</p></div>}
-          <section className="lower-grid"><div className="studio-banner"><div className="banner-copy"><span className="section-kicker">Meet the community</span><h3>Good energy<br /><em>lives here.</em></h3><p>From first steps to full-out freestyle. Find your people and your pace.</p><button className="light-btn">Explore studios <ArrowRight size={15} /></button></div><div className="banner-art"><div className="circle circle-one" /><div className="circle circle-two" /><div className="banner-figure">✦</div></div></div><div className="next-up"><div className="section-head compact"><div><span className="section-kicker">Your week</span><h3>Next up</h3></div><button className="dots-btn">•••</button></div>{bookedEvent ? <button className="upcoming-item" onClick={() => setShowTicket(true)}><div className="date-block"><strong>18</strong><span>AUG</span></div><div><strong>{bookedEvent.title}</strong><span>{bookedEvent.time} · {bookedEvent.location}</span></div><span className="upcoming-check"><Check size={14} /></span></button> : <div className="empty-upcoming"><CalendarDays size={20} /><span>No bookings yet</span><button onClick={() => setActiveTab('Discover')}>Find a class</button></div>}</div></section>
+            {visibleEvents.length === 0 && <div className="empty-state"><Search size={30} /><h3>No dances found</h3><p>Try a different style, studio, or neighbourhood.</p></div>}
+            <section className="lower-grid"><div className="studio-banner"><div className="banner-copy"><span className="section-kicker">Meet the community</span><h3>Good energy<br /><em>lives here.</em></h3><p>From first steps to full-out freestyle. Find your people and your pace.</p><button className="light-btn">Explore studios <ArrowRight size={15} /></button></div><div className="banner-art"><div className="circle circle-one" /><div className="circle circle-two" /><div className="banner-figure">✦</div></div></div><div className="next-up"><div className="section-head compact"><div><span className="section-kicker">Your week</span><h3>Next up</h3></div><button className="dots-btn">•••</button></div>{bookedEvent ? <button className="upcoming-item" onClick={() => setShowTicket(true)}><div className="date-block"><strong>18</strong><span>AUG</span></div><div><strong>{bookedEvent.title}</strong><span>{bookedEvent.time} · {bookedEvent.location}</span></div><span className="upcoming-check"><Check size={14} /></span></button> : <div className="empty-upcoming"><CalendarDays size={20} /><span>No bookings yet</span><button onClick={() => setActiveTab('Discover')}>Find a class</button></div>}</div></section>
           </> : <DancerTabView activeTab={activeTab} events={events} saved={saved} bookings={bookings.map((booking) => ({ booking, event: events.find((event) => event.id === booking.event_id) })).filter((item): item is { booking: Booking; event: EventItem } => Boolean(item.event))} onOpenEvent={setSelectedEvent} onToggleSave={toggleSaved} onFindClass={() => setActiveTab('Discover')} onViewTicket={(event, booking) => { setBookedEvent(event); setActiveBooking(booking); setShowTicket(true); }} />}
         </main>
       </div>
@@ -502,7 +502,8 @@ function DancerTabView({ activeTab, events, saved, bookings, onOpenEvent, onTogg
     const selectedBookings = selectedDateKey === null ? [] : bookings.filter(({ event }) => event.dateKey === selectedDateKey);
     const monthLabel = calendarMonth === 'AUG' ? 'August 2026' : 'September 2026';
     const daysInMonth = calendarMonth === 'AUG' ? 31 : 30;
-    return <section className="tab-view"><div className="tab-heading"><span className="section-kicker">Your workspace</span><h2>{title}</h2><p>Select a date to explore classes and your bookings.</p></div><div className="calendar-panel"><div className="calendar-header"><button aria-label="Previous month" onClick={() => { setCalendarMonth('AUG'); setSelectedCalendarDay(null); }}>‹</button><strong>{monthLabel}</strong><button aria-label="Next month" onClick={() => { setCalendarMonth('SEP'); setSelectedCalendarDay(null); }}>›</button></div><div className="calendar-week"><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span></div><div className="calendar-grid">{Array.from({ length: daysInMonth }, (_, index) => { const day = index + 1; const dateKey = `${calendarMonth === 'AUG' ? '2026-08' : '2026-09'}-${String(day).padStart(2, '0')}`; const hasBooking = bookings.some(({ event }) => event.dateKey === dateKey); const hasEvents = events.some((event) => event.dateKey === dateKey); return <button className={`${hasBooking ? 'calendar-day booked' : 'calendar-day'} ${selectedCalendarDay === day ? 'selected' : ''}`} key={day} onClick={() => setSelectedCalendarDay(day)}>{day}{(hasBooking || hasEvents) && <i />}</button>; })}</div><div className="calendar-legend"><span className="legend-dot event-dot" /> Classes available <span className="legend-dot booking-dot" /> Your booking</div></div>{selectedCalendarDay !== null && <div className="calendar-events"><div className="section-head"><div><span className="section-kicker">{monthLabel} · {selectedCalendarDay}</span><h3>{selectedEvents.length ? 'Classes on this day' : 'No classes on this day'}</h3></div></div>{selectedBookings.length > 0 && <div className="date-bookings"><span className="section-kicker">Your bookings</span>{selectedBookings.map(({ event, booking }) => <div className="date-booking" key={booking.id}><div><strong>{event.title}</strong><span>{event.time} · {event.studio}</span></div><button className="text-btn" onClick={() => onViewTicket(event, booking)}>View ticket <Ticket size={15} /></button></div>)}</div>}{selectedEvents.length ? <><span className="section-kicker">Other classes</span><div className="event-grid">{selectedEvents.map((event) => <EventCard event={event} saved={saved.includes(event.id)} onSave={() => onToggleSave(event.id)} onOpen={() => onOpenEvent(event)} key={event.id} />)}</div></> : <EmptyTab icon={<CalendarDays size={28} />} title="No classes found" message="Try another date or return to Discover." action="Browse all classes" onAction={onFindClass} />}</div>}</section>;
+    const firstDayOffset = (new Date(calendarMonth === 'AUG' ? '2026-08-01T00:00:00' : '2026-09-01T00:00:00').getDay() + 6) % 7;
+    return <section className="tab-view"><div className="tab-heading"><span className="section-kicker">Your workspace</span><h2>{title}</h2><p>Select a date to explore classes and your bookings.</p></div><div className="calendar-panel"><div className="calendar-header"><button aria-label="Previous month" onClick={() => { setCalendarMonth('AUG'); setSelectedCalendarDay(null); }}>‹</button><strong>{monthLabel}</strong><button aria-label="Next month" onClick={() => { setCalendarMonth('SEP'); setSelectedCalendarDay(null); }}>›</button></div><div className="calendar-week"><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span></div><div className="calendar-grid">{Array.from({ length: firstDayOffset }, (_, i) => <div key={`empty-${i}`} className="calendar-day empty" aria-hidden="true" />)}{Array.from({ length: daysInMonth }, (_, index) => { const day = index + 1; const dateKey = `${calendarMonth === 'AUG' ? '2026-08' : '2026-09'}-${String(day).padStart(2, '0')}`; const hasBooking = bookings.some(({ event }) => event.dateKey === dateKey); const hasEvents = events.some((event) => event.dateKey === dateKey); return <button className={`calendar-day ${hasBooking ? 'booked' : ''} ${selectedCalendarDay === day ? 'selected' : ''}`} key={day} onClick={() => setSelectedCalendarDay(day)}><span>{day}</span>{hasEvents && !hasBooking && <span className="day-dot event-dot" />}{hasBooking && <span className="day-dot booking-dot" />}</button>; })}</div><div className="calendar-legend"><span className="legend-dot event-dot" /> Classes available <span className="legend-dot booking-dot" /> Your booking</div></div>{selectedCalendarDay !== null && <div className="calendar-events"><div className="section-head"><div><span className="section-kicker">{monthLabel} · {selectedCalendarDay}</span><h3>{selectedEvents.length ? 'Classes on this day' : 'No classes on this day'}</h3></div></div>{selectedBookings.length > 0 && <div className="date-bookings"><span className="section-kicker">Your bookings</span>{selectedBookings.map(({ event, booking }) => <div className="date-booking" key={booking.id}><div><strong>{event.title}</strong><span>{event.time} · {event.studio}</span></div><button className="text-btn" onClick={() => onViewTicket(event, booking)}>View ticket <Ticket size={15} /></button></div>)}</div>}{selectedEvents.length ? <><span className="section-kicker">Other classes</span><div className="event-grid">{selectedEvents.map((event) => <EventCard event={event} saved={saved.includes(event.id)} onSave={() => onToggleSave(event.id)} onOpen={() => onOpenEvent(event)} key={event.id} />)}</div></> : <EmptyTab icon={<CalendarDays size={28} />} title="No classes found" message="Try another date or return to Discover." action="Browse all classes" onAction={onFindClass} />}</div>}</section>;
   }
 
   return <section className="tab-view"><div className="tab-heading"><span className="section-kicker">Your workspace</span><h2>{title}</h2><p>{subtitle}</p></div>{savedEvents.length > 0 ? <div className="event-grid">{savedEvents.map((event) => <EventCard event={event} saved onSave={() => onToggleSave(event.id)} onOpen={() => onOpenEvent(event)} key={event.id} />)}</div> : <EmptyTab icon={<Heart size={28} />} title="Nothing saved yet" message="Tap the heart on a class to save it for later." action="Explore classes" onAction={onFindClass} />}</section>;
