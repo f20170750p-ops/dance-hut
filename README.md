@@ -39,19 +39,36 @@ To deliver a high-quality, fully functional product quickly, the MVP is focused 
 
 ---
 
+## 🏗️ Architecture & Backend Design
+
+DanceHut follows a modern **Backend-as-a-Service (BaaS)** architecture using **React + Vite** on the frontend and **Supabase (PostgreSQL)** as the backend engine.
+
+* **Client**: React 18 with TypeScript, Tailwind CSS, Lucide icons, and the Supabase JavaScript SDK.
+* **Backend**: Supabase provides automated PostgREST APIs, GoTrue authentication, S3-compatible storage, and PostgreSQL Row-Level Security (RLS).
+* **Business Logic & Concurrency**: Critical operations (e.g. seat booking and capacity checking) run as atomic PostgreSQL stored procedures (`book_event`) to guarantee ACID transactions and eliminate race conditions.
+* **Evolution Path**: As payments (Razorpay/Stripe) and transactional messaging are added, the architecture seamlessly expands via **Supabase Edge Functions** without requiring a full backend rewrite.
+
+📖 **Read the complete design doc**: [Architecture & Backend Strategy](docs/architecture.md)
+
+---
+
 ## 📋 Problem Tracker & Immediate MVP Backlog
 
-Identified bugs and UI improvements scoped for the current MVP iteration:
+Identified feedback items and UI improvements scoped for the current MVP iteration:
 
 | # | Item | Status | Scope / Action Plan |
 |---|---|:---:|---|
-| 1 | **Dynamic User Profile** | 🟢 Resolved | Replaced hardcoded *"Aria Kapoor"* with dynamic user profile (full name input during signup, Supabase profiles table sync, initials generation, and role tags). |
-| 2 | **Clickable Profile Avatars** | 🟢 Resolved | Made top-left profile card, top-right avatar, and sidebar Preferences open an interactive Profile Modal with real-time editing of display name, role switcher, activity stats, and sign out. |
-| 3 | **Complete Booking Location Info** | 🔴 In Progress | Ensure studio name, neighbourhood, and full venue details appear consistently across bookings list, calendar, and ticket modal. |
-| 4 | **Discover Hero Section Refresh** | 🔴 In Progress | Update hero row to show dynamic current date, live upcoming class count, and active copy. |
+| 1 | **Custom Email Sender on Signup** | 🟡 Queued | Configure custom SMTP provider in Supabase Auth to replace default Supabase sender email. |
+| 2 | **Dynamic User Profile** | 🟢 Resolved | Replaced hardcoded *"Aria Kapoor"* with dynamic user profile (full name input during signup, Supabase profiles table sync, initials generation, and role tags). |
+| 3 | **Google Maps Venue Redirection** | 🔴 In Progress | Add clickable Google Maps directions link for workshop venues across bookings list, calendar, and ticket modal. |
+| 4 | **Clickable Profile Avatars** | 🟢 Resolved | Made top-left profile card, top-right avatar, and sidebar Preferences open an interactive Profile Modal with real-time editing of display name, role switcher, activity stats, and sign out. |
 | 5 | **Interactive Location Pill** | 🟡 Queued | Make "Bengaluru" location selector clickable with active city info & "More cities coming soon". |
 | 6 | **"Talk to our team" Support Action** | 🟡 Queued | Connect support card to direct email (`mailto:`) or WhatsApp support. |
-| 7 | **Search & Filter Refinements** | 🟡 Queued | Ensure multi-filter combinations (date, style, location) sync cleanly with active event list. |
+| 7 | **"Your Space" Navigation Links** | 🟡 Queued | Connect Messages, Notifications, and Preferences navigation to working modals/views. |
+| 8 | **Discover Hero Section Refresh** | 🟡 Queued | Update hero row to show dynamic current date, live upcoming class count, and active copy. |
+| 9 | **Explore Studios Placement & Action** | 🟡 Queued | Improve button positioning and connect to a partner studio preview section. |
+
+📖 **Read the full problem breakdown**: [MVP Problem Tracker & Backlog](docs/backlog.md)
 
 ---
 
@@ -118,6 +135,9 @@ npm run dev
 
 ```
 dance-hut/
+├── docs/
+│   ├── architecture.md      # Backend strategy & scaling design doc
+│   └── backlog.md           # Problem tracker & MVP issues status
 ├── src/
 │   ├── App.tsx              # Main UI & Navigation
 │   ├── main.tsx             # React entry point
@@ -138,6 +158,15 @@ dance-hut/
 
 ---
 
+## 📚 Documentation
+
+| Document | Description |
+|---|---|
+| [Architecture & Backend Strategy](docs/architecture.md) | Comprehensive overview of the BaaS design, security model (RLS/RPC), and scaling roadmap. |
+| [Problem Tracker & Backlog](docs/backlog.md) | Granular breakdown of identified issues, fixes, and current status. |
+
+---
+
 ## 🛠️ Scripts
 
 - `npm run dev` — Start local Vite dev server
@@ -145,3 +174,4 @@ dance-hut/
 - `npm run lint` — Lint code with ESLint
 - `npm run build` — Build production bundle to `dist/`
 - `npm run preview` — Preview production build locally
+
