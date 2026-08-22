@@ -216,13 +216,90 @@ create policy "Users can send messages to their conversations"
     )
   );
 
--- Enable Realtime publication for messages & conversations
+-- Notifications table for event updates, venue changes, reminders, and booking alerts
+create table if not exists public.notifications (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  event_id bigint references public.events(id) on delete cascade,
+  type text not null check (type in ('location_change', 'time_change', 'event_update', 'booking_confirmed', 'announcement', 'reminder')),
+  title text not null,
+  message text not null,
+  metadata jsonb,
+  read boolean not null default false,
+  created_at timestamptz not null default now()
+);
+
+alter table public.notifications enable row level security;
+
+drop policy if exists "Users can view their own notifications" on public.notifications;
+drop policy if exists "Users can update their own notifications" on public.notifications;
+drop policy if exists "Users can delete their own notifications" on public.notifications;
+drop policy if exists "Users can insert notifications" on public.notifications;
+
+create policy "Users can view their own notifications"
+  on public.notifications for select
+  using (auth.uid() = user_id);
+
+create policy "Users can update their own notifications"
+  on public.notifications for update
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+create policy "Users can delete their own notifications"
+  on public.notifications for delete
+  using (auth.uid() = user_id);
+
+create policy "Users can insert notifications"
+  on public.notifications for insert
+  with check (true);
+
+-- Stored procedure to broadcast an event notification to all enrolled, saved, and inquiring users
+create or replace function public.notify_event_audience(
+  p_event_id bigint,
+  p_type text,
+  p_title text,
+  p_message text,
+  p_metadata jsonb default '{}'::jsonb
+)
+returns integer
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_recipient_count integer := 0;
+  v_user_id uuid;
+begin
+  for v_user_id in (
+    select user_id from public.bookings where event_id = p_event_id and status = 'booked'
+    union
+    select user_id from public.saved_events where event_id = p_event_id
+    union
+    select participant_1 as user_id from public.conversations where event_id = p_event_id
+    union
+    select participant_2 as user_id from public.conversations where event_id = p_event_id
+  ) loop
+    insert into public.notifications (user_id, event_id, type, title, message, metadata)
+    values (v_user_id, p_event_id, p_type, p_title, p_message, p_metadata);
+    v_recipient_count := v_recipient_count + 1;
+  end loop;
+
+  return v_recipient_count;
+end;
+$$;
+
+revoke all on function public.notify_event_audience(bigint, text, text, text, jsonb) from public;
+grant execute on function public.notify_event_audience(bigint, text, text, text, jsonb) to authenticated;
+
+-- Enable Realtime publication for messages, conversations, and notifications
 do $$
 begin
   if exists (select 1 from pg_publication where pubname = 'supabase_realtime') then
     alter publication supabase_realtime add table public.conversations;
     alter publication supabase_realtime add table public.messages;
+    alter publication supabase_realtime add table public.notifications;
   end if;
 exception
   when duplicate_object then null;
 end $$;
+

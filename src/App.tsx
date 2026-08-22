@@ -17,6 +17,11 @@ import { createBooking, getUserBookings, type Booking } from './services/booking
 import { getEvents, type EventItem } from './services/events';
 import { getSavedEventIds, saveEvent, unsaveEvent } from './services/savedEvents';
 import { startOrGetInstructorChat } from './services/messages';
+import {
+  getUserNotifications,
+  subscribeToNotifications,
+  type NotificationItem,
+} from './services/notifications';
 import { isSupabaseConfigured } from './services/supabase';
 
 import { WelcomeView } from './components/auth/WelcomeView';
@@ -27,6 +32,7 @@ import { CalendarTab } from './components/tabs/CalendarTab';
 import { BookingsTab } from './components/tabs/BookingsTab';
 import { SavedTab } from './components/tabs/SavedTab';
 import { MessagesTab } from './components/tabs/MessagesTab';
+import { NotificationsTab } from './components/tabs/NotificationsTab';
 import { EventModal } from './components/modals/EventModal';
 import { TicketModal } from './components/modals/TicketModal';
 import { ProfileModal } from './components/modals/ProfileModal';
@@ -51,6 +57,8 @@ function App() {
   const [saved, setSaved] = useState<number[]>([]);
   const [showMenu, setShowMenu] = useState(false);
   const [showTicket, setShowTicket] = useState(false);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [incomingToastNotif, setIncomingToastNotif] = useState<NotificationItem | null>(null);
 
   useEffect(() => {
     if (!isSupabaseConfigured) {
@@ -118,11 +126,13 @@ function App() {
       getEvents(),
       getSavedEventIds(session.user.id),
       getUserBookings(session.user.id),
+      getUserNotifications(session.user.id),
     ])
-      .then(([eventResult, savedResult, bookingResult]) => {
+      .then(([eventResult, savedResult, bookingResult, notifResult]) => {
         if (eventResult.error) setEventsError(eventResult.error.message);
         setEvents(eventResult.data);
         if (!savedResult.error) setSaved(savedResult.data);
+        if (!notifResult.error) setNotifications(notifResult.data);
         if (!bookingResult.error) {
           const latestBooking = bookingResult.data[0] ?? null;
           setBookings(bookingResult.data);
@@ -136,6 +146,18 @@ function App() {
       })
       .catch((error: Error) => setEventsError(error.message))
       .finally(() => setEventsLoading(false));
+
+    const unsubscribeNotifs = subscribeToNotifications(session.user.id, (newNotif) => {
+      setNotifications((prev) => [newNotif, ...prev]);
+      setIncomingToastNotif(newNotif);
+      setTimeout(() => {
+        setIncomingToastNotif((current) => (current?.id === newNotif.id ? null : current));
+      }, 5000);
+    });
+
+    return () => {
+      unsubscribeNotifs();
+    };
   }, [session]);
 
   const book = async (event: EventItem) => {
@@ -235,6 +257,11 @@ function App() {
     }).format(new Date());
   }, []);
 
+  const unreadNotificationsCount = useMemo(
+    () => notifications.filter((n) => !n.read).length,
+    [notifications]
+  );
+
   const bookingsWithEvents = useMemo(() => {
     return bookings
       .map((booking) => ({
@@ -264,6 +291,7 @@ function App() {
         currentUserRoleBadge={currentUserRoleBadge}
         bookingsCount={bookings.length}
         unreadMessagesCount={1}
+        unreadNotificationsCount={unreadNotificationsCount}
         onOpenProfile={() => setShowProfileModal(true)}
         onSignOut={() => signOut()}
       />
@@ -352,6 +380,28 @@ function App() {
               onFindClass={() => setActiveTab('Discover')}
             />
           )}
+
+          {activeTab === 'Notifications' && (
+            <NotificationsTab
+              currentUserId={session?.user?.id || 'current-user'}
+              notifications={notifications}
+              setNotifications={setNotifications}
+              events={events}
+              bookings={bookings}
+              saved={saved}
+              onOpenEvent={(event) => {
+                setBookingError('');
+                setSelectedEvent(event);
+              }}
+              onViewTicket={(event, booking) => {
+                setBookedEvent(event);
+                setActiveBooking(booking);
+                setShowTicket(true);
+              }}
+              onMessageHost={handleMessageHost}
+              onFindClass={() => setActiveTab('Discover')}
+            />
+          )}
         </main>
       </div>
 
@@ -364,6 +414,36 @@ function App() {
           onBook={() => book(selectedEvent)}
           onMessageHost={handleMessageHost}
         />
+      )}
+
+      {/* Incoming Real-time Notification Toast */}
+      {incomingToastNotif && (
+        <div className="toast notif-toast">
+          <span className="toast-icon notif-toast-icon">
+            <Check size={17} />
+          </span>
+          <div>
+            <strong>{incomingToastNotif.title}</strong>
+            <span>{incomingToastNotif.message}</span>
+          </div>
+          <button
+            type="button"
+            className="view-ticket-toast"
+            onClick={() => {
+              setActiveTab('Notifications');
+              setIncomingToastNotif(null);
+            }}
+          >
+            View Feed
+          </button>
+          <button
+            type="button"
+            aria-label="Dismiss notification"
+            onClick={() => setIncomingToastNotif(null)}
+          >
+            <X size={16} />
+          </button>
+        </div>
       )}
 
       {bookedEvent && showBookingToast && !selectedEvent && (

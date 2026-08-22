@@ -21,6 +21,7 @@ interface SidebarProps {
   currentUserRoleBadge: string;
   bookingsCount: number;
   unreadMessagesCount?: number;
+  unreadNotificationsCount?: number;
   onOpenProfile: () => void;
   onOpenMessages?: () => void;
   onSignOut: () => void;
@@ -36,6 +37,7 @@ export function Sidebar({
   currentUserRoleBadge,
   bookingsCount,
   unreadMessagesCount = 1,
+  unreadNotificationsCount = 0,
   onOpenProfile,
   onOpenMessages,
   onSignOut,
@@ -64,20 +66,18 @@ export function Sidebar({
         </button>
       </div>
 
-      <div
+      <button
+        type="button"
         className="profile-mini"
         onClick={onOpenProfile}
-        role="button"
-        tabIndex={0}
-        title="Manage profile"
       >
-        <div className="avatar">{currentUserInitials}</div>
+        <span className="avatar">{currentUserInitials}</span>
         <div>
           <strong>{currentUserName}</strong>
           <span>{currentUserRoleBadge}</span>
         </div>
-        <ChevronDown size={15} />
-      </div>
+        <ChevronDown size={14} />
+      </button>
 
       <div className="side-group">
         <span className="side-label">Workspace</span>
@@ -112,9 +112,17 @@ export function Sidebar({
           <span>Messages</span>
           {unreadMessagesCount > 0 && <i className="message-dot" />}
         </button>
-        <button type="button" className="side-item">
+        <button
+          type="button"
+          className={`side-item ${activeTab === 'Notifications' ? 'active' : ''}`}
+          onClick={() => {
+            setActiveTab('Notifications');
+            setShowMenu(false);
+          }}
+        >
           <Bell size={19} />
           <span>Notifications</span>
+          {unreadNotificationsCount > 0 && <i>{unreadNotificationsCount}</i>}
         </button>
         <button
           type="button"
