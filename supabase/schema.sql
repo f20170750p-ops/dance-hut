@@ -150,3 +150,79 @@ create policy "Users can save their own events"
 create policy "Users can unsave their own events"
   on public.saved_events for delete
   using (auth.uid() = user_id);
+
+-- Conversations table for 1:1 dancer, instructor, and organizer chats
+create table if not exists public.conversations (
+  id uuid primary key default gen_random_uuid(),
+  event_id bigint references public.events(id) on delete set null,
+  participant_1 uuid not null references public.profiles(id) on delete cascade,
+  participant_2 uuid not null references public.profiles(id) on delete cascade,
+  last_message text,
+  updated_at timestamptz not null default now(),
+  created_at timestamptz not null default now()
+);
+
+alter table public.conversations enable row level security;
+
+drop policy if exists "Users can view their conversations" on public.conversations;
+drop policy if exists "Users can create conversations" on public.conversations;
+drop policy if exists "Users can update their conversations" on public.conversations;
+
+create policy "Users can view their conversations"
+  on public.conversations for select
+  using (auth.uid() = participant_1 or auth.uid() = participant_2);
+
+create policy "Users can create conversations"
+  on public.conversations for insert
+  with check (auth.uid() = participant_1 or auth.uid() = participant_2);
+
+create policy "Users can update their conversations"
+  on public.conversations for update
+  using (auth.uid() = participant_1 or auth.uid() = participant_2)
+  with check (auth.uid() = participant_1 or auth.uid() = participant_2);
+
+-- Messages table for chat history
+create table if not exists public.messages (
+  id uuid primary key default gen_random_uuid(),
+  conversation_id uuid not null references public.conversations(id) on delete cascade,
+  sender_id uuid not null references public.profiles(id) on delete cascade,
+  content text not null,
+  created_at timestamptz not null default now()
+);
+
+alter table public.messages enable row level security;
+
+drop policy if exists "Users can view messages in their conversations" on public.messages;
+drop policy if exists "Users can send messages to their conversations" on public.messages;
+
+create policy "Users can view messages in their conversations"
+  on public.messages for select
+  using (
+    exists (
+      select 1 from public.conversations c
+      where c.id = messages.conversation_id
+        and (c.participant_1 = auth.uid() or c.participant_2 = auth.uid())
+    )
+  );
+
+create policy "Users can send messages to their conversations"
+  on public.messages for insert
+  with check (
+    auth.uid() = sender_id and
+    exists (
+      select 1 from public.conversations c
+      where c.id = messages.conversation_id
+        and (c.participant_1 = auth.uid() or c.participant_2 = auth.uid())
+    )
+  );
+
+-- Enable Realtime publication for messages & conversations
+do $$
+begin
+  if exists (select 1 from pg_publication where pubname = 'supabase_realtime') then
+    alter publication supabase_realtime add table public.conversations;
+    alter publication supabase_realtime add table public.messages;
+  end if;
+exception
+  when duplicate_object then null;
+end $$;

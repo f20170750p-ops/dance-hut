@@ -64,7 +64,7 @@ Identified feedback items and UI improvements scoped for the current MVP iterati
 | 4 | **Clickable Profile Avatars** | 🟢 Resolved | Made top-left profile card, top-right avatar, and sidebar Preferences open an interactive Profile Modal with real-time editing of display name, role switcher, activity stats, and sign out. |
 | 5 | **Interactive Location Pill** | 🟡 Queued | Make "Bengaluru" location selector clickable with active city info & "More cities coming soon". |
 | 6 | **"Talk to our team" Support Action** | 🟡 Queued | Connect support card to direct email (`mailto:`) or WhatsApp support. |
-| 7 | **"Your Space" Navigation Links** | 🟡 Queued | Connect Messages, Notifications, and Preferences navigation to working modals/views. |
+| 7 | **"Your Space" Navigation & Realtime Messages** | 🟢 Resolved | Integrated Supabase Realtime messaging modal with conversation threads, prompt chips, direct workshop instructor inquiries, and connected Preferences to profile management. |
 | 8 | **Discover Hero Section Refresh** | 🟢 Resolved | Rendered dynamic current date with live pulse, real-time class & spot metrics from Supabase, active contextual copy, and 1-click style filter shortcuts. |
 | 9 | **Explore Studios Placement & Action** | 🟡 Queued | Improve button positioning and connect to a partner studio preview section. |
 

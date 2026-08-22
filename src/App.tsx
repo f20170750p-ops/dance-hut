@@ -16,6 +16,7 @@ import {
 import { createBooking, getUserBookings, type Booking } from './services/bookings';
 import { getEvents, type EventItem } from './services/events';
 import { getSavedEventIds, saveEvent, unsaveEvent } from './services/savedEvents';
+import { startOrGetInstructorChat } from './services/messages';
 import { isSupabaseConfigured } from './services/supabase';
 
 import { WelcomeView } from './components/auth/WelcomeView';
@@ -25,6 +26,7 @@ import { DiscoverTab } from './components/tabs/DiscoverTab';
 import { CalendarTab } from './components/tabs/CalendarTab';
 import { BookingsTab } from './components/tabs/BookingsTab';
 import { SavedTab } from './components/tabs/SavedTab';
+import { MessagesTab } from './components/tabs/MessagesTab';
 import { EventModal } from './components/modals/EventModal';
 import { TicketModal } from './components/modals/TicketModal';
 import { ProfileModal } from './components/modals/ProfileModal';
@@ -35,6 +37,7 @@ function App() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
   const [events, setEvents] = useState<EventItem[]>([]);
   const [eventsLoading, setEventsLoading] = useState(true);
   const [eventsError, setEventsError] = useState('');
@@ -188,6 +191,21 @@ function App() {
     }
   };
 
+  const handleMessageHost = async (event: EventItem) => {
+    setSelectedEvent(null);
+    if (session?.user) {
+      const { conversation } = await startOrGetInstructorChat(
+        session.user.id,
+        event.host,
+        event.id,
+        event.title,
+        event.studio
+      );
+      setActiveConversationId(conversation.id);
+    }
+    setActiveTab('Messages');
+  };
+
   const currentUserName = useMemo(
     () => getDisplayName(profile, session?.user ?? null),
     [profile, session?.user]
@@ -245,6 +263,7 @@ function App() {
         currentUserInitials={currentUserInitials}
         currentUserRoleBadge={currentUserRoleBadge}
         bookingsCount={bookings.length}
+        unreadMessagesCount={1}
         onOpenProfile={() => setShowProfileModal(true)}
         onSignOut={() => signOut()}
       />
@@ -323,6 +342,16 @@ function App() {
               onFindClass={() => setActiveTab('Discover')}
             />
           )}
+
+          {activeTab === 'Messages' && (
+            <MessagesTab
+              currentUserId={session?.user?.id || 'current-user'}
+              currentUserName={currentUserName}
+              selectedConversationId={activeConversationId}
+              onSelectConversation={(id) => setActiveConversationId(id)}
+              onFindClass={() => setActiveTab('Discover')}
+            />
+          )}
         </main>
       </div>
 
@@ -333,6 +362,7 @@ function App() {
           alreadyBooked={bookings.some((booking) => booking.event_id === selectedEvent.id)}
           onClose={() => setSelectedEvent(null)}
           onBook={() => book(selectedEvent)}
+          onMessageHost={handleMessageHost}
         />
       )}
 

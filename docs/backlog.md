@@ -16,7 +16,7 @@ This document tracks all identified feedback items, UX friction points, and impl
 | 4 | **Interactive Profile Icons** | 🟢 Resolved | Made top-right avatar and top-left profile card open the dynamic Profile Modal with editing and sign out. |
 | 5 | **Interactive Location Selector** | 🟡 Queued | Make location selector pill clickable with active city info ("Bengaluru") and "More cities coming soon" modal/dropdown. |
 | 6 | **"Talk to our team" Support Action** | 🟡 Queued | Connect support card to direct email (`mailto:`) or WhatsApp support link. |
-| 7 | **"Your Space" Sub-links Navigation** | 🟡 Queued | Add clean tab/modal navigation for Messages, Notifications, and Preferences in workspace view. |
+| 7 | **"Your Space" Navigation & Realtime Messages** | 🟢 Resolved | Built Supabase Realtime-powered MessagesModal with conversation threads, quick inquiry prompts, and direct workshop instructor questions from class cards. Connected Preferences to ProfileModal. |
 | 8 | **Discover Page Top Hero Relevance** | 🟢 Resolved | Rendered dynamic current date with live pulse, real-time class & spot metrics from Supabase, active contextual copy, and 1-click style filter shortcuts. |
 | 9 | **Explore Studios Placement & Action** | 🟡 Queued | Reposition Explore Studios CTA and connect to an informative studio discovery modal/section. |
 
@@ -46,9 +46,8 @@ This document tracks all identified feedback items, UX friction points, and impl
 * **Problem**: Sidebar support card has no click handler.
 * **Solution**: Bind to `mailto:support@dancehut.com` or WhatsApp quick chat.
 
-### 7. "Your Space" Quick Links
-* **Problem**: Messages, Notifications, and Preferences links do not navigate or perform actions.
-* **Solution**: Connect Preferences directly to the Profile Modal and provide contextual in-page views/toasts for Notifications & Messages.
+### 7. "Your Space" Quick Links & Realtime Messages [RESOLVED]
+* **Resolution**: Implemented `MessagesModal` with full conversation split-pane view, search filter, unread indicators, and real-time message stream. Added quick-prompt inquiry buttons for common workshop questions and integrated a 1-click "Message Host" trigger on workshop cards. Connected Preferences directly to `ProfileModal`.
 
 ### 8. Discover Hero Refresh [RESOLVED]
 * **Resolution**: Replaced static date and fixed copy with real-time dynamic date formatting (`Intl.DateTimeFormat`) and a glowing pulse live indicator. Computed dynamic upcoming sessions, total open spots, and unique partner studios count directly from active Supabase events. Added 1-click popular style shortcut tags under the search bar for effortless category discovery.

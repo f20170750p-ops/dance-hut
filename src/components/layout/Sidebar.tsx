@@ -20,7 +20,9 @@ interface SidebarProps {
   currentUserInitials: string;
   currentUserRoleBadge: string;
   bookingsCount: number;
+  unreadMessagesCount?: number;
   onOpenProfile: () => void;
+  onOpenMessages?: () => void;
   onSignOut: () => void;
 }
 
@@ -33,7 +35,9 @@ export function Sidebar({
   currentUserInitials,
   currentUserRoleBadge,
   bookingsCount,
+  unreadMessagesCount = 1,
   onOpenProfile,
+  onOpenMessages,
   onSignOut,
 }: SidebarProps) {
   const tabs = [
@@ -96,10 +100,17 @@ export function Sidebar({
 
       <div className="side-group side-bottom">
         <span className="side-label">Your space</span>
-        <button type="button" className="side-item">
+        <button
+          type="button"
+          className={`side-item ${activeTab === 'Messages' ? 'active' : ''}`}
+          onClick={() => {
+            setActiveTab('Messages');
+            setShowMenu(false);
+          }}
+        >
           <MessageCircle size={19} />
           <span>Messages</span>
-          <i className="message-dot" />
+          {unreadMessagesCount > 0 && <i className="message-dot" />}
         </button>
         <button type="button" className="side-item">
           <Bell size={19} />

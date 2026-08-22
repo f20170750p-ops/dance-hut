@@ -1,4 +1,4 @@
-import { ArrowRight, Clock3, MapPin, Ticket, UserRound, X } from 'lucide-react';
+import { ArrowRight, Clock3, MapPin, MessageCircle, Ticket, UserRound, X } from 'lucide-react';
 import type { EventItem } from '../../services/events';
 
 interface EventModalProps {
@@ -7,6 +7,7 @@ interface EventModalProps {
   alreadyBooked: boolean;
   onClose: () => void;
   onBook: () => void;
+  onMessageHost?: (event: EventItem) => void;
 }
 
 export function EventModal({
@@ -15,6 +16,7 @@ export function EventModal({
   alreadyBooked,
   onClose,
   onBook,
+  onMessageHost,
 }: EventModalProps) {
   const soldOut = event.spots <= 0;
   const statusMessage =
@@ -55,12 +57,25 @@ export function EventModal({
                 {event.location}
               </span>
             </div>
-            <div>
+            <div className="instructor-detail-row">
               <UserRound size={17} />
-              <span>
-                <strong>Hosted by {event.host}</strong>
-                Professional choreographer
-              </span>
+              <div className="instructor-info-wrap">
+                <span>
+                  <strong>Hosted by {event.host}</strong>
+                  Professional choreographer
+                </span>
+                {onMessageHost && (
+                  <button
+                    type="button"
+                    className="message-instructor-btn"
+                    onClick={() => onMessageHost(event)}
+                    title={`Message ${event.host}`}
+                  >
+                    <MessageCircle size={14} />
+                    <span>Message Host</span>
+                  </button>
+                )}
+              </div>
             </div>
             <div>
               <Clock3 size={17} />
