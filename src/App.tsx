@@ -21,7 +21,7 @@ import {
   Users,
   X,
 } from 'lucide-react';
-import type { Session } from '@supabase/supabase-js';
+import type { Session, User } from '@supabase/supabase-js';
 import { QRCodeSVG } from 'qrcode.react';
 import {
   getDisplayName,
@@ -34,6 +34,7 @@ import {
   signInWithEmailPassword,
   signOut,
   signUpWithEmailPassword,
+  updateProfile,
   type UserProfile,
   type UserRole,
 } from './services/auth';
@@ -55,6 +56,7 @@ function App() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [authOpen, setAuthOpen] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
   const [events, setEvents] = useState<EventItem[]>([]);
   const [eventsLoading, setEventsLoading] = useState(true);
   const [eventsError, setEventsError] = useState('');
@@ -243,13 +245,13 @@ function App() {
     <div className="app-shell">
       <aside className={`sidebar ${showMenu ? 'open' : ''}`}>
         <div className="sidebar-head"><div className="brand"><span className="brand-mark">D</span><span>dancehut</span></div><button className="close-menu" onClick={() => setShowMenu(false)}><X size={20} /></button></div>
-        <div className="profile-mini"><div className="avatar">{currentUserInitials}</div><div><strong>{currentUserName}</strong><span>{currentUserRoleBadge}</span></div><ChevronDown size={15} /></div>
+        <div className="profile-mini" onClick={() => setShowProfileModal(true)} role="button" tabIndex={0} title="Manage profile"><div className="avatar">{currentUserInitials}</div><div><strong>{currentUserName}</strong><span>{currentUserRoleBadge}</span></div><ChevronDown size={15} /></div>
         <div className="side-group"><span className="side-label">Workspace</span>{['Discover', 'Calendar', 'My bookings', 'Saved'].map((item, index) => { const icons = [Compass, CalendarDays, Ticket, Heart]; const Icon = icons[index]; return <button className={`side-item ${activeTab === item ? 'active' : ''}`} key={item} onClick={() => { setActiveTab(item); setShowMenu(false); }}><Icon size={19} /><span>{item}</span>{item === 'My bookings' && bookings.length > 0 && <i>{bookings.length}</i>}</button>; })}</div>
-        <div className="side-group side-bottom"><span className="side-label">Your space</span><button className="side-item"><MessageCircle size={19} /><span>Messages</span><i className="message-dot" /></button><button className="side-item"><Bell size={19} /><span>Notifications</span></button><button className="side-item"><SlidersHorizontal size={19} /><span>Preferences</span></button><button className="side-item sign-out-item" onClick={() => signOut()}><X size={19} /><span>Sign out</span></button></div>
+        <div className="side-group side-bottom"><span className="side-label">Your space</span><button className="side-item"><MessageCircle size={19} /><span>Messages</span><i className="message-dot" /></button><button className="side-item"><Bell size={19} /><span>Notifications</span></button><button className="side-item" onClick={() => setShowProfileModal(true)}><SlidersHorizontal size={19} /><span>Preferences</span></button><button className="side-item sign-out-item" onClick={() => signOut()}><X size={19} /><span>Sign out</span></button></div>
         <div className="side-footer"><div className="help-card"><span>Need a hand?</span><strong>Talk to our team <ArrowRight size={14} /></strong></div><span className="version">dancehut / 01</span></div>
       </aside>
       <div className="main-area">
-        <header className="topbar"><button className="menu-trigger" onClick={() => setShowMenu(true)}><Menu size={22} /></button><div className="mobile-brand"><span className="brand-mark">D</span> dancehut</div><div className="topbar-right"><div className="city-pill"><MapPin size={15} /> Bengaluru <ChevronDown size={14} /></div><button className="icon-btn"><Bell size={19} /></button><div className="avatar avatar-small" title={currentUserName}>{currentUserInitials}</div></div></header>
+        <header className="topbar"><button className="menu-trigger" onClick={() => setShowMenu(true)}><Menu size={22} /></button><div className="mobile-brand"><span className="brand-mark">D</span> dancehut</div><div className="topbar-right"><div className="city-pill"><MapPin size={15} /> Bengaluru <ChevronDown size={14} /></div><button className="icon-btn"><Bell size={19} /></button><div className="avatar avatar-small" onClick={() => setShowProfileModal(true)} role="button" tabIndex={0} title={`Logged in as ${currentUserName}. Click to manage profile.`}>{currentUserInitials}</div></div></header>
         <main className="content">
           {activeTab === 'Discover' ? <>
           <section className="hero-row"><div><div className="eyebrow"><span className="eyebrow-dot" /> Tuesday, 13 August 2024</div><h2>Make room for<br /><em>something new.</em></h2><p className="hero-sub">The best dance experiences in Bengaluru,<br className="desktop-only" /> curated for your kind of movement.</p></div><div className="hero-aside"><div className="stat-card"><strong>24</strong><span>sessions this week</span></div><div className="sparkline"><span /><span /><span /><span /><span /><span /><span /></div></div></section>
@@ -267,6 +269,23 @@ function App() {
       {selectedEvent && <EventModal event={selectedEvent} error={bookingError} alreadyBooked={bookings.some((booking) => booking.event_id === selectedEvent.id)} onClose={() => setSelectedEvent(null)} onBook={() => book(selectedEvent)} />}
       {bookedEvent && showBookingToast && !selectedEvent && <div className="toast"><span className="toast-icon"><Check size={17} /></span><div><strong>You're on the list.</strong><span>{bookedEvent.title} is booked for you.</span></div><button className="view-ticket-toast" onClick={() => setShowTicket(true)}>View ticket</button><button aria-label="Dismiss booking notification" onClick={() => setShowBookingToast(false)}><X size={16} /></button></div>}
       {bookedEvent && showTicket && <TicketModal event={bookedEvent} bookingId={activeBooking?.id ?? null} onClose={() => setShowTicket(false)} />}
+      {showProfileModal && session?.user && (
+        <ProfileModal
+          user={session.user}
+          profile={profile}
+          activeBookingsCount={bookings.length}
+          savedCount={saved.length}
+          onClose={() => setShowProfileModal(false)}
+          onUpdate={(updated) => {
+            setProfile(updated);
+            setRole(updated.role);
+          }}
+          onSignOut={() => {
+            setShowProfileModal(false);
+            signOut();
+          }}
+        />
+      )}
     </div>
   );
 }
@@ -427,6 +446,157 @@ function EventModal({ event, error, alreadyBooked, onClose, onBook }: { event: E
   const soldOut = event.spots <= 0;
   const statusMessage = error || (alreadyBooked ? 'You have already booked this class. You can find it in My bookings.' : soldOut ? 'This class is sold out. Please choose another session.' : '');
   return <div className="modal-backdrop" onClick={onClose}><div className="event-modal" onClick={(e) => e.stopPropagation()}><button className="modal-close" onClick={onClose}><X size={18} /></button><img className="modal-image" src={event.image} alt={`${event.title} at ${event.studio}`} /><div className="modal-body"><div className="event-date">{event.date} <span>·</span> {event.time}</div><div className="modal-title-row"><div><span className="event-style dark-style">{event.style}</span><h2>{event.title}</h2></div><span className="modal-price">{event.price}</span></div><div className="details-list"><div><MapPin size={17} /><span><strong>{event.studio}</strong>{event.location}</span></div><div><UserRound size={17} /><span><strong>Hosted by {event.host}</strong>Professional choreographer</span></div><div><Clock3 size={17} /><span><strong>90 minutes</strong>All levels welcome</span></div></div><p className="modal-description">Come as you are. Leave with a new groove. This intimate session is built for good music, clear guidance, and the kind of energy that makes you want to stay for one more song.</p>{statusMessage && <p className="booking-error" role="alert">{statusMessage}</p>}<button className="primary-btn book-btn" onClick={onBook} disabled={soldOut || alreadyBooked}>{alreadyBooked ? 'Already booked' : soldOut ? 'Sold out' : 'Book this session'} {!soldOut && !alreadyBooked && <ArrowRight size={17} />}</button><span className="modal-note"><Ticket size={14} /> Instant confirmation with a QR ticket</span></div></div></div>;
+}
+
+function ProfileModal({
+  user,
+  profile,
+  activeBookingsCount,
+  savedCount,
+  onClose,
+  onUpdate,
+  onSignOut,
+}: {
+  user: User;
+  profile: UserProfile | null;
+  activeBookingsCount: number;
+  savedCount: number;
+  onClose: () => void;
+  onUpdate: (profile: UserProfile) => void;
+  onSignOut: () => void;
+}) {
+  const [displayName, setDisplayName] = useState(
+    profile?.display_name || user.user_metadata?.display_name || user.user_metadata?.full_name || ''
+  );
+  const [selectedRole, setSelectedRole] = useState<UserRole>(
+    profile?.role || (user.user_metadata?.role as UserRole) || 'dancer'
+  );
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+
+  const previewName = displayName.trim() || getDisplayName(profile, user);
+  const previewInitials = getInitials(previewName);
+
+  const handleSave = async (e: FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setSuccess(false);
+    setSaving(true);
+
+    const trimmed = displayName.trim();
+    const { data, error: updateErr } = await updateProfile(user.id, {
+      display_name: trimmed,
+      role: selectedRole,
+    });
+
+    setSaving(false);
+
+    if (updateErr) {
+      setError(updateErr.message);
+      return;
+    }
+
+    if (data) {
+      onUpdate(data);
+      setSuccess(true);
+      setTimeout(() => {
+        onClose();
+      }, 700);
+    }
+  };
+
+  const roleOptions: { id: UserRole; label: string; icon: typeof UserRound }[] = [
+    { id: 'dancer', label: 'Dancer', icon: UserRound },
+    { id: 'choreographer', label: 'Choreographer', icon: Sparkles },
+    { id: 'studio', label: 'Studio', icon: Users },
+  ];
+
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="profile-modal" onClick={(e) => e.stopPropagation()}>
+        <button className="modal-close" onClick={onClose} aria-label="Close profile">
+          <X size={18} />
+        </button>
+
+        <div className="profile-modal-head">
+          <div className="profile-modal-avatar">{previewInitials}</div>
+          <div className="profile-modal-meta">
+            <h2>{previewName}</h2>
+            <span>{user.email}</span>
+          </div>
+        </div>
+
+        <div className="profile-stats-row">
+          <div className="profile-stat-item">
+            <strong>{activeBookingsCount}</strong>
+            <span>Active Bookings</span>
+          </div>
+          <div className="profile-stat-item">
+            <strong>{savedCount}</strong>
+            <span>Saved Classes</span>
+          </div>
+        </div>
+
+        <form onSubmit={handleSave}>
+          <label className="auth-field" style={{ marginTop: '12px' }}>
+            Full name / Display name
+            <input
+              type="text"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              placeholder="e.g. Maya Sharma"
+              required
+            />
+          </label>
+
+          <div className="profile-role-picker">
+            <span className="profile-role-label">Account Role</span>
+            <div className="profile-roles-grid">
+              {roleOptions.map(({ id, label, icon: Icon }) => (
+                <button
+                  type="button"
+                  key={id}
+                  className={`profile-role-btn ${selectedRole === id ? 'selected' : ''}`}
+                  onClick={() => setSelectedRole(id)}
+                >
+                  <Icon size={16} />
+                  <span>{label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <label className="auth-field" style={{ marginTop: '16px' }}>
+            Email address
+            <input
+              type="email"
+              value={user.email ?? ''}
+              disabled
+              style={{ background: '#ebe8e1', color: '#6e6963', cursor: 'not-allowed' }}
+            />
+          </label>
+
+          {error && <p className="auth-error" role="alert">{error}</p>}
+          {success && <p className="auth-success" role="status">Profile updated successfully!</p>}
+
+          <div className="profile-actions">
+            <button className="primary-btn" type="submit" disabled={saving}>
+              {saving ? 'Saving…' : success ? 'Saved!' : 'Save changes'} {!saving && !success && <Check size={16} />}
+            </button>
+            <button
+              className="profile-signout-btn"
+              type="button"
+              onClick={onSignOut}
+              title="Sign out of your account"
+            >
+              <X size={15} /> Sign out
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 }
 
 export default App;

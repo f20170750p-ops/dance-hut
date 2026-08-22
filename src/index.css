@@ -113,6 +113,31 @@ h1 em, h2 em, .studio-banner em { font-family: Georgia, serif; font-weight: 400;
 .ticket-details strong { color: #393531; font-size: 11px; }
 @keyframes slideUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 .event-grid { max-height: 720px; overflow-y: auto; padding: 3px 8px 12px 2px; scrollbar-color: #d9aaa1 transparent; scrollbar-width: thin; }
+
+.profile-mini, .avatar-small { cursor: pointer; transition: transform .15s, background .15s, box-shadow .15s; }
+.profile-mini:hover { background: #dbd7ce !important; transform: translateY(-1px); }
+.avatar-small:hover { transform: scale(1.08); box-shadow: 0 4px 12px #31251a25; }
+
+.profile-modal { width: min(480px, 100%); background: #f8f6f1; border-radius: 14px; padding: 36px 32px 30px; position: relative; box-shadow: 0 30px 60px #1d151550; animation: ticketIn .35s ease; }
+.profile-modal-head { display: flex; align-items: center; gap: 16px; margin-bottom: 22px; }
+.profile-modal-avatar { width: 62px; height: 62px; border-radius: 16px; background: #2e2c2b; color: white; display: grid; place-items: center; font: 700 22px 'DM Mono'; box-shadow: 0 6px 18px #2e2c2b25; flex-shrink: 0; }
+.profile-modal-meta { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.profile-modal-meta h2 { font: 600 24px 'Space Grotesk'; letter-spacing: -.05em; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.profile-modal-meta span { color: #8d8880; font-size: 11px; }
+.profile-stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; padding: 12px 16px; border-radius: 10px; background: #ebe8e1; }
+.profile-stat-item { display: flex; flex-direction: column; gap: 2px; }
+.profile-stat-item strong { font: 700 16px 'Space Grotesk'; color: #2b2826; }
+.profile-stat-item span { font: 10px 'DM Mono'; color: #8a857e; text-transform: uppercase; letter-spacing: .06em; }
+.profile-role-picker { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; }
+.profile-role-label { color: #77716a; font: 10px 'DM Mono'; text-transform: uppercase; letter-spacing: .08em; }
+.profile-roles-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.profile-role-btn { border: 1px solid #dedbd3; border-radius: 8px; padding: 10px 8px; background: #fff; color: #67635d; display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 11px; font-weight: 500; cursor: pointer; transition: .2s; }
+.profile-role-btn:hover { border-color: #e8bbb2; background: #fffafa; }
+.profile-role-btn.selected { border-color: #e83b3b; background: #fdf5f4; color: #c0393d; font-weight: 600; }
+.profile-actions { display: flex; align-items: center; gap: 12px; margin-top: 24px; }
+.profile-actions .primary-btn { flex: 1; margin: 0; }
+.profile-signout-btn { border: 1px solid #dedbd3; border-radius: 8px; padding: 13px 18px; background: transparent; color: #c0393d; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px; cursor: pointer; transition: .2s; }
+.profile-signout-btn:hover { background: #fee; border-color: #e83b3b; }
 .calendar-day.selected { border-color: #e83b3b; box-shadow: inset 0 0 0 1px #e83b3b; }
 .calendar-events { margin-top: 38px; }
 .event-grid { display: flex; gap: 18px; max-height: none; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x proximity; }

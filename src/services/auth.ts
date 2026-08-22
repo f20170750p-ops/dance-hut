@@ -67,6 +67,29 @@ export async function getProfile(userId: string): Promise<{ data: UserProfile | 
   return { data: (data as UserProfile | null) ?? null, error: error ? new Error(error.message) : null };
 }
 
+export async function updateProfile(
+  userId: string,
+  updates: { display_name?: string; role?: UserRole }
+): Promise<{ data: UserProfile | null; error: Error | null }> {
+  if (updates.display_name !== undefined || updates.role !== undefined) {
+    await supabase.auth.updateUser({
+      data: {
+        ...(updates.display_name !== undefined ? { display_name: updates.display_name, full_name: updates.display_name } : {}),
+        ...(updates.role !== undefined ? { role: updates.role } : {}),
+      },
+    });
+  }
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .update(updates)
+    .eq('id', userId)
+    .select('id, role, display_name, email, created_at')
+    .single();
+
+  return { data: (data as UserProfile | null) ?? null, error: error ? new Error(error.message) : null };
+}
+
 export async function signOut() {
   const { error } = await supabase.auth.signOut();
   return { error };
