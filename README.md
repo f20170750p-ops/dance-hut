@@ -1,215 +1,132 @@
-# 🎵 DanceHut MVP - Status Report
+# 🎵 DanceHut MVP - Status & Roadmap
 
-> **Streamline Your Workshop Management**
+> **Streamline Your Dance Workshop Discovery & Management**
 > 
-> DanceHut is a 3-party event management platform connecting Dancers, Choreographers, and Dance Studios in Bengaluru (extensible to other cities).
+> DanceHut is an event management and workshop discovery platform connecting Dancers, Choreographers, and Dance Studios in Bengaluru (extensible to other cities).
 
 ---
 
-## 📋 Project Overview
+## 🎯 Narrowed MVP Scope (Dancer Experience First)
 
-DanceHut enables:
-- **Users/Dancers**: Discover, book, and manage dance classes across multiple studios
-- **Choreographers**: Manage their availability and book slots at studios
-- **Auth**: Supabase email/password sign-up and sign-in (integrated); Instagram OAuth pending
-- **Backend**: Supabase events, saved events, bookings, RLS policies, and atomic booking RPC integrated
-- **Payment**: Stripe (planned)
+To deliver a high-quality, fully functional product quickly, the MVP is focused on **delivering a seamless end-to-end Dancer experience**:
 
-- [x] Login prompts (Instagram & Phone - UI only)
+```
+[Email/Pass Auth] ──▶ [Discover & Filter Workshops] ──▶ [Instant Booking] ──▶ [QR Code Ticket & Calendar Sync]
+```
 
-### 2. **User/Dancer Dashboard**
-- [x] Home screen with featured events
-- [x] Event discovery/search (UI with local filter logic)
-- [x] Event cards with details (title, time, location, price, available spots)
-- [x] Event details modal
-- [x] Booking flow
-- [x] Booking confirmation with QR code ticket
-- [x] "Saved events" functionality
-- [x] My Bookings tab (shows upcoming booked events)
-- [x] Calendar view of bookings
-- [x] Sidebar navigation (Discover, Calendar, My Bookings, Saved)
-- [x] Profile mini-view with user info
-- [x] Toast notifications for booking confirmation
-- [x] Mobile-responsive design
-
-### 3. **UI/UX**
-- [x] Colorful gradient design with brushstroke elements
-- [x] Responsive layout (desktop & mobile)
-- [x] Navigation hamburger menu
-- [x] City/location selector
-- [x] Filter panel UI (non-functional)
-- [x] Top navigation bar with notifications
+### ✅ What is In-Scope for MVP:
+1. **Authentication & Session**:
+   - Supabase email/password sign-up and sign-in.
+   - User profile association with dynamic user details (name/email and role).
+   - Session persistence and secure sign-out.
+2. **Workshop Discovery & Search**:
+   - Live events list loaded from Supabase.
+   - Dynamic Discover hero with live session counts.
+   - Real-time search and multi-criteria filters (date, dance style, location/neighbourhood).
+3. **Booking & Ticketing Flow**:
+   - Atomic bookings via Supabase stored procedure `book_event` (prevents overselling & duplicate bookings).
+   - Instant booking confirmation with a real, scannable QR ticket.
+   - Saved/bookmarked workshops per user.
+4. **Workspace / My Space**:
+   - **My Bookings tab**: View all upcoming confirmed workshops with complete venue & time details.
+   - **Calendar view**: Monthly calendar highlighting booked sessions and available workshops.
+   - **Saved tab**: Access bookmarked classes for quick booking.
+5. **Core UI Polish**:
+   - Interactive profile avatar with user details and sign out.
+   - Working city/location selector pill.
+   - Direct support access ("Talk to our team").
+   - Responsive desktop and mobile layout.
 
 ---
 
-## ❌ Pending Features
+## 🏗️ Architecture & Backend Design
 
-### 🔴 **Critical (Blocking MVP)**
+DanceHut follows a modern **Backend-as-a-Service (BaaS)** architecture using **React + Vite** on the frontend and **Supabase (PostgreSQL)** as the backend engine.
 
-#### **1. Backend & Database**
-- [x] Supabase setup and configuration
-- [x] Initial database schema for:
-- [x] Real event, saved-event, and booking persistence
+* **Client**: React 18 with TypeScript, Tailwind CSS, Lucide icons, and the Supabase JavaScript SDK.
+* **Backend**: Supabase provides automated PostgREST APIs, GoTrue authentication, S3-compatible storage, and PostgreSQL Row-Level Security (RLS).
+* **Business Logic & Concurrency**: Critical operations (e.g. seat booking and capacity checking) run as atomic PostgreSQL stored procedures (`book_event`) to guarantee ACID transactions and eliminate race conditions.
+* **Evolution Path**: As payments (Razorpay/Stripe) and transactional messaging are added, the architecture seamlessly expands via **Supabase Edge Functions** without requiring a full backend rewrite.
 
-#### **2. Authentication**
-- [ ] Instagram OAuth integration
-- [x] Email/password sign-up and sign-in
-- [ ] Phone number authentication (OTP)
-- [x] Session management
-- [x] User state persistence
-- [x] Initial profile RLS / role persistence
-
-#### **3. Search & Filters**
-- [ ] Working search across events
-- [ ] Filter by date range
-- [ ] Filter by dance style
-- [ ] Filter by location/neighborhood
-- [ ] Filter by experience level
-
-#### **4. Booking System**
-- [x] Save bookings to database
-- [x] Retrieve user's bookings
-- [ ] Booking cancellation
-- [ ] Booking confirmation emails
-- [ ] Payment integration (Stripe/Razorpay)
-
-#### **5. QR Code Generation**
-- [x] QR code generation for booking tickets
-- [ ] QR code scanning at venue (admin feature)
-- [ ] Attendance marking via QR code
+📖 **Read the complete design doc**: [Architecture & Backend Strategy](docs/architecture.md)
 
 ---
 
-### 🟡 **Choreographer Dashboard (Complete Missing)**
-- [ ] Dashboard layout and navigation
-- [ ] Explore feature (search studios and opportunities)
-- [ ] Management: Calendar view of workshops
-- [ ] Availability: Submit time slots to studios
-- [ ] Transparency: View contracts and registrations
-- [ ] Direct messaging with studios
-- [ ] Commission/payment tracking
+## 📋 Problem Tracker & Immediate MVP Backlog
+
+Identified feedback items and UI improvements scoped for the current MVP iteration:
+
+| # | Item | Status | Scope / Action Plan |
+|---|---|:---:|---|
+| 1 | **Custom Email Sender on Signup** | 🟡 Queued | Configure custom SMTP provider in Supabase Auth to replace default Supabase sender email. |
+| 2 | **Dynamic User Profile** | 🟢 Resolved | Replaced hardcoded *"Aria Kapoor"* with dynamic user profile (full name input during signup, Supabase profiles table sync, initials generation, and role tags). |
+| 3 | **Google Maps Venue Redirection** | 🔴 In Progress | Add clickable Google Maps directions link for workshop venues across bookings list, calendar, and ticket modal. |
+| 4 | **Clickable Profile Avatars** | 🟢 Resolved | Made top-left profile card, top-right avatar, and sidebar Preferences open an interactive Profile Modal with real-time editing of display name, role switcher, activity stats, and sign out. |
+| 5 | **Interactive Location Pill** | 🟡 Queued | Make "Bengaluru" location selector clickable with active city info & "More cities coming soon". |
+| 6 | **"Talk to our team" Support Action** | 🟡 Queued | Connect support card to direct email (`mailto:`) or WhatsApp support. |
+| 7 | **"Your Space" Navigation Links** | 🟡 Queued | Connect Messages, Notifications, and Preferences navigation to working modals/views. |
+| 8 | **Discover Hero Section Refresh** | 🟢 Resolved | Rendered dynamic current date with live pulse, real-time class & spot metrics from Supabase, active contextual copy, and 1-click style filter shortcuts. |
+| 9 | **Explore Studios Placement & Action** | 🟡 Queued | Improve button positioning and connect to a partner studio preview section. |
+
+📖 **Read the full problem breakdown**: [MVP Problem Tracker & Backlog](docs/backlog.md)
 
 ---
 
-### 🟡 **Studio Dashboard (Complete Missing)**
-- [ ] Admin login system
-- [ ] Employee login system
-- [ ] Event creation form (multi-step)
-- [ ] Event management calendar
-- [ ] Event search with filters (Past/Ongoing/Upcoming)
-- [ ] Attendance: Registered student list per workshop
-- [ ] Attendance marking (scan QR codes)
-- [ ] Event promotions and marketing tools
-- [ ] Notification system for event changes
-- [ ] Analytics dashboard:
-  - Revenue analytics
-  - Visitor insights
-  - Popular dance styles
-  - Popular choreographers
-  - Attendance comparison
-  - Customer metrics
+## 🚀 Future Scope (Post-MVP / Phase 2 & 3)
+
+The following advanced features are intentionally kept out of the MVP to ensure focused and stable delivery:
+
+### 🟡 **Phase 2: Choreographer & Studio Dashboards**
+- **Choreographer Portal**:
+  - Profile & portfolio showcase (bio, videos, experience).
+  - Workshop proposal & slot booking at partner studios.
+  - Workshop registrations list and commission tracking.
+- **Studio Management Portal**:
+  - Studio dashboard for listing and managing studio rooms.
+  - Multi-step event creation and batch scheduling.
+  - QR code ticket scanner for venue check-in & attendance marking.
+  - Studio revenue, attendance, and popular style analytics.
+
+### 🔵 **Phase 3: Communication, Social & Expansion**
+- **"Your Space" Communication Tools**:
+  - In-app direct messaging between dancers, choreographers, and studios.
+  - User notification center for class updates, schedule changes, and reminders.
+  - Granular user preferences (favourite dance styles, notification channels).
+- **Studio Exploration Directory**:
+  - Dedicated "Explore Studios" directory page with studio facilities, photos, and reviews.
+- **Advanced Auth & Payments**:
+  - Instagram OAuth & Phone OTP authentication.
+  - Custom branded SMTP setup for confirmation/transactional emails.
+  - Online payments via Stripe / Razorpay.
+- **AI Features**:
+  - Smart workshop recommendations and dancer matching.
+  - Dynamic pricing and studio demand forecasting.
 
 ---
 
-### 🟠 **Feature-Specific Items**
+## 💻 Quick Start
 
-#### **Notifications & Reminders**
-- [ ] Push notifications for upcoming classes
-- [ ] Event modification alerts
-- [ ] Cancellation notifications
-- [ ] Payment receipts
-- [ ] Booking reminders (24hr, 1hr before)
-
-#### **User Features**
-- [ ] Edit profile/preferences
-- [ ] Save favorite choreographers
-- [ ] Follow studios
-- [ ] Wishlist management
-- [ ] Booking history
-- [ ] Reviews and ratings
-- [ ] Referral system
-
-#### **Choreographer Features**
-- [ ] Profile creation and management
-- [ ] Portfolio/bio
-- [ ] Schedule management
-- [ ] Earnings tracking
-- [ ] Reviews from users
-- [ ] Direct messaging
-
-#### **Studio Features**
-- [ ] Studio profile management
-- [ ] Promotions and discounts
-- [ ] Bulk event creation
-- [ ] Batch registration/enrollment
-- [ ] Revenue reports
-- [ ] Customer segmentation
-- [ ] Refund management
-
-#### **AI & Smart Features**
-- [ ] AI-powered event recommendations for users
-- [ ] Smart scheduling suggestions for choreographers
-- [ ] Dynamic pricing suggestions
-- [ ] Demand forecasting
-
----
-
-## 🚀 Quick Start
-
-### **Local Development**
+### 1. Install Dependencies
 ```bash
-# Install dependencies
 npm install
-
-# Start dev server
-npm run dev
-
-# App runs at http://localhost:5173
 ```
 
-### **Mobile Testing**
-
-#### Option 1: Local Network
-```bash
-# Get your PC IP address
-ipconfig  # Windows
-
-# Run with --host flag
-npm run dev -- --host
-
-# On phone (same WiFi):
-# http://<YOUR_PC_IP>:5173
-```
-
-#### Option 2: Using ngrok (Remote Access)
-```bash
-# Install ngrok from https://ngrok.com
-ngrok http 5173
-
-# Use the provided URL on any device
-```
-
-### **Code Quality**
-```bash
-npm run lint          # Run ESLint
-npm run typecheck     # Check TypeScript types
-npm run build         # Production build
-npm run preview       # Preview production build
-```
-
-### Supabase Dancer Flow Setup
-
-Run [supabase/schema.sql](supabase/schema.sql) in the Supabase SQL Editor. It creates or updates the `profiles`, `events`, `saved_events`, and `bookings` tables, RLS policies, and the atomic `book_event` function. Then run [supabase/seed.sql](supabase/seed.sql) to add the MVP demo events.
-
-After authentication, the app loads events and saved events from Supabase. Bookings are created through `book_event`, which prevents duplicate bookings and overselling. Each confirmed booking displays a real QR code containing a booking reference.
-
-The seed file adds six upcoming Bengaluru events, including one sold-out event for testing. It is safe to run repeatedly because events are matched by title and date. The app shows loading, error, and empty states when appropriate.
-
-The app requires these local variables in `.env.local`:
-
+### 2. Configure Environment Variables
+Create `.env.local` in the root folder:
 ```env
-VITE_SUPABASE_URL=your_project_url
-VITE_SUPABASE_ANON_KEY=your_publishable_or_anon_key
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-publishable-key
+```
+
+### 3. Run Database Migrations
+In your Supabase SQL Editor:
+1. Run [supabase/schema.sql](supabase/schema.sql) (tables, RLS policies, `book_event` function).
+2. Run [supabase/seed.sql](supabase/seed.sql) (demo Bengaluru dance workshops).
+
+### 4. Start Development Server
+```bash
+npm run dev
+# App runs at http://localhost:5173
 ```
 
 ---
@@ -218,220 +135,43 @@ VITE_SUPABASE_ANON_KEY=your_publishable_or_anon_key
 
 ```
 dance-hut/
+├── docs/
+│   ├── architecture.md      # Backend strategy & scaling design doc
+│   └── backlog.md           # Problem tracker & MVP issues status
 ├── src/
-│   ├── App.tsx              # Main app with role selection & navigation
-│   ├── main.tsx             # Entry point
-│   ├── index.css            # Tailwind + custom styles
-│   └── vite-env.d.ts        # Vite type definitions
+│   ├── App.tsx              # Main UI & Navigation
+│   ├── main.tsx             # React entry point
+│   ├── index.css            # Tailwind + design tokens
+│   └── services/
+│       ├── auth.ts          # Supabase Auth methods
+│       ├── bookings.ts      # Booking creation & query functions
+│       ├── events.ts        # Events fetch & detail services
+│       ├── savedEvents.ts   # Saved events persistence
+│       └── supabase.ts      # Supabase client initialization
 ├── supabase/
-│   └── schema.sql           # Initial tables and RLS policies
-├── index.html               # HTML template
+│   ├── schema.sql           # Database schema, RLS, stored procedures
+│   └── seed.sql             # Demo events data
+├── .env.example             # Environment variable template
 ├── package.json             # Dependencies & scripts
-├── tsconfig.json            # TypeScript config
-├── vite.config.ts           # Vite configuration
-├── tailwind.config.js       # Tailwind CSS config
-├── postcss.config.js        # PostCSS config
-└── eslint.config.js         # ESLint rules
+└── vite.config.ts           # Vite build configuration
 ```
 
 ---
 
-## 🔄 Current Data Structure
+## 📚 Documentation
 
-Events are loaded from the Supabase `events` table through [src/services/events.ts](src/services/events.ts). Bookings and saved events are loaded per authenticated user through [src/services/bookings.ts](src/services/bookings.ts) and [src/services/savedEvents.ts](src/services/savedEvents.ts).
-
-```typescript
-const events: EventItem[] = [
-  { 
-    id: 1, 
-    title: 'Sunday Groove Lab', 
-    style: 'Hip-hop', 
-    date: 'Sun, 18 Aug', 
-    time: '5:30 PM', 
-    location: 'Koramangala', 
-    studio: 'The Movement House', 
-    host: 'Maya Joseph', 
-    price: '₹850', 
-    spots: 8, 
-    image: '...',
-    featured: true 
-  },
-  // ... more events
-]
-```
-
-The database schema and RLS policies are defined in [supabase/schema.sql](supabase/schema.sql).
+| Document | Description |
+|---|---|
+| [Architecture & Backend Strategy](docs/architecture.md) | Comprehensive overview of the BaaS design, security model (RLS/RPC), and scaling roadmap. |
+| [Problem Tracker & Backlog](docs/backlog.md) | Granular breakdown of identified issues, fixes, and current status. |
 
 ---
 
-## 📊 Implementation Progress
+## 🛠️ Scripts
 
-| Component | Status | Notes |
-|-----------|--------|-------|
-| User Dashboard | ✅ 90% | Missing: real data, notifications |
-| Choreographer Dashboard | ❌ 0% | Not started |
-| Studio Dashboard | ❌ 0% | Not started |
-| Authentication | ❌ 0% | UI exists, logic missing |
-| Database | ❌ 0% | Not set up |
-| Search/Filters | ⚠️ 20% | UI exists, filters don't work |
-| Bookings | ⚠️ 30% | Flow works, not persisted |
-| Payments | ❌ 0% | Not started |
-| QR Codes | ❌ 0% | Not started |
-| Analytics | ❌ 0% | UI designed, no backend |
-| Notifications | ❌ 0% | Not started |
+- `npm run dev` — Start local Vite dev server
+- `npm run typecheck` — Run TypeScript compiler check
+- `npm run lint` — Lint code with ESLint
+- `npm run build` — Build production bundle to `dist/`
+- `npm run preview` — Preview production build locally
 
----
-
-## 🎯 Recommended Implementation Order
-
-### **Phase 1: Backend Foundation** (Week 1)
-1. Set up Supabase project and database schema
-2. Implement phone + Instagram authentication
-3. Create events table and basic API
-4. Connect app to real events data
-
-### **Phase 2: Core Dashboards** (Week 2-3)
-1. Build Choreographer dashboard
-2. Build Studio dashboard (MVP version)
-3. Implement booking save/retrieval
-4. QR code generation
-
-### **Phase 3: Features & Polish** (Week 4)
-1. Working search and filters
-2. Notifications system
-3. Basic analytics for studios
-4. Payment integration
-
-### **Phase 4: Scale** (Post-MVP)
-1. AI recommendations
-2. Advanced analytics
-3. Referral system
-4. Mobile app version
-
----
-
-## 🔧 Known Issues & TODOs
-
-### Code
-- [ ] Refactor App.tsx (too large, needs component splitting)
-- [ ] Move hardcoded events to context/state management
-- [ ] Add TypeScript interfaces for API responses
-- [ ] Add error boundaries
-- [ ] Add loading states
-- [ ] Add proper error handling
-
-### UX
-- [ ] Add loading skeletons for image-heavy components
-- [ ] Add animations for smoother transitions
-- [ ] Improve mobile layout for larger screens
-- [ ] Add accessibility features (ARIA labels, keyboard navigation)
-
-### Security
-- [ ] Implement row-level security (RLS) in Supabase
-- [ ] Secure API keys
-- [ ] Validate all inputs server-side
-- [ ] Rate limiting for APIs
-
----
-
-## 📦 Dependencies
-
-### Production
-- `react` (18.3.1) - UI framework
-- `react-dom` (18.3.1) - DOM rendering
-- `lucide-react` (0.446.0) - Icon library
-- `@supabase/supabase-js` (2.57.4) - Backend as a service
-- `qrcode.react` - Real QR code ticket rendering
-
-### Development
-- `typescript` (5.5.3) - Type safety
-- `vite` (5.4.2) - Build tool
-- `tailwindcss` (3.4.1) - CSS framework
-- `eslint` (9.9.1) - Code linting
-
----
-
-## 🤝 Contributing
-
-To add features:
-1. Create a new branch: `git checkout -b feature/feature-name`
-2. Make changes
-3. Test locally on mobile
-4. Commit with clear messages
-5. Push and create PR
-
----
-
-## 📝 Notes for Development
-
-### Component Organization
-```
-Future structure (recommended):
-src/
-  ├── components/
-  │   ├── User/
-  │   ├── Choreographer/
-  │   ├── Studio/
-  │   └── Shared/
-  ├── pages/
-  ├── services/
-  │   ├── api.ts
-  │   ├── auth.ts
-  │   └── supabase.ts
-  ├── hooks/
-  ├── types/
-  └── utils/
-```
-
-### Environment Variables Needed
-```env
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_ANON_KEY=your_anon_key
-VITE_STRIPE_PUBLIC_KEY=your_stripe_key
-```
-
----
-
-## 🎨 Design Reference
-
-- Figma designs: [Check Figma for detailed UI specs]
-- Vision slide deck: AlignHut presentation (PDF provided)
-- Color palette: Pinks (#FF6B9D), Teals (#00D4D4), Yellows (#FFD93D), Purples
-
----
-
-## 📞 Support
-
-For blockers or questions:
-1. Check existing issues
-2. Review the design deck for specifications
-3. Check Supabase documentation for backend queries
-4. Review TypeScript/React docs for implementation questions
-
----
-
-## 📅 Timeline
-
-- **MVP Target**: 2-3 weeks of development
-- **Current Date**: August 16, 2026
-- **Target Launch**: Early September 2026
-
----
-
-## ✨ Future Enhancements
-
-- [ ] Mobile app (React Native/Flutter)
-- [ ] Video tutorials for choreographers
-- [ ] Live streaming of events
-- [ ] Social features (follow, comment, share)
-- [ ] Subscription plans for studios
-- [ ] Advanced scheduling with AI
-- [ ] Multi-city expansion
-- [ ] Instructor training program
-- [ ] Integration with payment gateways
-- [ ] Offline mode for bookings
-
----
-
-**Last Updated**: August 16, 2026  
-**Status**: In Active Development
