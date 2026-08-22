@@ -160,6 +160,24 @@ function App() {
   const totalSpots = useMemo(() => events.reduce((sum, event) => sum + event.spots, 0), [events]);
   const uniqueStudiosCount = useMemo(() => new Set(events.map((event) => event.studio)).size, [events]);
 
+  const uniqueNeighborhoods = useMemo(() => {
+    const locs = [...new Set(events.map((e) => e.location))];
+    if (locs.length <= 2) return locs.join(' & ');
+    return `${locs.slice(0, 2).join(', ')} & more`;
+  }, [events]);
+
+  const greeting = useMemo(() => {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) return 'Good morning';
+    if (hour >= 12 && hour < 17) return 'Good afternoon';
+    return 'Good evening';
+  }, []);
+
+  const spotlightEvent = useMemo(() => {
+    if (!events.length) return null;
+    return events.find((e) => e.featured) || events.find((e) => e.spots > 0) || events[0];
+  }, [events]);
+
   const formattedToday = useMemo(() => {
     return new Intl.DateTimeFormat('en-IN', {
       weekday: 'long',
@@ -215,6 +233,10 @@ function App() {
   const currentUserInitials = useMemo(() => getInitials(currentUserName), [currentUserName]);
   const currentUserRole = profile?.role ?? (session?.user?.user_metadata?.role as Role | undefined) ?? role;
   const currentUserRoleBadge = useMemo(() => getRoleBadge(currentUserRole), [currentUserRole]);
+  const userFirstName = useMemo(() => {
+    if (!currentUserName || currentUserName === 'Dancer') return '';
+    return currentUserName.split(' ')[0];
+  }, [currentUserName]);
 
   if (authLoading) {
     return <div className="auth-loading">Loading dancehut…</div>;
@@ -273,16 +295,25 @@ function App() {
           <section className="hero-row">
             <div>
               <div className="eyebrow">
-                <span className="eyebrow-dot pulse" /> Live schedule · {formattedToday}
+                <span className="eyebrow-dot pulse" /> Live schedule · Bengaluru · {formattedToday}
               </div>
               <h2>
-                Make room for<br />
-                <em>something new.</em>
+                {userFirstName ? (
+                  <>
+                    {greeting}, <em>{userFirstName}.</em><br />
+                    What's your rhythm today?
+                  </>
+                ) : (
+                  <>
+                    {greeting}.<br />
+                    Find your <em>next rhythm.</em>
+                  </>
+                )}
               </h2>
               <p className="hero-sub">
                 {events.length > 0
-                  ? `${events.length} upcoming dance workshops across ${uniqueStudiosCount} Bengaluru studios. Curated for your movement.`
-                  : 'The best dance experiences in Bengaluru, curated for your kind of movement.'}
+                  ? `${events.length} workshops live across ${uniqueNeighborhoods} • ${totalSpots} open spots today`
+                  : 'Discover the best dance experiences in Bengaluru, curated for your kind of movement.'}
               </p>
             </div>
             <div className="hero-aside">
@@ -307,6 +338,68 @@ function App() {
               </div>
             </div>
           </section>
+
+          {spotlightEvent && (
+            <section className="sponsored-spotlight-banner">
+              <div className="sponsored-banner-left">
+                <div className="sponsored-tag-row">
+                  <span className="sponsored-tag">
+                    <Sparkles size={13} /> Featured Spotlight
+                  </span>
+                  <span className="sponsored-style-badge">{spotlightEvent.style}</span>
+                  <span className="sponsored-spots-badge">{spotlightEvent.spots} spots left</span>
+                </div>
+                <h3 className="sponsored-title">{spotlightEvent.title}</h3>
+                <div className="sponsored-meta-row">
+                  <span><Clock3 size={14} /> {spotlightEvent.date} · {spotlightEvent.time}</span>
+                  <span><MapPin size={14} /> {spotlightEvent.studio} · {spotlightEvent.location}</span>
+                  <span>with <strong>{spotlightEvent.host}</strong></span>
+                </div>
+                <div className="sponsored-actions">
+                  <button
+                    type="button"
+                    className="primary-btn sponsored-book-btn"
+                    onClick={() => book(spotlightEvent)}
+                    disabled={spotlightEvent.spots <= 0 || bookings.some((b) => b.event_id === spotlightEvent.id)}
+                  >
+                    {bookings.some((b) => b.event_id === spotlightEvent.id) ? (
+                      <>Booked <Check size={16} /></>
+                    ) : spotlightEvent.spots <= 0 ? (
+                      'Sold out'
+                    ) : (
+                      <>Book this session · {spotlightEvent.price} <ArrowRight size={16} /></>
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    className="sponsored-details-btn"
+                    onClick={() => {
+                      setBookingError('');
+                      setSelectedEvent(spotlightEvent);
+                    }}
+                  >
+                    View details
+                  </button>
+                </div>
+              </div>
+              <div
+                className="sponsored-banner-right"
+                onClick={() => {
+                  setBookingError('');
+                  setSelectedEvent(spotlightEvent);
+                }}
+                role="button"
+                tabIndex={0}
+                title="Click to view workshop details"
+              >
+                <img src={spotlightEvent.image} alt={spotlightEvent.title} />
+                <div className="sponsored-image-overlay">
+                  <span className="sponsored-price-pill">{spotlightEvent.price}</span>
+                </div>
+              </div>
+            </section>
+          )}
+
           <section className="search-row">
             <div className="search-box">
               <Search size={19} />
