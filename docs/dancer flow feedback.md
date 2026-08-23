@@ -20,3 +20,7 @@
 | F-16 | Notifications Tab (N-5) | **Wrong chat mapping bug**: Clicking "Message Host" from the "Bollywood Foundation by Ananya Mehta" notification opened the chat for "Aria / Afro fusion" instead of Ananya Mehta. | All | Critical Bug |
 | F-17 | Contact Modal (CT-1) | Contact Support modal is off-center on mobile. Text and labels need proper alignment. Remove "Open in Mail app" option and provide cleaner alternatives (e.g. WhatsApp / clean in-app submission). | Mobile | UI/UX |
 | F-18 | Profile Modal / Role Switch (PR-3) | When switching role to "Studio", the app experience does not change immediately without a manual reload. Needs instant state sync or clean reload. | All | UX |
+1. change gradient color to red- qr modal
+2. shorten the QR box
+3. make the QR code working: studio app's scanner should identify the QR
+4. add a ticket id
