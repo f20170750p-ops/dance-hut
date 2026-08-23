@@ -73,3 +73,33 @@ This document tracks all identified feedback items, UX friction points, and impl
 * **Problem**: The subtext *"Your email and password are securely managed by Supabase."* at the bottom of the Email Auth Modal was redundant and cluttered the auth dialog.
 * **Resolution**: Removed the `<span className="auth-legal">` element from `EmailAuthModal.tsx`.
 
+---
+
+## 🏢 Studio Portal Implementation Roadmap (Phase 2)
+
+| # | Epic / Feature | Status | Scope & Implementation Plan | Target View |
+|---|---|:---:|---|---|
+| S-1 | **Studio Workspace View Routing** | 🟢 Resolved | Conditionally render Studio-specific navigation & dashboard when `profile.role === 'studio'`. | `App.tsx` & `Sidebar.tsx` |
+| S-2 | **Studio Dashboard Overview** | 🟢 Resolved | Render key metrics cards (Active workshops, booked capacity, total revenue, check-in rate) and today's schedule timeline with live roster links. | `StudioOverviewTab.tsx` |
+| S-3 | **Create Workshop Modal / Flow** | 🟢 Resolved | Multi-step interactive event creator form linked directly to Supabase `events` table. | `CreateWorkshopModal.tsx` |
+| S-4 | **Workshop Management Feed** | 🟢 Resolved | Filterable list of hosted classes with Edit, Cancel, Duplicate, and Roster management triggers. | `StudioWorkshopsTab.tsx` |
+| S-5 | **Live Attendee Roster & Manual Check-in** | 🟢 Resolved | Searchable roster of confirmed dancers with 1-click status toggle (`booked` -> `attended`). | `AttendeeRosterModal.tsx` |
+| S-6 | **QR Ticket Scanner for Front Desk** | 🟢 Resolved | Camera QR barcode scanner verifying Supabase ticket payloads and confirming attendance with instant feedback. | `QRScannerModal.tsx` |
+| S-7 | **Studio Announcements Broadcast** | 🟢 Resolved | Dispatch notifications with alert templates to all enrolled dancers of a workshop via `notify_event_audience`. | `StudioBroadcastModal.tsx` |
+| S-8 | **Studio Profile & Room Management** | 🟢 Resolved | Manage studio profile, Google Maps venue location, amenities checklist, and room capacities. | `StudioProfileTab.tsx` |
+
+---
+
+## 💃 Choreographer Portal Implementation Roadmap (Phase 1)
+
+| # | Epic / Feature | Status | Scope & Implementation Plan | Target View |
+|---|---|:---:|---|---|
+| C-1 | **Choreographer Role-Based Routing** | 🟢 Resolved | Conditional navigation and tab synchronization when `profile.role === 'choreographer'`. | `App.tsx` & `Sidebar.tsx` |
+| C-2 | **Choreographer Dashboard Overview** | 🟢 Resolved | Real-time creator KPI cards (Upcoming masterclasses, student count, gross revenue, fill rate), next class spotlight countdown card, and teaching schedule timeline. | `ChoreoOverviewTab.tsx` |
+| C-3 | **Host Workshop Flow (Creator Mode)** | 🟢 Resolved | Class creation wizard with song track input, skill level picker (Beginner/Intermediate/Advanced/All Levels), partner studio venue selector / custom space, price & spot caps. | `CreateWorkshopModal.tsx` |
+| C-4 | **My Classes Management Feed** | 🟢 Resolved | Searchable & filterable feed of hosted masterclasses with student roster triggers, song prep notes, 1-click class share, and class cancellation. | `ChoreoWorkshopsTab.tsx` |
+| C-5 | **Live Student Roster View** | 🟢 Resolved | Searchable roster of confirmed students for each class with 1-click attendance marking. | `AttendeeRosterModal.tsx` |
+| C-6 | **Song Track & Routine Prep Broadcasts** | 🟢 Resolved | Dispatch song releases, footwear guidelines, and warm-up tips directly to registered dancers. | `StudioBroadcastModal.tsx` |
+| C-7 | **Choreographer Portfolio & Brand Profile** | 🟢 Resolved | Artist profile with stage name, bio, signature styles selector, Instagram handle, and video showreel showcase with live dancer card preview. | `ChoreoProfileTab.tsx` |
+
+
