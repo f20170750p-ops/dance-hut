@@ -47,6 +47,7 @@ import { CreateWorkshopModal } from './components/modals/CreateWorkshopModal';
 import { AttendeeRosterModal } from './components/modals/AttendeeRosterModal';
 import { QRScannerModal } from './components/modals/QRScannerModal';
 import { StudioBroadcastModal } from './components/modals/StudioBroadcastModal';
+import { CitySelectorModal } from './components/modals/CitySelectorModal';
 
 function App() {
   const [role, setRole] = useState<UserRole>('dancer');
@@ -54,6 +55,14 @@ function App() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [showCitySelector, setShowCitySelector] = useState(false);
+  const [selectedCity, setSelectedCity] = useState<string>(() => {
+    try {
+      return localStorage.getItem('dancehut.city') || 'Bengaluru';
+    } catch {
+      return 'Bengaluru';
+    }
+  });
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
   const [events, setEvents] = useState<EventItem[]>([]);
   const [eventsLoading, setEventsLoading] = useState(true);
@@ -154,11 +163,11 @@ function App() {
   // Tab synchronization when switching roles
   useEffect(() => {
     if (currentUserRole === 'studio') {
-      if (['Discover', 'Calendar', 'My bookings', 'Saved', 'My Classes', 'My Portfolio'].includes(activeTab)) {
+      if (['Calendar', 'My bookings', 'Saved', 'My Classes', 'My Portfolio'].includes(activeTab)) {
         setActiveTab('Dashboard');
       }
     } else if (currentUserRole === 'choreographer') {
-      if (['Discover', 'Calendar', 'My bookings', 'Saved', 'My Workshops', 'Studio Profile'].includes(activeTab)) {
+      if (['Calendar', 'My bookings', 'Saved', 'My Workshops', 'Studio Profile'].includes(activeTab)) {
         setActiveTab('Dashboard');
       }
     } else {
@@ -209,6 +218,25 @@ function App() {
       unsubscribeNotifs();
     };
   }, [session]);
+
+  const handleSelectCity = (cityName: string) => {
+    setSelectedCity(cityName);
+    try {
+      localStorage.setItem('dancehut.city', cityName);
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleNavigateHome = () => {
+    setActiveTab('Discover');
+    setShowMenu(false);
+  };
+
+  const handleOpenNotifications = () => {
+    setActiveTab('Notifications');
+    setShowMenu(false);
+  };
 
   const book = async (event: EventItem) => {
     if (!session?.user) return;
@@ -359,6 +387,7 @@ function App() {
           setBroadcastTargetEvent(null);
           setShowBroadcastModal(true);
         }}
+        onNavigateHome={handleNavigateHome}
         onSignOut={() => signOut()}
       />
 
@@ -368,11 +397,16 @@ function App() {
           currentUserName={currentUserName}
           currentUserInitials={currentUserInitials}
           onOpenProfile={() => setShowProfileModal(true)}
+          onOpenNotifications={handleOpenNotifications}
+          unreadNotificationsCount={unreadNotificationsCount}
+          onNavigateHome={handleNavigateHome}
+          selectedCity={selectedCity}
+          onOpenCitySelector={() => setShowCitySelector(true)}
         />
 
         <main className="content">
-          {/* Dancer Tabs */}
-          {isDancer && activeTab === 'Discover' && (
+          {/* Universal Discover Tab (accessible to dancer, studio & choreographer) */}
+          {activeTab === 'Discover' && (
             <DiscoverTab
               events={events}
               eventsLoading={eventsLoading}
@@ -724,6 +758,14 @@ function App() {
             setShowProfileModal(false);
             signOut();
           }}
+        />
+      )}
+
+      {showCitySelector && (
+        <CitySelectorModal
+          currentCity={selectedCity}
+          onSelectCity={handleSelectCity}
+          onClose={() => setShowCitySelector(false)}
         />
       )}
     </div>

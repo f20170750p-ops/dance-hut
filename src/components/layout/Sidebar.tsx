@@ -37,6 +37,7 @@ interface SidebarProps {
   onOpenCreateWorkshop?: () => void;
   onOpenScanner?: () => void;
   onOpenBroadcast?: () => void;
+  onNavigateHome?: () => void;
   onSignOut: () => void;
 }
 
@@ -58,6 +59,7 @@ export function Sidebar({
   onOpenCreateWorkshop,
   onOpenScanner,
   onOpenBroadcast,
+  onNavigateHome,
   onSignOut,
 }: SidebarProps) {
   const isStudio = currentUserRole === 'studio';
@@ -87,10 +89,23 @@ export function Sidebar({
   return (
     <aside className={`sidebar ${showMenu ? 'open' : ''}`}>
       <div className="sidebar-head">
-        <div className="brand">
+        <button
+          type="button"
+          className="brand brand-btn"
+          onClick={() => {
+            if (onNavigateHome) {
+              onNavigateHome();
+            } else {
+              setActiveTab(isStudio || isChoreo ? 'Dashboard' : 'Discover');
+            }
+            setShowMenu(false);
+          }}
+          title="Go to Discover feed"
+          aria-label="Dance Hut home"
+        >
           <span className="brand-mark">D</span>
           <span>dancehut</span>
-        </div>
+        </button>
         <button
           type="button"
           className="close-menu"
