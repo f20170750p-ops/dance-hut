@@ -19,6 +19,11 @@ This document tracks all identified feedback items, UX friction points, and impl
 | 7 | **"Your Space" Navigation & Realtime Messages** | 🟢 Resolved | Built Supabase Realtime-powered MessagesModal with conversation threads, quick inquiry prompts, and direct workshop instructor questions from class cards. Connected Preferences to ProfileModal. |
 | 8 | **Discover Page Top Hero Relevance** | 🟢 Resolved | Rendered dynamic current date with live pulse, real-time class & spot metrics from Supabase, active contextual copy, and 1-click style filter shortcuts. |
 | 9 | **Explore Studios Placement & Action** | 🟡 Queued | Reposition Explore Studios CTA and connect to an informative studio discovery modal/section. |
+| 10 | **Welcome Page Art Panel Scroll Issue** | 🟢 Resolved (2026-08-23) | Removed decorative `welcome-art` card collage (SUNDAY GROOVE, "move with us", etc.) from `WelcomeView` — caused overflow and scroll issues on mobile. |
+| 11 | **Welcome Page Footer Scroll Issue** | 🟢 Resolved (2026-08-23) | Removed `welcome-footer` section ("Dance classes, reimagined." + "Scroll to explore") from `WelcomeView` — added unnecessary page height and scroll on smaller screens. |
+| 12 | **Auth Modal Supabase Disclaimer Text** | 🟢 Resolved (2026-08-23) | Removed "Your email and password are securely managed by Supabase." text from `EmailAuthModal`. |
+| 13 | **Smart Hero Subtitle + QR Check-in Takeover** | 🟢 Resolved (2026-08-23) | Replaced vanity stat metrics with contextual countdown/urgency subtitle. Hero section is dynamically replaced by a scannable QR ticket 15 minutes prior to class. |
+| 14 | **Class Detail Social Proof Metrics** | 🟡 Queued | Display real-time urgency/social proof on class cards/modals (e.g., "8 dancers booked a class in the last hour"). |
 
 ---
 
@@ -55,3 +60,16 @@ This document tracks all identified feedback items, UX friction points, and impl
 ### 9. Explore Studios Button
 * **Problem**: CTA button is unclickable and feels misplaced.
 * **Solution**: Improve positioning within the Discover feed and open a studio preview modal highlighting featured partner studios.
+
+### 10. Welcome Page Art Panel Scroll Issue [RESOLVED — 2026-08-23]
+* **Problem**: The decorative art panel (`welcome-art`) on the login/welcome page — containing the card collage with "SUNDAY GROOVE", "move with us" circle, "01 — DISCOVER", etc. — caused overflow and scroll issues, especially on mobile devices.
+* **Resolution**: Removed the entire `welcome-art` div from `WelcomeView.tsx`. The welcome page now shows only the functional auth content (role picker, login buttons).
+
+### 11. Welcome Page Footer Scroll Issue [RESOLVED — 2026-08-23]
+* **Problem**: The `welcome-footer` section ("Dance classes, reimagined." + "Scroll to explore →") added unnecessary page height and forced scrolling on smaller screens.
+* **Resolution**: Removed the `<footer>` element from `WelcomeView.tsx`.
+
+### 12. Auth Modal Supabase Disclaimer Text [RESOLVED — 2026-08-23]
+* **Problem**: The subtext *"Your email and password are securely managed by Supabase."* at the bottom of the Email Auth Modal was redundant and cluttered the auth dialog.
+* **Resolution**: Removed the `<span className="auth-legal">` element from `EmailAuthModal.tsx`.
+

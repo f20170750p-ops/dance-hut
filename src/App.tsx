@@ -23,6 +23,7 @@ import {
   type NotificationItem,
 } from './services/notifications';
 import { isSupabaseConfigured } from './services/supabase';
+import { useClassCountdown } from './hooks/useClassCountdown';
 
 import { WelcomeView } from './components/auth/WelcomeView';
 import { Sidebar } from './components/layout/Sidebar';
@@ -271,6 +272,8 @@ function App() {
       .filter((item): item is { booking: Booking; event: EventItem } => Boolean(item.event));
   }, [bookings, events]);
 
+  const { nextEvent: countdownEvent, nextBooking, timeLabel: countdownLabel, phase: countdownPhase } = useClassCountdown(bookings, events);
+
   if (authLoading) {
     return <div className="auth-loading">Loading dancehut…</div>;
   }
@@ -316,6 +319,10 @@ function App() {
               userFirstName={userFirstName}
               greeting={greeting}
               formattedToday={formattedToday}
+              countdownPhase={countdownPhase}
+              countdownLabel={countdownLabel}
+              countdownEvent={countdownEvent}
+              countdownBookingId={nextBooking?.id ?? null}
               onBook={book}
               onToggleSave={toggleSaved}
               onOpenEvent={(event) => {

@@ -95,43 +95,9 @@ export function WelcomeView({ role, setRole }: WelcomeViewProps) {
             Use your email and password to securely access your account.
           </span>
         </div>
-        <div className="welcome-art">
-          <div className="art-label label-top">01 — Discover</div>
-          <div className="art-card card-back">
-            <div className="art-card-top">
-              <span>UP NEXT</span>
-              <span>18 AUG</span>
-            </div>
-            <div className="art-photo photo-back" />
-          </div>
-          <div className="art-card card-front">
-            <div className="art-card-top">
-              <span>THE MOVEMENT HOUSE</span>
-              <span>05:30 PM</span>
-            </div>
-            <div className="art-photo photo-front">
-              <span className="photo-sticker">
-                SUNDAY<br />GROOVE
-              </span>
-            </div>
-            <div className="art-card-bottom">
-              <strong>Sunday Groove Lab</strong>
-              <span>Hip-hop · 8 spots left</span>
-            </div>
-          </div>
-          <div className="art-burst">
-            move<br />
-            <span>with us</span>
-          </div>
-          <div className="art-label label-bottom">Your city is a stage.</div>
-        </div>
+
       </main>
-      <footer className="welcome-footer">
-        <span>Dance classes, reimagined.</span>
-        <span>
-          Scroll to explore <ArrowRight size={14} />
-        </span>
-      </footer>
+
       {authOpen && <EmailAuthModal role={role} onClose={() => setAuthOpen(false)} />}
     </div>
   );

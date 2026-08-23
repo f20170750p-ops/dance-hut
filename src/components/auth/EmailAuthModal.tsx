@@ -120,7 +120,7 @@ export function EmailAuthModal({ role, onClose }: EmailAuthModalProps) {
             {loading ? 'Please wait…' : authMode === 'sign-up' ? 'Create account' : 'Sign in'} <ArrowRight size={17} />
           </button>
         </form>
-        <span className="auth-legal">Your email and password are securely managed by Supabase.</span>
+
       </div>
     </div>
   );
