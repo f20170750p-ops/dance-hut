@@ -72,6 +72,40 @@ Identified feedback items and UI improvements scoped for the current MVP iterati
 
 ---
 
+## 🏢 Studio Experience & Workflow Scope
+
+When a user signs up with the **"I run a studio"** role, DanceHut transforms into a dedicated **Studio Management Workspace** tailored for studio managers and event organizers:
+
+```
+[Studio Sign-up / Login] ──▶ [Studio Dashboard] ──▶ [Create Workshop / Batch] ──▶ [Discover Feed (Live)]
+                                    │
+                                    ├──▶ [Live Roster & QR Scanner] ──▶ [Mark Attendance]
+                                    ├──▶ [Messages & Attendee Inquiries]
+                                    └──▶ [Broadcast Updates to Registered Dancers]
+```
+
+### 🎯 Key Studio Views & Supported Features:
+1. **Studio Dashboard Overview**:
+   - High-level KPIs: Active workshops count, total spots booked vs remaining, gross revenue, and weekly check-in rates.
+   - **Today's Class Schedule**: Quick timeline of upcoming classes with 1-click access to the attendee roster and check-in scanner.
+2. **Workshop Creator & Management**:
+   - Multi-step event creation: Title, dance style, date/time, instructor tagging, price (₹), total capacity, and poster selection.
+   - Real-time publishing directly to the public Discover feed.
+   - Edit, duplicate, or cancel hosted workshops with automated audience notifications.
+3. **Live Attendee Roster & Front-Desk QR Scanner**:
+   - Real-time roster of confirmed dancers per class.
+   - Built-in camera QR code ticket scanner and manual ticket lookup to mark attendance in real time.
+4. **Dancer Inquiries & Studio Messaging**:
+   - 1:1 direct messaging inbox to answer dancer questions regarding prerequisites, footwear, and studio directions.
+5. **Broadcast Announcements & Alerts**:
+   - 1-click notification dispatcher sending push updates and alerts to enrolled dancers for any specific class.
+6. **Studio Space & Room Management**:
+   - Configure studio rooms, capacity limits, amenities (AC, sprung wood floors, sound systems), and Google Maps venue pin.
+
+📖 **Read the full studio design doc**: [Studio Workflow & Product Specification](docs/studio_workflow.md)
+
+---
+
 ## 🚀 Future Scope (Post-MVP / Phase 2 & 3)
 
 The following advanced features are intentionally kept out of the MVP to ensure focused and stable delivery:
@@ -137,7 +171,8 @@ npm run dev
 dance-hut/
 ├── docs/
 │   ├── architecture.md      # Backend strategy & scaling design doc
-│   └── backlog.md           # Problem tracker & MVP issues status
+│   ├── backlog.md           # Problem tracker & MVP issues status
+│   └── studio_workflow.md   # Studio portal workflow & feature specifications
 ├── src/
 │   ├── App.tsx              # Main UI & Navigation
 │   ├── main.tsx             # React entry point
@@ -162,6 +197,7 @@ dance-hut/
 
 | Document | Description |
 |---|---|
+| [Studio Workflow & Specifications](docs/studio_workflow.md) | In-depth studio persona, user flows, UI views, QR check-in, database schema extensions, and feature roadmap. |
 | [Architecture & Backend Strategy](docs/architecture.md) | Comprehensive overview of the BaaS design, security model (RLS/RPC), and scaling roadmap. |
 | [Problem Tracker & Backlog](docs/backlog.md) | Granular breakdown of identified issues, fixes, and current status. |
 

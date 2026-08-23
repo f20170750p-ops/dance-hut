@@ -73,3 +73,18 @@ This document tracks all identified feedback items, UX friction points, and impl
 * **Problem**: The subtext *"Your email and password are securely managed by Supabase."* at the bottom of the Email Auth Modal was redundant and cluttered the auth dialog.
 * **Resolution**: Removed the `<span className="auth-legal">` element from `EmailAuthModal.tsx`.
 
+---
+
+## 🏢 Studio Portal Implementation Roadmap (Phase 2)
+
+| # | Epic / Feature | Scope & Implementation Plan | Target View |
+|---|---|---|---|
+| S-1 | **Studio Workspace View Routing** | Conditionally render Studio-specific navigation & dashboard when `profile.role === 'studio'`. | `App.tsx` & `StudioLayout` |
+| S-2 | **Studio Dashboard Overview** | Render key metrics cards (Active workshops, booked capacity, total revenue) and today's schedule timeline with live roster links. | `StudioOverviewTab.tsx` |
+| S-3 | **Create Workshop Modal / Flow** | 4-step interactive event creator form linked directly to Supabase `events` table with `organizer_id`. | `CreateEventModal.tsx` |
+| S-4 | **Workshop Management Feed** | List of hosted classes with Edit, Cancel, Duplicate, and Roster management triggers. | `StudioWorkshopsTab.tsx` |
+| S-5 | **Live Attendee Roster & Manual Check-in** | Searchable roster of confirmed dancers with 1-click status toggle (`booked` -> `attended`). | `AttendeeRosterModal.tsx` |
+| S-6 | **QR Ticket Scanner for Front Desk** | Camera QR barcode scanner verifying Supabase ticket payloads and confirming attendance. | `QRScannerModal.tsx` |
+| S-7 | **Studio Announcements Broadcast** | Dispatch notifications to all enrolled dancers of a specific workshop via `notify_event_audience`. | `StudioBroadcastModal.tsx` |
+| S-8 | **Studio Profile & Room Management** | Manage studio profile, Google Maps venue location, amenities checklist, and room capacities. | `StudioProfileTab.tsx` |
+
