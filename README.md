@@ -84,22 +84,22 @@ When a user signs up with the **"I run a studio"** role, DanceHut transforms int
                                     └──▶ [Broadcast Updates to Registered Dancers]
 ```
 
-### 🎯 Key Studio Views & Supported Features:
-1. **Studio Dashboard Overview**:
+### 🎯 Implemented Studio Views & Supported Features (Phase 1):
+1. **Studio Dashboard Overview (`StudioOverviewTab`)**:
    - High-level KPIs: Active workshops count, total spots booked vs remaining, gross revenue, and weekly check-in rates.
-   - **Today's Class Schedule**: Quick timeline of upcoming classes with 1-click access to the attendee roster and check-in scanner.
-2. **Workshop Creator & Management**:
+   - **Today's Class Schedule**: Real-time timeline of upcoming classes with 1-click access to the attendee roster and check-in scanner.
+2. **Workshop Creator & Management (`CreateWorkshopModal` & `StudioWorkshopsTab`)**:
    - Multi-step event creation: Title, dance style, date/time, instructor tagging, price (₹), total capacity, and poster selection.
    - Real-time publishing directly to the public Discover feed.
    - Edit, duplicate, or cancel hosted workshops with automated audience notifications.
-3. **Live Attendee Roster & Front-Desk QR Scanner**:
-   - Real-time roster of confirmed dancers per class.
-   - Built-in camera QR code ticket scanner and manual ticket lookup to mark attendance in real time.
-4. **Dancer Inquiries & Studio Messaging**:
+3. **Live Attendee Roster & Front-Desk QR Scanner (`AttendeeRosterModal` & `QRScannerModal`)**:
+   - Real-time roster of confirmed dancers per class with 1-click attendance toggle.
+   - Built-in camera QR code ticket scanner and manual ticket lookup to verify passes in real time.
+4. **Dancer Inquiries & Studio Messaging (`MessagesTab`)**:
    - 1:1 direct messaging inbox to answer dancer questions regarding prerequisites, footwear, and studio directions.
-5. **Broadcast Announcements & Alerts**:
+5. **Broadcast Announcements & Alerts (`StudioBroadcastModal`)**:
    - 1-click notification dispatcher sending push updates and alerts to enrolled dancers for any specific class.
-6. **Studio Space & Room Management**:
+6. **Studio Space & Room Management (`StudioProfileTab`)**:
    - Configure studio rooms, capacity limits, amenities (AC, sprung wood floors, sound systems), and Google Maps venue pin.
 
 📖 **Read the full studio design doc**: [Studio Workflow & Product Specification](docs/studio_workflow.md)

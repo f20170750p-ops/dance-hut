@@ -34,9 +34,16 @@ import { BookingsTab } from './components/tabs/BookingsTab';
 import { SavedTab } from './components/tabs/SavedTab';
 import { MessagesTab } from './components/tabs/MessagesTab';
 import { NotificationsTab } from './components/tabs/NotificationsTab';
+import { StudioOverviewTab } from './components/tabs/StudioOverviewTab';
+import { StudioWorkshopsTab } from './components/tabs/StudioWorkshopsTab';
+import { StudioProfileTab } from './components/tabs/StudioProfileTab';
 import { EventModal } from './components/modals/EventModal';
 import { TicketModal } from './components/modals/TicketModal';
 import { ProfileModal } from './components/modals/ProfileModal';
+import { CreateWorkshopModal } from './components/modals/CreateWorkshopModal';
+import { AttendeeRosterModal } from './components/modals/AttendeeRosterModal';
+import { QRScannerModal } from './components/modals/QRScannerModal';
+import { StudioBroadcastModal } from './components/modals/StudioBroadcastModal';
 
 function App() {
   const [role, setRole] = useState<UserRole>('dancer');
@@ -60,6 +67,15 @@ function App() {
   const [showTicket, setShowTicket] = useState(false);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [incomingToastNotif, setIncomingToastNotif] = useState<NotificationItem | null>(null);
+
+  // Studio Flow Modals & States
+  const [showCreateWorkshopModal, setShowCreateWorkshopModal] = useState(false);
+  const [selectedRosterEvent, setSelectedRosterEvent] = useState<EventItem | null>(null);
+  const [showQRScanner, setShowQRScanner] = useState(false);
+  const [scannerTargetEvent, setScannerTargetEvent] = useState<EventItem | null>(null);
+  const [showBroadcastModal, setShowBroadcastModal] = useState(false);
+  const [broadcastTargetEvent, setBroadcastTargetEvent] = useState<EventItem | null>(null);
+  const [studioToastMsg, setStudioToastMsg] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isSupabaseConfigured) {
@@ -118,6 +134,32 @@ function App() {
 
     syncUserProfile();
   }, [session, role]);
+
+  const currentUserName = useMemo(
+    () => getDisplayName(profile, session?.user ?? null),
+    [profile, session?.user]
+  );
+  const currentUserInitials = useMemo(() => getInitials(currentUserName), [currentUserName]);
+  const currentUserRole =
+    profile?.role ?? (session?.user?.user_metadata?.role as UserRole | undefined) ?? role;
+  const currentUserRoleBadge = useMemo(() => getRoleBadge(currentUserRole), [currentUserRole]);
+  const userFirstName = useMemo(() => {
+    if (!currentUserName || currentUserName === 'Dancer') return '';
+    return currentUserName.split(' ')[0];
+  }, [currentUserName]);
+
+  // Tab synchronization when switching roles
+  useEffect(() => {
+    if (currentUserRole === 'studio') {
+      if (['Discover', 'Calendar', 'My bookings', 'Saved'].includes(activeTab)) {
+        setActiveTab('Dashboard');
+      }
+    } else {
+      if (['Dashboard', 'My Workshops', 'Studio Profile'].includes(activeTab)) {
+        setActiveTab('Discover');
+      }
+    }
+  }, [currentUserRole]);
 
   useEffect(() => {
     if (!session?.user) return;
@@ -229,18 +271,17 @@ function App() {
     setActiveTab('Messages');
   };
 
-  const currentUserName = useMemo(
-    () => getDisplayName(profile, session?.user ?? null),
-    [profile, session?.user]
-  );
-  const currentUserInitials = useMemo(() => getInitials(currentUserName), [currentUserName]);
-  const currentUserRole =
-    profile?.role ?? (session?.user?.user_metadata?.role as UserRole | undefined) ?? role;
-  const currentUserRoleBadge = useMemo(() => getRoleBadge(currentUserRole), [currentUserRole]);
-  const userFirstName = useMemo(() => {
-    if (!currentUserName || currentUserName === 'Dancer') return '';
-    return currentUserName.split(' ')[0];
-  }, [currentUserName]);
+  const handleEventCreated = (newEvent: EventItem) => {
+    setEvents((prev) => [newEvent, ...prev]);
+    setStudioToastMsg(`Workshop "${newEvent.title}" published successfully!`);
+    setTimeout(() => setStudioToastMsg(null), 4000);
+  };
+
+  const handleDeleteWorkshop = (eventId: number) => {
+    setEvents((prev) => prev.filter((e) => e.id !== eventId));
+    setStudioToastMsg('Workshop has been cancelled and removed.');
+    setTimeout(() => setStudioToastMsg(null), 4000);
+  };
 
   const greeting = useMemo(() => {
     const hour = new Date().getHours();
@@ -282,6 +323,8 @@ function App() {
     return <WelcomeView role={role} setRole={setRole} />;
   }
 
+  const isStudio = currentUserRole === 'studio';
+
   return (
     <div className="app-shell">
       <Sidebar
@@ -292,10 +335,21 @@ function App() {
         currentUserName={currentUserName}
         currentUserInitials={currentUserInitials}
         currentUserRoleBadge={currentUserRoleBadge}
+        currentUserRole={currentUserRole}
         bookingsCount={bookings.length}
+        studioEventsCount={events.length}
         unreadMessagesCount={1}
         unreadNotificationsCount={unreadNotificationsCount}
         onOpenProfile={() => setShowProfileModal(true)}
+        onOpenCreateWorkshop={() => setShowCreateWorkshopModal(true)}
+        onOpenScanner={() => {
+          setScannerTargetEvent(null);
+          setShowQRScanner(true);
+        }}
+        onOpenBroadcast={() => {
+          setBroadcastTargetEvent(null);
+          setShowBroadcastModal(true);
+        }}
         onSignOut={() => signOut()}
       />
 
@@ -308,7 +362,8 @@ function App() {
         />
 
         <main className="content">
-          {activeTab === 'Discover' && (
+          {/* Dancer Tabs */}
+          {!isStudio && activeTab === 'Discover' && (
             <DiscoverTab
               events={events}
               eventsLoading={eventsLoading}
@@ -334,7 +389,7 @@ function App() {
             />
           )}
 
-          {activeTab === 'Calendar' && (
+          {!isStudio && activeTab === 'Calendar' && (
             <CalendarTab
               events={events}
               saved={saved}
@@ -353,7 +408,7 @@ function App() {
             />
           )}
 
-          {activeTab === 'My bookings' && (
+          {!isStudio && activeTab === 'My bookings' && (
             <BookingsTab
               bookings={bookingsWithEvents}
               onViewTicket={(event, booking) => {
@@ -365,7 +420,7 @@ function App() {
             />
           )}
 
-          {activeTab === 'Saved' && (
+          {!isStudio && activeTab === 'Saved' && (
             <SavedTab
               events={events}
               saved={saved}
@@ -378,13 +433,61 @@ function App() {
             />
           )}
 
+          {/* Studio Tabs */}
+          {isStudio && activeTab === 'Dashboard' && (
+            <StudioOverviewTab
+              studioName={currentUserName}
+              events={events}
+              bookings={bookings}
+              onOpenCreateWorkshop={() => setShowCreateWorkshopModal(true)}
+              onOpenRoster={(ev) => setSelectedRosterEvent(ev)}
+              onOpenScanner={(ev) => {
+                setScannerTargetEvent(ev || null);
+                setShowQRScanner(true);
+              }}
+              onOpenBroadcast={(ev) => {
+                setBroadcastTargetEvent(ev || null);
+                setShowBroadcastModal(true);
+              }}
+              onNavigateTab={setActiveTab}
+            />
+          )}
+
+          {isStudio && activeTab === 'My Workshops' && (
+            <StudioWorkshopsTab
+              events={events}
+              onOpenCreateWorkshop={() => setShowCreateWorkshopModal(true)}
+              onOpenRoster={(ev) => setSelectedRosterEvent(ev)}
+              onOpenScanner={(ev) => {
+                setScannerTargetEvent(ev);
+                setShowQRScanner(true);
+              }}
+              onOpenBroadcast={(ev) => {
+                setBroadcastTargetEvent(ev);
+                setShowBroadcastModal(true);
+              }}
+              onDeleteWorkshop={handleDeleteWorkshop}
+            />
+          )}
+
+          {isStudio && activeTab === 'Studio Profile' && (
+            <StudioProfileTab
+              profile={profile}
+              onUpdateProfile={(updated) => {
+                setProfile(updated);
+                setRole(updated.role);
+              }}
+            />
+          )}
+
+          {/* Shared Space Tabs */}
           {activeTab === 'Messages' && (
             <MessagesTab
               currentUserId={session?.user?.id || 'current-user'}
               currentUserName={currentUserName}
               selectedConversationId={activeConversationId}
               onSelectConversation={(id) => setActiveConversationId(id)}
-              onFindClass={() => setActiveTab('Discover')}
+              onFindClass={() => setActiveTab(isStudio ? 'Dashboard' : 'Discover')}
             />
           )}
 
@@ -406,12 +509,13 @@ function App() {
                 setShowTicket(true);
               }}
               onMessageHost={handleMessageHost}
-              onFindClass={() => setActiveTab('Discover')}
+              onFindClass={() => setActiveTab(isStudio ? 'Dashboard' : 'Discover')}
             />
           )}
         </main>
       </div>
 
+      {/* Dancer Modals */}
       {selectedEvent && (
         <EventModal
           event={selectedEvent}
@@ -421,6 +525,83 @@ function App() {
           onBook={() => book(selectedEvent)}
           onMessageHost={handleMessageHost}
         />
+      )}
+
+      {bookedEvent && showTicket && (
+        <TicketModal
+          event={bookedEvent}
+          bookingId={activeBooking?.id ?? null}
+          onClose={() => setShowTicket(false)}
+        />
+      )}
+
+      {/* Studio Flow Modals */}
+      {showCreateWorkshopModal && (
+        <CreateWorkshopModal
+          studioName={currentUserName}
+          onClose={() => setShowCreateWorkshopModal(false)}
+          onEventCreated={handleEventCreated}
+        />
+      )}
+
+      {selectedRosterEvent && (
+        <AttendeeRosterModal
+          event={selectedRosterEvent}
+          onClose={() => setSelectedRosterEvent(null)}
+          onOpenScanner={(ev) => {
+            setSelectedRosterEvent(null);
+            setScannerTargetEvent(ev);
+            setShowQRScanner(true);
+          }}
+          onOpenBroadcast={(ev) => {
+            setSelectedRosterEvent(null);
+            setBroadcastTargetEvent(ev);
+            setShowBroadcastModal(true);
+          }}
+        />
+      )}
+
+      {showQRScanner && (
+        <QRScannerModal
+          activeEvent={scannerTargetEvent}
+          onClose={() => setShowQRScanner(false)}
+          onCheckInSuccess={(attendee) => {
+            setStudioToastMsg(`Check-in verified for ${attendee.userName}!`);
+            setTimeout(() => setStudioToastMsg(null), 4000);
+          }}
+        />
+      )}
+
+      {showBroadcastModal && (
+        <StudioBroadcastModal
+          events={events}
+          preselectedEvent={broadcastTargetEvent}
+          onClose={() => setShowBroadcastModal(false)}
+          onBroadcastSent={(_eventId, count) => {
+            setStudioToastMsg(`Broadcast sent to ${count} dancers.`);
+            setTimeout(() => setStudioToastMsg(null), 4000);
+          }}
+        />
+      )}
+
+      {/* Studio Toast Notification */}
+      {studioToastMsg && (
+        <div className="toast studio-toast">
+          <span className="toast-icon">
+            <Check size={17} />
+          </span>
+          <div>
+            <strong>Studio Portal Alert</strong>
+            <span>{studioToastMsg}</span>
+          </div>
+          <button
+            type="button"
+            aria-label="Dismiss toast"
+            onClick={() => setStudioToastMsg(null)}
+          >
+            <X size={16} />
+          </button>
+        </div>
       )}
 
       {/* Incoming Real-time Notification Toast */}
@@ -479,14 +660,6 @@ function App() {
         </div>
       )}
 
-      {bookedEvent && showTicket && (
-        <TicketModal
-          event={bookedEvent}
-          bookingId={activeBooking?.id ?? null}
-          onClose={() => setShowTicket(false)}
-        />
-      )}
-
       {showProfileModal && session?.user && (
         <ProfileModal
           user={session.user}
@@ -509,3 +682,4 @@ function App() {
 }
 
 export default App;
+

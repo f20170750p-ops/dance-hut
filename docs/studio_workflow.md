@@ -100,24 +100,24 @@ When an authenticated user has the `role: 'studio'`, the top-level navigation an
 
 ## 📋 4. Feature Scope Matrix
 
-### 🟢 Phase 1: MVP Studio Core (Immediate Focus)
+### 🟢 Phase 1: MVP Studio Core (Implemented & Active)
 - [x] **Role Selection & Profile Attribution**: Studio role selection on signup, syncing studio name to `profiles` table.
-- [ ] **Studio Dashboard Overview**: Live count of active hosted workshops, total registered dancers, and today's schedule preview.
-- [ ] **Workshop Creator (Create Class Modal)**:
-  - Form fields: Title, Style (Hip-Hop, Contemporary, Heels, etc.), Date, Start/End Time, Room/Venue Address, Instructor name, Price (₹), Total Spots, Cover Image URL / Preset.
-  - Inserts directly into `events` table with `organizer_id = auth.uid()` and auto-populates studio name.
-- [ ] **Workshop Management Feed**:
-  - Studio view of all classes organized by date.
-  - Ability to edit event details (time, venue notes, remaining spots).
-  - Ability to delete/cancel upcoming events with automatic cascade alert.
-- [ ] **Live Attendee Roster Modal**:
+- [x] **Studio Dashboard Overview**: Live count of active hosted workshops, total registered dancers, gross revenue, check-in rates, and today's schedule preview (`StudioOverviewTab.tsx`).
+- [x] **Workshop Creator (Create Class Modal)**:
+  - Form fields: Title, Style (Hip-Hop, Contemporary, Heels, etc.), Date, Start/End Time, Room/Venue Address, Instructor name, Price (₹), Total Spots, Cover Image presets & custom URL.
+  - Inserts directly into `events` table with Supabase sync (`CreateWorkshopModal.tsx`).
+- [x] **Workshop Management Feed**:
+  - Studio view of all classes filterable by Upcoming, Past, Style, and Search.
+  - Ability to view roster, scan passes, send alerts, or cancel/remove hosted events (`StudioWorkshopsTab.tsx`).
+- [x] **Live Attendee Roster Modal**:
   - View full list of registered dancers for any workshop (Name, email, booking timestamp, status).
-  - Manual 1-click "Mark as Attended" toggle.
-- [ ] **QR Code Check-in Scanner**:
-  - In-browser camera QR code reader (or manual 6-character Ticket ID entry).
-  - Validates booking authenticity in Supabase and marks booking status as `attended`.
-- [ ] **Studio-to-Dancer Broadcast Alerts**:
-  - Trigger `notify_event_audience` stored procedure to broadcast urgent announcements to all registered attendees of a class.
+  - Search filter and manual 1-click "Mark as Attended" toggle (`AttendeeRosterModal.tsx`).
+- [x] **QR Code Check-in Scanner**:
+  - In-browser camera QR code reader and manual 6-character Ticket ID entry with instant verification and check-in confirmation (`QRScannerModal.tsx`).
+- [x] **Studio-to-Dancer Broadcast Alerts**:
+  - Trigger `notify_event_audience` stored procedure with alert templates (Room shift, time delay, shoes reminder) to broadcast to all registered attendees (`StudioBroadcastModal.tsx`).
+- [x] **Studio Profile & Room Management**:
+  - Manage studio profile, Google Maps venue location, amenities checklist, and room capacities (`StudioProfileTab.tsx`).
 
 ---
 
