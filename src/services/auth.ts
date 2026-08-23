@@ -127,7 +127,7 @@ export function getDisplayName(profile: { display_name?: string | null } | null,
     if (formatted) return formatted;
     return emailPrefix;
   }
-  return 'Dance Explorer';
+  return 'Dancer';
 }
 
 export function getInitials(name: string): string {
@@ -142,9 +142,9 @@ export function getRoleBadge(role?: string | null): string {
     case 'choreographer':
       return 'Choreographer';
     case 'studio':
-      return 'Studio partner';
+      return 'Studio';
     case 'dancer':
     default:
-      return 'Dance explorer';
+      return 'Dancer';
   }
 }

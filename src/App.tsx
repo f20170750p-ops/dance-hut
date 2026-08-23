@@ -43,6 +43,7 @@ import { ChoreoProfileTab } from './components/tabs/ChoreoProfileTab';
 import { EventModal } from './components/modals/EventModal';
 import { TicketModal } from './components/modals/TicketModal';
 import { ProfileModal } from './components/modals/ProfileModal';
+import { ContactModal } from './components/modals/ContactModal';
 import { CreateWorkshopModal } from './components/modals/CreateWorkshopModal';
 import { AttendeeRosterModal } from './components/modals/AttendeeRosterModal';
 import { QRScannerModal } from './components/modals/QRScannerModal';
@@ -88,6 +89,7 @@ function App() {
   const [showBroadcastModal, setShowBroadcastModal] = useState(false);
   const [broadcastTargetEvent, setBroadcastTargetEvent] = useState<EventItem | null>(null);
   const [studioToastMsg, setStudioToastMsg] = useState<string | null>(null);
+  const [showContactModal, setShowContactModal] = useState(false);
 
   useEffect(() => {
     if (!isSupabaseConfigured) {
@@ -388,6 +390,7 @@ function App() {
           setShowBroadcastModal(true);
         }}
         onNavigateHome={handleNavigateHome}
+        onOpenContact={() => setShowContactModal(true)}
         onSignOut={() => signOut()}
       />
 
@@ -766,6 +769,15 @@ function App() {
           currentCity={selectedCity}
           onSelectCity={handleSelectCity}
           onClose={() => setShowCitySelector(false)}
+        />
+      )}
+
+      {showContactModal && (
+        <ContactModal
+          currentUserEmail={session?.user?.email ?? null}
+          currentUserName={currentUserName}
+          currentUserRole={currentUserRole}
+          onClose={() => setShowContactModal(false)}
         />
       )}
     </div>

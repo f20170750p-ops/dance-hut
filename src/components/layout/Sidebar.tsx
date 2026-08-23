@@ -1,18 +1,18 @@
 import {
-  ArrowRight,
   Bell,
   Building2,
   CalendarDays,
   ChevronDown,
   Compass,
+  Headphones,
   Heart,
   LayoutDashboard,
+  LogOut,
   Megaphone,
   MessageCircle,
   Music2,
   Plus,
   QrCode,
-  SlidersHorizontal,
   Sparkles,
   Ticket,
   X,
@@ -38,6 +38,7 @@ interface SidebarProps {
   onOpenScanner?: () => void;
   onOpenBroadcast?: () => void;
   onNavigateHome?: () => void;
+  onOpenContact?: () => void;
   onSignOut: () => void;
 }
 
@@ -60,6 +61,7 @@ export function Sidebar({
   onOpenScanner,
   onOpenBroadcast,
   onNavigateHome,
+  onOpenContact,
   onSignOut,
 }: SidebarProps) {
   const isStudio = currentUserRole === 'studio';
@@ -223,32 +225,34 @@ export function Sidebar({
             <span>Broadcast Alert</span>
           </button>
         )}
-        <button
-          type="button"
-          className="side-item"
-          onClick={onOpenProfile}
-        >
-          <SlidersHorizontal size={19} />
-          <span>Preferences</span>
-        </button>
-        <button
-          type="button"
-          className="side-item sign-out-item"
-          onClick={onSignOut}
-        >
-          <X size={19} />
-          <span>Sign out</span>
-        </button>
       </div>
 
       <div className="side-footer">
-        <div className="help-card">
-          <span>Need a hand?</span>
-          <strong>
-            Talk to our team <ArrowRight size={14} />
-          </strong>
-        </div>
-        <span className="version">dancehut / 01</span>
+        <button
+          type="button"
+          className="side-contact-btn"
+          onClick={() => {
+            if (onOpenContact) {
+              onOpenContact();
+            }
+            setShowMenu(false);
+          }}
+        >
+          <Headphones size={17} />
+          <span>Contact us</span>
+        </button>
+
+        <button
+          type="button"
+          className="side-item side-signout-btn"
+          onClick={() => {
+            setShowMenu(false);
+            onSignOut();
+          }}
+        >
+          <LogOut size={17} />
+          <span>Sign out</span>
+        </button>
       </div>
     </aside>
   );
