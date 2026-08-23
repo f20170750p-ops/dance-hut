@@ -37,6 +37,9 @@ import { NotificationsTab } from './components/tabs/NotificationsTab';
 import { StudioOverviewTab } from './components/tabs/StudioOverviewTab';
 import { StudioWorkshopsTab } from './components/tabs/StudioWorkshopsTab';
 import { StudioProfileTab } from './components/tabs/StudioProfileTab';
+import { ChoreoOverviewTab } from './components/tabs/ChoreoOverviewTab';
+import { ChoreoWorkshopsTab } from './components/tabs/ChoreoWorkshopsTab';
+import { ChoreoProfileTab } from './components/tabs/ChoreoProfileTab';
 import { EventModal } from './components/modals/EventModal';
 import { TicketModal } from './components/modals/TicketModal';
 import { ProfileModal } from './components/modals/ProfileModal';
@@ -151,11 +154,15 @@ function App() {
   // Tab synchronization when switching roles
   useEffect(() => {
     if (currentUserRole === 'studio') {
-      if (['Discover', 'Calendar', 'My bookings', 'Saved'].includes(activeTab)) {
+      if (['Discover', 'Calendar', 'My bookings', 'Saved', 'My Classes', 'My Portfolio'].includes(activeTab)) {
+        setActiveTab('Dashboard');
+      }
+    } else if (currentUserRole === 'choreographer') {
+      if (['Discover', 'Calendar', 'My bookings', 'Saved', 'My Workshops', 'Studio Profile'].includes(activeTab)) {
         setActiveTab('Dashboard');
       }
     } else {
-      if (['Dashboard', 'My Workshops', 'Studio Profile'].includes(activeTab)) {
+      if (['Dashboard', 'My Workshops', 'Studio Profile', 'My Classes', 'My Portfolio'].includes(activeTab)) {
         setActiveTab('Discover');
       }
     }
@@ -324,6 +331,8 @@ function App() {
   }
 
   const isStudio = currentUserRole === 'studio';
+  const isChoreo = currentUserRole === 'choreographer';
+  const isDancer = !isStudio && !isChoreo;
 
   return (
     <div className="app-shell">
@@ -363,7 +372,7 @@ function App() {
 
         <main className="content">
           {/* Dancer Tabs */}
-          {!isStudio && activeTab === 'Discover' && (
+          {isDancer && activeTab === 'Discover' && (
             <DiscoverTab
               events={events}
               eventsLoading={eventsLoading}
@@ -389,7 +398,7 @@ function App() {
             />
           )}
 
-          {!isStudio && activeTab === 'Calendar' && (
+          {isDancer && activeTab === 'Calendar' && (
             <CalendarTab
               events={events}
               saved={saved}
@@ -408,7 +417,7 @@ function App() {
             />
           )}
 
-          {!isStudio && activeTab === 'My bookings' && (
+          {isDancer && activeTab === 'My bookings' && (
             <BookingsTab
               bookings={bookingsWithEvents}
               onViewTicket={(event, booking) => {
@@ -420,7 +429,7 @@ function App() {
             />
           )}
 
-          {!isStudio && activeTab === 'Saved' && (
+          {isDancer && activeTab === 'Saved' && (
             <SavedTab
               events={events}
               saved={saved}
@@ -480,6 +489,44 @@ function App() {
             />
           )}
 
+          {/* Choreographer Tabs */}
+          {isChoreo && activeTab === 'Dashboard' && (
+            <ChoreoOverviewTab
+              choreoName={currentUserName}
+              events={events}
+              onOpenCreateWorkshop={() => setShowCreateWorkshopModal(true)}
+              onOpenRoster={(ev) => setSelectedRosterEvent(ev)}
+              onOpenBroadcast={(ev) => {
+                setBroadcastTargetEvent(ev || null);
+                setShowBroadcastModal(true);
+              }}
+              onNavigateTab={setActiveTab}
+            />
+          )}
+
+          {isChoreo && activeTab === 'My Classes' && (
+            <ChoreoWorkshopsTab
+              events={events}
+              onOpenCreateWorkshop={() => setShowCreateWorkshopModal(true)}
+              onOpenRoster={(ev) => setSelectedRosterEvent(ev)}
+              onOpenBroadcast={(ev) => {
+                setBroadcastTargetEvent(ev);
+                setShowBroadcastModal(true);
+              }}
+              onDeleteWorkshop={handleDeleteWorkshop}
+            />
+          )}
+
+          {isChoreo && activeTab === 'My Portfolio' && (
+            <ChoreoProfileTab
+              userId={session?.user?.id || 'choreo-user'}
+              currentUserName={currentUserName}
+              onProfileUpdated={(newName) => {
+                if (profile) setProfile({ ...profile, display_name: newName });
+              }}
+            />
+          )}
+
           {/* Shared Space Tabs */}
           {activeTab === 'Messages' && (
             <MessagesTab
@@ -487,7 +534,7 @@ function App() {
               currentUserName={currentUserName}
               selectedConversationId={activeConversationId}
               onSelectConversation={(id) => setActiveConversationId(id)}
-              onFindClass={() => setActiveTab(isStudio ? 'Dashboard' : 'Discover')}
+              onFindClass={() => setActiveTab(isStudio || isChoreo ? 'Dashboard' : 'Discover')}
             />
           )}
 
@@ -509,7 +556,7 @@ function App() {
                 setShowTicket(true);
               }}
               onMessageHost={handleMessageHost}
-              onFindClass={() => setActiveTab(isStudio ? 'Dashboard' : 'Discover')}
+              onFindClass={() => setActiveTab(isStudio || isChoreo ? 'Dashboard' : 'Discover')}
             />
           )}
         </main>
@@ -535,10 +582,11 @@ function App() {
         />
       )}
 
-      {/* Studio Flow Modals */}
+      {/* Studio & Choreographer Flow Modals */}
       {showCreateWorkshopModal && (
         <CreateWorkshopModal
           studioName={currentUserName}
+          creatorRole={currentUserRole}
           onClose={() => setShowCreateWorkshopModal(false)}
           onEventCreated={handleEventCreated}
         />
@@ -575,6 +623,7 @@ function App() {
       {showBroadcastModal && (
         <StudioBroadcastModal
           events={events}
+          creatorRole={currentUserRole}
           preselectedEvent={broadcastTargetEvent}
           onClose={() => setShowBroadcastModal(false)}
           onBroadcastSent={(_eventId, count) => {

@@ -7,6 +7,7 @@ import {
   Info,
   MapPin,
   Megaphone,
+  Music2,
   Radio,
   Send,
   Shirt,
@@ -15,15 +16,17 @@ import {
 } from 'lucide-react';
 import type { EventItem } from '../../services/events';
 import { broadcastWorkshopAlert } from '../../services/studio';
+import type { UserRole } from '../../services/auth';
 
 interface StudioBroadcastModalProps {
   events: EventItem[];
   preselectedEvent?: EventItem | null;
+  creatorRole?: UserRole;
   onClose: () => void;
   onBroadcastSent?: (eventId: number, recipientCount: number) => void;
 }
 
-const BROADCAST_TEMPLATES = [
+const STUDIO_TEMPLATES = [
   {
     type: 'announcement' as const,
     label: 'General Announcement',
@@ -54,20 +57,55 @@ const BROADCAST_TEMPLATES = [
   },
 ];
 
+const CHOREO_TEMPLATES = [
+  {
+    type: 'announcement' as const,
+    label: 'Song & Music Track Release',
+    icon: Music2,
+    defaultTitle: '🎵 Music Track Announcement for Class!',
+    defaultMsg: 'Hey everyone! Here is the routine song for our upcoming workshop so you can groove to it beforehand. Get ready to bring high energy!',
+  },
+  {
+    type: 'reminder' as const,
+    label: 'Outfit & Knee Pads Guide',
+    icon: Shirt,
+    defaultTitle: '👟 Outfit & Knee Pads Recommendation',
+    defaultMsg: 'Wear comfortable oversized clothing / block heels as appropriate. Knee pads are highly recommended for floorwork sections!',
+  },
+  {
+    type: 'announcement' as const,
+    label: 'Class Energy & Prep Notes',
+    icon: Sparkles,
+    defaultTitle: '🔥 Prep Notes from your Instructor',
+    defaultMsg: 'We will start with a full body warm-up followed by routine breakdown at 50% tempo. Hydrate well and see you on the dance floor!',
+  },
+  {
+    type: 'time_change' as const,
+    label: 'Timing / Studio Update',
+    icon: Clock,
+    defaultTitle: 'Schedule / Studio Arrival Update',
+    defaultMsg: 'Please arrive 15 minutes before the session to settle in, warm up, and get your spot ready.',
+  },
+];
+
 export function StudioBroadcastModal({
   events,
   preselectedEvent,
+  creatorRole = 'studio',
   onClose,
   onBroadcastSent,
 }: StudioBroadcastModalProps) {
+  const isChoreo = creatorRole === 'choreographer';
+  const templates = isChoreo ? CHOREO_TEMPLATES : STUDIO_TEMPLATES;
+
   const [selectedEventId, setSelectedEventId] = useState<number>(
     preselectedEvent?.id || events[0]?.id || 0
   );
   const [selectedType, setSelectedType] = useState<
     'announcement' | 'location_change' | 'time_change' | 'reminder'
   >('announcement');
-  const [title, setTitle] = useState(BROADCAST_TEMPLATES[0].defaultTitle);
-  const [message, setMessage] = useState(BROADCAST_TEMPLATES[0].defaultMsg);
+  const [title, setTitle] = useState(templates[0].defaultTitle);
+  const [message, setMessage] = useState(templates[0].defaultMsg);
   const [sending, setSending] = useState(false);
   const [success, setSuccess] = useState(false);
   const [recipientCount, setRecipientCount] = useState<number | null>(null);
@@ -75,7 +113,7 @@ export function StudioBroadcastModal({
 
   const activeEvent = events.find((e) => e.id === Number(selectedEventId));
 
-  const handleTemplateSelect = (tmpl: (typeof BROADCAST_TEMPLATES)[0]) => {
+  const handleTemplateSelect = (tmpl: (typeof templates)[0]) => {
     setSelectedType(tmpl.type);
     setTitle(tmpl.defaultTitle);
     setMessage(tmpl.defaultMsg);
@@ -133,8 +171,10 @@ export function StudioBroadcastModal({
       >
         <div className="modal-header-row">
           <div>
-            <span className="section-kicker">Audience Notification Center</span>
-            <h2>Broadcast Workshop Alert</h2>
+            <span className="section-kicker">
+              {isChoreo ? 'Instructor Student Broadcast' : 'Audience Notification Center'}
+            </span>
+            <h2>{isChoreo ? 'Send Song & Prep Announcement' : 'Broadcast Workshop Alert'}</h2>
           </div>
           <button
             type="button"
@@ -153,7 +193,7 @@ export function StudioBroadcastModal({
             </div>
             <h3>Broadcast Sent Successfully!</h3>
             <p>
-              Alert dispatched to <strong>{recipientCount}</strong> enrolled & interested dancers for <em>"{activeEvent?.title}"</em>.
+              Alert dispatched to <strong>{recipientCount}</strong> enrolled dancers for <em>"{activeEvent?.title}"</em>.
             </p>
           </div>
         ) : (
@@ -178,13 +218,13 @@ export function StudioBroadcastModal({
             <div className="broadcast-templates-container">
               <span className="field-label">Quick Alert Presets</span>
               <div className="template-chips-grid">
-                {BROADCAST_TEMPLATES.map((tmpl) => {
+                {templates.map((tmpl) => {
                   const Icon = tmpl.icon;
-                  const isSelected = selectedType === tmpl.type;
+                  const isSelected = selectedType === tmpl.type && title === tmpl.defaultTitle;
                   return (
                     <button
                       type="button"
-                      key={tmpl.type}
+                      key={tmpl.label}
                       className={`template-chip ${isSelected ? 'selected' : ''}`}
                       onClick={() => handleTemplateSelect(tmpl)}
                     >
@@ -202,7 +242,7 @@ export function StudioBroadcastModal({
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g. Bring indoor dance sneakers"
+                placeholder="e.g. Song track for tomorrow's heels class"
                 required
               />
             </label>

@@ -1,11 +1,26 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { Calendar, Check, Clock, Image as ImageIcon, MapPin, Sparkles, Tag, Users, X } from 'lucide-react';
+import {
+  Calendar,
+  Check,
+  Clock,
+  Flame,
+  Image as ImageIcon,
+  MapPin,
+  Music2,
+  Sparkles,
+  Tag,
+  Users,
+  X,
+} from 'lucide-react';
 import { createStudioEvent, type StudioEventInput } from '../../services/studio';
 import type { EventItem } from '../../services/events';
+import type { UserRole } from '../../services/auth';
+import { DANCE_STYLE_OPTIONS, SKILL_LEVELS } from '../../services/choreo';
 
 interface CreateWorkshopModalProps {
   studioName: string;
+  creatorRole?: UserRole;
   onClose: () => void;
   onEventCreated: (newEvent: EventItem) => void;
 }
@@ -15,53 +30,50 @@ const PRESET_IMAGES = [
   { label: 'Contemporary Flow', url: 'https://images.pexels.com/photos/3775127/pexels-photo-3775127.jpeg?auto=compress&cs=tinysrgb&w=900' },
   { label: 'Heels & Grooves', url: 'https://images.pexels.com/photos/2820884/pexels-photo-2820884.jpeg?auto=compress&cs=tinysrgb&w=900' },
   { label: 'Afrobeats Vibe', url: 'https://images.pexels.com/photos/2188012/pexels-photo-2188012.jpeg?auto=compress&cs=tinysrgb&w=900' },
-  { label: 'Studio Rehearsal', url: 'https://images.pexels.com/photos/2188012/pexels-photo-2188012.jpeg?auto=compress&cs=tinysrgb&w=900' },
+  { label: 'Studio Rehearsal', url: 'https://images.pexels.com/photos/3775127/pexels-photo-3775127.jpeg?auto=compress&cs=tinysrgb&w=900' },
 ];
 
-const STYLE_OPTIONS = [
-  'Hip Hop',
-  'Contemporary',
-  'Heels',
-  'Afrobeats',
-  'Bollywood',
-  'Jazz Funk',
-  'Waacking',
-  'House',
-  'Bachata',
-  'Locking',
-];
-
-const LOCATION_OPTIONS = [
-  'Indiranagar (100ft Road)',
-  'Koramangala 4th Block',
-  'HSR Layout Sector 2',
-  'Church Street (MG Road)',
-  'Jayanagar 4th Block',
-  'Whitefield (ITPL Road)',
+const STUDIO_VENUES = [
+  { name: 'Step & Groove Studio', area: 'Koramangala 4th Block' },
+  { name: 'Lourd Vijay Dance Studio', area: 'Indiranagar (100ft Road)' },
+  { name: 'Left Foot Right Danceworks', area: 'HSR Layout Sector 2' },
+  { name: 'Attakkalari Centre for Movement Arts', area: 'Wilson Garden' },
+  { name: 'Nnritya Dance Studio', area: 'Church Street (MG Road)' },
+  { name: 'The Tribe Dance Space', area: 'Jayanagar 4th Block' },
+  { name: 'Custom Studio / Venue', area: 'Bengaluru' },
 ];
 
 export function CreateWorkshopModal({
   studioName,
+  creatorRole = 'studio',
   onClose,
   onEventCreated,
 }: CreateWorkshopModalProps) {
+  const isChoreo = creatorRole === 'choreographer';
+
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   const defaultDate = tomorrow.toISOString().slice(0, 10);
 
   const [title, setTitle] = useState('');
-  const [style, setStyle] = useState('Hip Hop');
+  const [songTrack, setSongTrack] = useState('');
+  const [level, setLevel] = useState(SKILL_LEVELS[0]);
+  const [style, setStyle] = useState(DANCE_STYLE_OPTIONS[0]);
   const [date, setDate] = useState(defaultDate);
   const [time, setTime] = useState('18:00 - 19:30');
-  const [location, setLocation] = useState('Indiranagar (100ft Road)');
-  const [host, setHost] = useState('');
+  const [selectedStudioIndex, setSelectedStudioIndex] = useState(0);
+  const [customStudioName, setCustomStudioName] = useState('');
+  const [customLocation, setCustomLocation] = useState('');
+  const [host, setHost] = useState(isChoreo ? studioName || '' : '');
   const [price, setPrice] = useState('850');
-  const [spots, setSpots] = useState(30);
+  const [spots, setSpots] = useState(25);
   const [selectedImage, setSelectedImage] = useState(PRESET_IMAGES[0].url);
   const [customImageUrl, setCustomImageUrl] = useState('');
   const [featured, setFeatured] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const isCustomVenue = selectedStudioIndex === STUDIO_VENUES.length - 1;
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -77,13 +89,26 @@ export function CreateWorkshopModal({
     setLoading(true);
     setError('');
 
+    const venue = STUDIO_VENUES[selectedStudioIndex];
+    const finalStudio = isCustomVenue
+      ? customStudioName.trim() || 'Dance Studio'
+      : venue.name;
+    const finalLocation = isCustomVenue
+      ? customLocation.trim() || 'Bengaluru'
+      : venue.area;
+
+    const fullTitle =
+      isChoreo && songTrack.trim()
+        ? `${title.trim()} (${songTrack.trim()})`
+        : title.trim();
+
     const eventInput: StudioEventInput = {
-      title: title.trim(),
+      title: fullTitle,
       style,
       date,
       time,
-      location,
-      studio: studioName || 'Partner Studio',
+      location: finalLocation,
+      studio: isChoreo ? finalStudio : (studioName || finalStudio),
       host: host.trim(),
       price: price.startsWith('₹') ? price : `₹${price}`,
       spots: Number(spots) || 25,
@@ -113,8 +138,10 @@ export function CreateWorkshopModal({
       >
         <div className="modal-header-row">
           <div>
-            <span className="section-kicker">Studio Workshop Creator</span>
-            <h2>Create New Workshop</h2>
+            <span className="section-kicker">
+              {isChoreo ? 'Choreographer Creator Suite' : 'Studio Workshop Creator'}
+            </span>
+            <h2>{isChoreo ? 'Host a New Masterclass' : 'Create New Workshop'}</h2>
           </div>
           <button
             type="button"
@@ -129,26 +156,56 @@ export function CreateWorkshopModal({
         <form onSubmit={handleSubmit} className="workshop-form">
           {error && <div className="form-alert error">{error}</div>}
 
+          {/* Section 1: Routine & Style Info */}
           <div className="form-section">
             <span className="form-section-title">
-              <Sparkles size={14} /> Basic Workshop Information
+              <Sparkles size={14} /> Workshop & Choreography Details
             </span>
             <div className="form-grid">
               <label className="field-group full-width">
-                <span>Workshop Title *</span>
+                <span>Routine / Workshop Title *</span>
                 <input
                   type="text"
-                  placeholder="e.g. Commercial Hip Hop Masterclass"
+                  placeholder={
+                    isChoreo
+                      ? 'e.g. Urban Choreography Intensive'
+                      : 'e.g. Commercial Hip Hop Masterclass'
+                  }
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   required
                 />
               </label>
 
+              {isChoreo && (
+                <label className="field-group">
+                  <span>
+                    <Music2 size={13} /> Routine Song Track / Artist
+                  </span>
+                  <input
+                    type="text"
+                    placeholder="e.g. Too Sweet — Hozier"
+                    value={songTrack}
+                    onChange={(e) => setSongTrack(e.target.value)}
+                  />
+                </label>
+              )}
+
+              <label className="field-group">
+                <span>Skill Level</span>
+                <select value={level} onChange={(e) => setLevel(e.target.value)}>
+                  {SKILL_LEVELS.map((lvl) => (
+                    <option key={lvl} value={lvl}>
+                      {lvl}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
               <label className="field-group">
                 <span>Dance Style</span>
                 <select value={style} onChange={(e) => setStyle(e.target.value)}>
-                  {STYLE_OPTIONS.map((st) => (
+                  {DANCE_STYLE_OPTIONS.map((st) => (
                     <option key={st} value={st}>
                       {st}
                     </option>
@@ -157,10 +214,10 @@ export function CreateWorkshopModal({
               </label>
 
               <label className="field-group">
-                <span>Instructor / Host *</span>
+                <span>Instructor / Host Name *</span>
                 <input
                   type="text"
-                  placeholder="e.g. Rohan Verma"
+                  placeholder="e.g. Ananya Roy"
                   value={host}
                   onChange={(e) => setHost(e.target.value)}
                   required
@@ -169,9 +226,10 @@ export function CreateWorkshopModal({
             </div>
           </div>
 
+          {/* Section 2: Schedule & Studio Venue */}
           <div className="form-section">
             <span className="form-section-title">
-              <Calendar size={14} /> Schedule & Location
+              <Calendar size={14} /> Schedule & Studio Venue
             </span>
             <div className="form-grid">
               <label className="field-group">
@@ -196,24 +254,50 @@ export function CreateWorkshopModal({
               </label>
 
               <label className="field-group full-width">
-                <span>Neighborhood & Venue Area</span>
+                <span>Dance Studio Venue *</span>
                 <select
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
+                  value={selectedStudioIndex}
+                  onChange={(e) => setSelectedStudioIndex(Number(e.target.value))}
                 >
-                  {LOCATION_OPTIONS.map((loc) => (
-                    <option key={loc} value={loc}>
-                      {loc}
+                  {STUDIO_VENUES.map((ven, idx) => (
+                    <option key={ven.name} value={idx}>
+                      {ven.name} ({ven.area})
                     </option>
                   ))}
                 </select>
               </label>
+
+              {isCustomVenue && (
+                <>
+                  <label className="field-group">
+                    <span>Studio / Space Name</span>
+                    <input
+                      type="text"
+                      placeholder="e.g. Dance District Bangalore"
+                      value={customStudioName}
+                      onChange={(e) => setCustomStudioName(e.target.value)}
+                      required
+                    />
+                  </label>
+                  <label className="field-group">
+                    <span>Neighborhood / Area</span>
+                    <input
+                      type="text"
+                      placeholder="e.g. Indiranagar 12th Main"
+                      value={customLocation}
+                      onChange={(e) => setCustomLocation(e.target.value)}
+                      required
+                    />
+                  </label>
+                </>
+              )}
             </div>
           </div>
 
+          {/* Section 3: Pricing & Capacity */}
           <div className="form-section">
             <span className="form-section-title">
-              <Tag size={14} /> Pricing & Capacity
+              <Tag size={14} /> Pricing & Spot Capacity
             </span>
             <div className="form-grid">
               <label className="field-group">
@@ -228,7 +312,7 @@ export function CreateWorkshopModal({
               </label>
 
               <label className="field-group">
-                <span>Total Spot Capacity</span>
+                <span>Total Spots Cap</span>
                 <input
                   type="number"
                   min="5"
@@ -241,9 +325,10 @@ export function CreateWorkshopModal({
             </div>
           </div>
 
+          {/* Section 4: Workshop Poster */}
           <div className="form-section">
             <span className="form-section-title">
-              <ImageIcon size={14} /> Workshop Poster Image
+              <ImageIcon size={14} /> Workshop Poster Art
             </span>
             <div className="poster-presets-grid">
               {PRESET_IMAGES.map((img) => (
@@ -264,7 +349,7 @@ export function CreateWorkshopModal({
               ))}
             </div>
             <label className="field-group custom-image-field">
-              <span>Or Custom Image URL</span>
+              <span>Or Custom Poster URL</span>
               <input
                 type="url"
                 placeholder="https://images.unsplash.com/photo-..."
@@ -299,7 +384,7 @@ export function CreateWorkshopModal({
               className="primary-btn submit-workshop-btn"
               disabled={loading}
             >
-              {loading ? 'Publishing...' : 'Publish Workshop to Discover'}{' '}
+              {loading ? 'Publishing...' : isChoreo ? 'Launch Masterclass' : 'Publish Workshop to Discover'}{' '}
               <Check size={16} />
             </button>
           </div>

@@ -88,3 +88,18 @@ This document tracks all identified feedback items, UX friction points, and impl
 | S-7 | **Studio Announcements Broadcast** | 🟢 Resolved | Dispatch notifications with alert templates to all enrolled dancers of a workshop via `notify_event_audience`. | `StudioBroadcastModal.tsx` |
 | S-8 | **Studio Profile & Room Management** | 🟢 Resolved | Manage studio profile, Google Maps venue location, amenities checklist, and room capacities. | `StudioProfileTab.tsx` |
 
+---
+
+## 💃 Choreographer Portal Implementation Roadmap (Phase 1)
+
+| # | Epic / Feature | Status | Scope & Implementation Plan | Target View |
+|---|---|:---:|---|---|
+| C-1 | **Choreographer Role-Based Routing** | 🟢 Resolved | Conditional navigation and tab synchronization when `profile.role === 'choreographer'`. | `App.tsx` & `Sidebar.tsx` |
+| C-2 | **Choreographer Dashboard Overview** | 🟢 Resolved | Real-time creator KPI cards (Upcoming masterclasses, student count, gross revenue, fill rate), next class spotlight countdown card, and teaching schedule timeline. | `ChoreoOverviewTab.tsx` |
+| C-3 | **Host Workshop Flow (Creator Mode)** | 🟢 Resolved | Class creation wizard with song track input, skill level picker (Beginner/Intermediate/Advanced/All Levels), partner studio venue selector / custom space, price & spot caps. | `CreateWorkshopModal.tsx` |
+| C-4 | **My Classes Management Feed** | 🟢 Resolved | Searchable & filterable feed of hosted masterclasses with student roster triggers, song prep notes, 1-click class share, and class cancellation. | `ChoreoWorkshopsTab.tsx` |
+| C-5 | **Live Student Roster View** | 🟢 Resolved | Searchable roster of confirmed students for each class with 1-click attendance marking. | `AttendeeRosterModal.tsx` |
+| C-6 | **Song Track & Routine Prep Broadcasts** | 🟢 Resolved | Dispatch song releases, footwear guidelines, and warm-up tips directly to registered dancers. | `StudioBroadcastModal.tsx` |
+| C-7 | **Choreographer Portfolio & Brand Profile** | 🟢 Resolved | Artist profile with stage name, bio, signature styles selector, Instagram handle, and video showreel showcase with live dancer card preview. | `ChoreoProfileTab.tsx` |
+
+

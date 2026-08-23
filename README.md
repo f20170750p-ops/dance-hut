@@ -106,35 +106,61 @@ When a user signs up with the **"I run a studio"** role, DanceHut transforms int
 
 ---
 
+## 💃 Choreographer Experience & Workflow Scope
+
+When a user signs up with the **"I'm a choreographer"** role, DanceHut activates a dedicated **Choreographer Workspace** designed for dance artists, instructors, and masterclass educators:
+
+```
+[Choreo Sign-up / Login] ──▶ [Choreo Dashboard] ──▶ [Host Workshop / Class] ──▶ [Discover Feed (Live)]
+                                     │
+                                     ├──▶ [Live Student Roster & Check-In]
+                                     ├──▶ [Messages & Student Inquiries]
+                                     ├──▶ [Studio Space Booking / Collaboration]
+                                     └──▶ [Portfolio & Video Reel Showcase]
+```
+
+### 🎯 Choreographer Views & Supported Features (Phase 1 Scope):
+1. **Choreographer Dashboard (`ChoreoOverviewTab`)**:
+   - Live metrics: Upcoming masterclasses, total enrolled students, estimated gross earnings, and average class fill rate.
+   - **Next Class Spotlight**: Countdown card with real-time enrolled count, studio location, and 1-click student roster trigger.
+2. **Class & Workshop Management (`ChoreoWorkshopsTab`)**:
+   - Filterable list of hosted workshops (Upcoming, Past, Drafts).
+   - 1-click actions: View Student Roster, Broadcast Song/Prep Tip, Edit Details, Share Link, or Cancel.
+3. **Workshop Host Flow (`CreateWorkshopModal` / Choreo Mode)**:
+   - Creator wizard with song track selection, difficulty level (Beginner/Intermediate/Advanced/All Levels), partner studio picker / custom venue, date & time, price, and cover image.
+   - Instant synchronization to the live Bengaluru Discover feed.
+4. **Live Student Roster (`AttendeeRosterModal`)**:
+   - Real-time attendee list for the choreographer's classes with dancer experience level and attendance check-in.
+5. **Choreographer Portfolio & Brand Profile (`ChoreoProfileTab`)**:
+   - Profile setup: Stage name, bio, signature dance styles, Instagram handle, and featured dance video reel showcase.
+6. **Student Communication & Song Prep Alerts**:
+   - Broadcast song track previews, footwear recommendations, and choreography tips directly to enrolled students.
+   - 1:1 direct chat with students inquiring about choreography pacing and skill level requirements.
+
+📖 **Read the full choreographer design doc**: [Choreographer Workflow & Product Specification](docs/choreographer_workflow.md)
+
+---
+
 ## 🚀 Future Scope (Post-MVP / Phase 2 & 3)
 
-The following advanced features are intentionally kept out of the MVP to ensure focused and stable delivery:
+The following advanced features are intentionally kept out of the Phase 1 scope to ensure focused and stable delivery:
 
-### 🟡 **Phase 2: Choreographer & Studio Dashboards**
-- **Choreographer Portal**:
-  - Profile & portfolio showcase (bio, videos, experience).
-  - Workshop proposal & slot booking at partner studios.
-  - Workshop registrations list and commission tracking.
-- **Studio Management Portal**:
-  - Studio dashboard for listing and managing studio rooms.
-  - Multi-step event creation and batch scheduling.
-  - QR code ticket scanner for venue check-in & attendance marking.
-  - Studio revenue, attendance, and popular style analytics.
+### 🟡 **Phase 2: Space Collaboration & Slot Proposals**
+- **Choreographer & Studio Slot Proposals**:
+  - Choreographers browse partner studio rooms in Bengaluru and submit slot proposals with desired time and pricing/split model.
+  - Studio owners review, accept, decline, or counter-propose slot bookings.
+- **Multi-Session Courses & Intensives**:
+  - Multi-day progressive choreography courses and weekend intensives.
+- **Post-Class Video Recap Distribution**:
+  - Secure video recap uploads shared exclusively with confirmed workshop attendees.
 
-### 🔵 **Phase 3: Communication, Social & Expansion**
-- **"Your Space" Communication Tools**:
-  - In-app direct messaging between dancers, choreographers, and studios.
-  - User notification center for class updates, schedule changes, and reminders.
-  - Granular user preferences (favourite dance styles, notification channels).
-- **Studio Exploration Directory**:
-  - Dedicated "Explore Studios" directory page with studio facilities, photos, and reviews.
-- **Advanced Auth & Payments**:
-  - Instagram OAuth & Phone OTP authentication.
-  - Custom branded SMTP setup for confirmation/transactional emails.
-  - Online payments via Stripe / Razorpay.
-- **AI Features**:
-  - Smart workshop recommendations and dancer matching.
-  - Dynamic pricing and studio demand forecasting.
+### 🔵 **Phase 3: Creator Monetization & Community Growth**
+- **Automated Payout Splits**:
+  - Automated revenue split between Choreographer and Studio venue via Stripe Connect / Razorpay Route.
+- **Dancer "Follow Choreographer" Feeds**:
+  - Instant push notifications when followed choreographers announce new classes in Bengaluru.
+- **Verified Instructor Badges & Reviews**:
+  - Verified educator badges and student feedback ratings.
 
 ---
 
@@ -170,19 +196,29 @@ npm run dev
 ```
 dance-hut/
 ├── docs/
-│   ├── architecture.md      # Backend strategy & scaling design doc
-│   ├── backlog.md           # Problem tracker & MVP issues status
-│   └── studio_workflow.md   # Studio portal workflow & feature specifications
+│   ├── architecture.md             # Backend strategy & scaling design doc
+│   ├── backlog.md                  # Problem tracker & MVP issues status
+│   ├── choreographer_workflow.md   # Choreographer portal workflow & specifications
+│   └── studio_workflow.md          # Studio portal workflow & feature specifications
 ├── src/
-│   ├── App.tsx              # Main UI & Navigation
-│   ├── main.tsx             # React entry point
-│   ├── index.css            # Tailwind + design tokens
+│   ├── App.tsx                     # Main UI, role routing & tab state
+│   ├── main.tsx                    # React entry point
+│   ├── index.css                   # Design tokens & styling
+│   ├── components/
+│   │   ├── auth/                   # Welcome page & Auth modals
+│   │   ├── common/                 # EventCard, filters, badges
+│   │   ├── layout/                 # Sidebar, Topbar
+│   │   ├── modals/                 # CreateWorkshop, Roster, Scanner, Broadcast, Profile
+│   │   └── tabs/                   # Dancer, Studio & Choreographer tab views
 │   └── services/
-│       ├── auth.ts          # Supabase Auth methods
-│       ├── bookings.ts      # Booking creation & query functions
-│       ├── events.ts        # Events fetch & detail services
-│       ├── savedEvents.ts   # Saved events persistence
-│       └── supabase.ts      # Supabase client initialization
+│       ├── auth.ts                 # Supabase Auth & profile methods
+│       ├── bookings.ts             # Booking creation & query functions
+│       ├── events.ts               # Events fetch & detail services
+│       ├── messages.ts             # Real-time messaging service
+│       ├── notifications.ts        # Notification dispatcher & subscriptions
+│       ├── savedEvents.ts          # Saved events persistence
+│       ├── studio.ts               # Studio data services
+│       └── supabase.ts             # Supabase client initialization
 ├── supabase/
 │   ├── schema.sql           # Database schema, RLS, stored procedures
 │   └── seed.sql             # Demo events data
@@ -197,6 +233,7 @@ dance-hut/
 
 | Document | Description |
 |---|---|
+| [Choreographer Workflow & Specifications](docs/choreographer_workflow.md) | Comprehensive choreographer persona, user flows, UI views, portfolio showcase, student roster, and feature roadmap. |
 | [Studio Workflow & Specifications](docs/studio_workflow.md) | In-depth studio persona, user flows, UI views, QR check-in, database schema extensions, and feature roadmap. |
 | [Architecture & Backend Strategy](docs/architecture.md) | Comprehensive overview of the BaaS design, security model (RLS/RPC), and scaling roadmap. |
 | [Problem Tracker & Backlog](docs/backlog.md) | Granular breakdown of identified issues, fixes, and current status. |
@@ -210,4 +247,3 @@ dance-hut/
 - `npm run lint` — Lint code with ESLint
 - `npm run build` — Build production bundle to `dist/`
 - `npm run preview` — Preview production build locally
-

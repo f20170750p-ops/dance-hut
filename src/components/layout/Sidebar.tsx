@@ -9,9 +9,11 @@ import {
   LayoutDashboard,
   Megaphone,
   MessageCircle,
+  Music2,
   Plus,
   QrCode,
   SlidersHorizontal,
+  Sparkles,
   Ticket,
   X,
 } from 'lucide-react';
@@ -59,6 +61,7 @@ export function Sidebar({
   onSignOut,
 }: SidebarProps) {
   const isStudio = currentUserRole === 'studio';
+  const isChoreo = currentUserRole === 'choreographer';
 
   const dancerTabs = [
     { name: 'Discover', icon: Compass },
@@ -73,7 +76,13 @@ export function Sidebar({
     { name: 'Studio Profile', icon: Building2 },
   ];
 
-  const activeTabsList = isStudio ? studioTabs : dancerTabs;
+  const choreoTabs = [
+    { name: 'Dashboard', icon: LayoutDashboard },
+    { name: 'My Classes', icon: Music2 },
+    { name: 'My Portfolio', icon: Sparkles },
+  ];
+
+  const activeTabsList = isStudio ? studioTabs : isChoreo ? choreoTabs : dancerTabs;
 
   return (
     <aside className={`sidebar ${showMenu ? 'open' : ''}`}>
@@ -105,8 +114,8 @@ export function Sidebar({
         <ChevronDown size={14} />
       </button>
 
-      {/* Studio Fast Action: Create Workshop */}
-      {isStudio && onOpenCreateWorkshop && (
+      {/* Studio / Choreo Fast Action: Create / Host Workshop */}
+      {(isStudio || isChoreo) && onOpenCreateWorkshop && (
         <button
           type="button"
           className="sidebar-quick-create-btn"
@@ -116,13 +125,13 @@ export function Sidebar({
           }}
         >
           <Plus size={16} />
-          <span>New Workshop</span>
+          <span>{isChoreo ? 'Host Workshop' : 'New Workshop'}</span>
         </button>
       )}
 
       <div className="side-group">
         <span className="side-label">
-          {isStudio ? 'Studio Portal' : 'Workspace'}
+          {isStudio ? 'Studio Portal' : isChoreo ? 'Choreo Suite' : 'Workspace'}
         </span>
         {activeTabsList.map(({ name, icon: Icon }) => (
           <button
@@ -137,7 +146,7 @@ export function Sidebar({
             <Icon size={19} />
             <span>{name}</span>
             {name === 'My bookings' && bookingsCount > 0 && <i>{bookingsCount}</i>}
-            {name === 'My Workshops' && studioEventsCount > 0 && (
+            {(name === 'My Workshops' || name === 'My Classes') && studioEventsCount > 0 && (
               <i>{studioEventsCount}</i>
             )}
           </button>
@@ -160,7 +169,7 @@ export function Sidebar({
 
       <div className="side-group side-bottom">
         <span className="side-label">
-          {isStudio ? 'Studio Comms' : 'Your space'}
+          {isStudio ? 'Studio Comms' : isChoreo ? 'Choreo Comms' : 'Your space'}
         </span>
         <button
           type="button"
@@ -186,7 +195,7 @@ export function Sidebar({
           <span>Notifications</span>
           {unreadNotificationsCount > 0 && <i>{unreadNotificationsCount}</i>}
         </button>
-        {isStudio && onOpenBroadcast && (
+        {(isStudio || isChoreo) && onOpenBroadcast && (
           <button
             type="button"
             className="side-item"

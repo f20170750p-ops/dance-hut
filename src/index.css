@@ -3739,5 +3739,587 @@ h1 em, h2 em, .studio-banner em { font-family: Georgia, serif; font-weight: 400;
   }
 }
 
+/* ==========================================================================
+   CHOREOGRAPHER PORTAL STYLES
+   ========================================================================== */
 
+.choreo-hero-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #1e1b18 0%, #2b231d 50%, #1a1614 100%);
+  border: 1px solid rgba(235, 130, 60, 0.2);
+  border-radius: 16px;
+  padding: 32px;
+  color: #fff;
+  gap: 24px;
+  margin-bottom: 28px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 12px 32px rgba(26, 22, 20, 0.12);
+}
 
+.choreo-hero-card::after {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(circle, rgba(232, 59, 59, 0.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.choreo-hero-copy h2 {
+  font: 700 32px/1.1 'Space Grotesk', sans-serif;
+  letter-spacing: -0.05em;
+  margin: 6px 0 10px;
+}
+
+.choreo-hero-copy h2 em {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-weight: 400;
+  color: #f7cbbf;
+}
+
+.choreo-hero-copy p {
+  color: #b8b2a8;
+  font-size: 14px;
+  max-width: 520px;
+  line-height: 1.45;
+  margin: 0 0 14px;
+}
+
+.choreo-hero-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #d1cbc2;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.choreo-hero-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.choreo-create-btn {
+  background: linear-gradient(135deg, #e83b3b 0%, #d97706 100%) !important;
+  color: #fff !important;
+  border: 0 !important;
+  font-weight: 700 !important;
+  box-shadow: 0 6px 16px rgba(232, 59, 59, 0.3) !important;
+}
+
+.choreo-create-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(232, 59, 59, 0.4) !important;
+}
+
+.choreo-secondary-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.choreo-chip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 14px;
+  background: rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: #f3efe9;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.choreo-chip-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.choreo-chip-btn.share-icon-btn {
+  padding: 9px 11px;
+}
+
+/* Choreo KPI Grid */
+.choreo-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.choreo-kpi-card {
+  background: #fff;
+  border: 1px solid #dedbd3;
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  transition: all 0.2s ease;
+}
+
+.choreo-kpi-card:hover {
+  border-color: #c8c3b7;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.04);
+}
+
+/* Choreo Spotlight Card */
+.live-spotlight-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  color: #b45309;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.choreo-spotlight-card {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  background: #fff;
+  border: 1px solid #dedbd3;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+  margin-bottom: 32px;
+}
+
+.spotlight-media {
+  position: relative;
+  height: 100%;
+  min-height: 220px;
+  background: #201e1c;
+}
+
+.spotlight-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.spotlight-style-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(25, 25, 24, 0.85);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.spotlight-content {
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.spotlight-meta-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 12px;
+  color: #635f58;
+  margin-bottom: 8px;
+}
+
+.spotlight-meta-top span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.spotlight-price {
+  margin-left: auto;
+  font-weight: 700;
+  color: #e83b3b;
+  font-size: 14px;
+}
+
+.spotlight-content h4 {
+  font: 700 20px/1.2 'Space Grotesk', sans-serif;
+  letter-spacing: -0.03em;
+  margin: 0 0 8px;
+  color: #191918;
+}
+
+.spotlight-venue {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #524e47;
+  font-size: 13px;
+  margin: 0 0 16px;
+}
+
+.spotlight-enrollment {
+  margin-bottom: 18px;
+}
+
+.enrollment-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 6px;
+  color: #524e47;
+}
+
+.enrollment-labels strong {
+  color: #191918;
+}
+
+.enrollment-bar {
+  height: 7px;
+  background: #ece8df;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.enrollment-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #e83b3b, #d97706);
+  border-radius: 4px;
+}
+
+.spotlight-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.spotlight-btn {
+  padding: 10px 18px;
+  font-size: 12px;
+}
+
+.table-style-pill {
+  display: inline-block;
+  background: #f1ede4;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #5f5a52;
+  margin-top: 4px;
+}
+
+.table-action-btns-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.table-alert-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: #f4f0e6;
+  border: 1px solid #dedbd3;
+  color: #524e47;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.table-alert-btn:hover {
+  background: #ebe6d9;
+  color: #e83b3b;
+  border-color: #f7cbbf;
+}
+
+/* Choreographer Profile & Portfolio View */
+.choreo-profile-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 24px;
+  align-items: flex-start;
+  margin-top: 16px;
+}
+
+.choreo-profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.section-hint {
+  font-size: 12px;
+  color: #79746d;
+  margin: -6px 0 12px;
+}
+
+.style-chips-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.style-selector-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: #f4f0e6;
+  border: 1px solid #dedbd3;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #524e47;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.style-selector-chip:hover {
+  border-color: #c8c3b7;
+  background: #ece7db;
+}
+
+.style-selector-chip.selected {
+  background: #191918;
+  color: #fff;
+  border-color: #191918;
+}
+
+.save-portfolio-btn {
+  padding: 12px 24px;
+  font-size: 13px;
+}
+
+/* Right Column Live Dancer View Card */
+.choreo-preview-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: sticky;
+  top: 20px;
+}
+
+.preview-pane-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #79746d;
+}
+
+.choreo-public-card {
+  background: #fff;
+  border: 1px solid #dedbd3;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+.public-card-cover {
+  height: 90px;
+  background: linear-gradient(135deg, #1e1b18 0%, #e83b3b 100%);
+  position: relative;
+  padding: 0 20px;
+}
+
+.choreo-avatar-circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #191918;
+  color: #fff;
+  border: 3px solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 700 20px 'Space Grotesk', sans-serif;
+  position: absolute;
+  bottom: -24px;
+  left: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.public-card-body {
+  padding: 32px 20px 20px;
+}
+
+.public-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+
+.public-card-header h3 {
+  font: 700 18px 'Space Grotesk', sans-serif;
+  letter-spacing: -0.03em;
+  margin: 0;
+  color: #191918;
+}
+
+.badge-choreo {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.public-card-exp {
+  display: block;
+  font-size: 11px;
+  color: #79746d;
+  margin-bottom: 10px;
+}
+
+.public-card-bio {
+  font-size: 12px;
+  color: #4b463f;
+  line-height: 1.45;
+  margin: 0 0 12px;
+}
+
+.public-card-credentials {
+  background: #f7f4ed;
+  border-left: 3px solid #d97706;
+  padding: 6px 10px;
+  border-radius: 0 6px 6px 0;
+  margin-bottom: 14px;
+}
+
+.public-card-credentials small {
+  font-size: 11px;
+  color: #5f5a52;
+  font-weight: 500;
+}
+
+.public-card-styles {
+  margin-bottom: 14px;
+}
+
+.styles-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #79746d;
+  margin-bottom: 6px;
+}
+
+.styles-tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.style-tag-pill {
+  display: inline-block;
+  background: #ebe7de;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #3f3b37;
+}
+
+.public-card-links {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 12px;
+  border-top: 1px solid #eeebe3;
+}
+
+.public-link-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #524e47;
+  text-decoration: none;
+  padding: 6px 10px;
+  background: #f8f6f0;
+  border: 1px solid #dedbd3;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+}
+
+.public-link-chip:hover {
+  background: #ece8df;
+  color: #191918;
+}
+
+.public-link-chip.video-chip {
+  background: #fef2f2;
+  border-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.public-link-chip.video-chip:hover {
+  background: #fee2e2;
+}
+
+/* Responsive Choreo Layouts */
+@media (max-width: 900px) {
+  .choreo-kpi-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .choreo-spotlight-card {
+    grid-template-columns: 1fr;
+  }
+  .spotlight-media {
+    height: 180px;
+  }
+  .choreo-profile-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .choreo-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+  .choreo-hero-card {
+    padding: 24px;
+  }
+  .spotlight-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .spotlight-btn {
+    text-align: center;
+  }
+}
