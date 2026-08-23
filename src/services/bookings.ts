@@ -16,7 +16,18 @@ export async function getUserBookings(userId: string) {
     .neq('status', 'cancelled')
     .order('created_at', { ascending: false });
 
-  return { data: (data as Booking[] | null) ?? [], error };
+  const bookings = (data as Booking[] | null) ?? [];
+
+  // MOCK DATA FOR TESTING
+  bookings.push({
+    id: 9999,
+    event_id: 9999,
+    status: 'booked',
+    qr_code: null,
+    created_at: new Date().toISOString()
+  });
+
+  return { data: bookings, error };
 }
 
 export async function createBooking(userId: string, eventId: number) {

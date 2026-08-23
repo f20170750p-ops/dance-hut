@@ -4,6 +4,7 @@ import {
   CalendarDays,
   Check,
   Clock3,
+  Flame,
   MapPin,
   Search,
   SlidersHorizontal,
@@ -11,7 +12,9 @@ import {
 } from 'lucide-react';
 import type { Booking } from '../../services/bookings';
 import type { EventItem } from '../../services/events';
+import type { CountdownPhase } from '../../hooks/useClassCountdown';
 import { EventCard } from '../common/EventCard';
+import { CheckInCard } from '../common/CheckInCard';
 
 interface DiscoverTabProps {
   events: EventItem[];
@@ -23,6 +26,10 @@ interface DiscoverTabProps {
   userFirstName: string;
   greeting: string;
   formattedToday: string;
+  countdownPhase: CountdownPhase;
+  countdownLabel: string;
+  countdownEvent: EventItem | null;
+  countdownBookingId: number | null;
   onBook: (event: EventItem) => void;
   onToggleSave: (eventId: number) => void;
   onOpenEvent: (event: EventItem) => void;
@@ -40,6 +47,10 @@ export function DiscoverTab({
   userFirstName,
   greeting,
   formattedToday,
+  countdownPhase,
+  countdownLabel,
+  countdownEvent,
+  countdownBookingId,
   onBook,
   onToggleSave,
   onOpenEvent,
@@ -67,73 +78,82 @@ export function DiscoverTab({
 
   const styles = useMemo(() => [...new Set(events.map((event) => event.style))], [events]);
   const locations = useMemo(() => [...new Set(events.map((event) => event.location))], [events]);
-  const totalSpots = useMemo(() => events.reduce((sum, event) => sum + event.spots, 0), [events]);
-
-  const uniqueNeighborhoods = useMemo(() => {
-    const locs = [...new Set(events.map((e) => e.location))];
-    if (locs.length <= 2) return locs.join(' & ');
-    return `${locs.slice(0, 2).join(', ')} & more`;
-  }, [events]);
-
   const spotlightEvent = useMemo(() => {
     if (!events.length) return null;
     return events.find((e) => e.featured) || events.find((e) => e.spots > 0) || events[0];
   }, [events]);
 
-  const sparklineHeights = useMemo(() => {
-    if (!events.length) return [30, 45, 35, 60, 40, 75, 55];
-    return [35, 55, 40, 80, 60, 95, 70];
+  // Urgency: find the class with fewest spots (but > 0) for State B
+  const urgentEvent = useMemo(() => {
+    const available = events.filter((e) => e.spots > 0);
+    if (!available.length) return null;
+    return available.reduce((min, e) => (e.spots < min.spots ? e : min), available[0]);
   }, [events]);
+
+  const isQRActive = countdownPhase === 'checkin' || countdownPhase === 'in-progress';
 
   return (
     <>
-      <section className="hero-row">
-        <div>
-          <div className="eyebrow">
-            <span className="eyebrow-dot pulse" /> Live schedule · Bengaluru · {formattedToday}
-          </div>
-          <h2>
-            {userFirstName ? (
-              <>
-                {greeting}, <em>{userFirstName}.</em>
-                <br />
-                What's your rhythm today?
-              </>
+      {isQRActive && countdownEvent ? (
+        <CheckInCard
+          event={countdownEvent}
+          bookingId={countdownBookingId}
+          timeLabel={countdownLabel}
+          phase={countdownPhase}
+        />
+      ) : (
+        <section className="hero-row">
+          <div>
+            <div className="eyebrow">
+              <span className="eyebrow-dot pulse" /> Live schedule · Bengaluru · {formattedToday}
+            </div>
+            <h2>
+              {userFirstName ? (
+                <>
+                  {greeting}, <em>{userFirstName}.</em>
+                  <br />
+                  What's your rhythm today?
+                </>
+              ) : (
+                <>
+                  {greeting}.<br />
+                  Find your <em>next rhythm.</em>
+                </>
+              )}
+            </h2>
+            {countdownPhase === 'countdown' && countdownEvent ? (
+              <div className="hero-countdown">
+                <Clock3 size={15} />
+                <span>
+                  <strong>{countdownEvent.title}</strong> in{' '}
+                  <span className="hero-countdown-time">{countdownLabel}</span>
+                  {' — '}{countdownEvent.time} · {countdownEvent.studio}
+                </span>
+                <button type="button" className="text-btn" onClick={onViewTicket}>
+                  View ticket <ArrowRight size={14} />
+                </button>
+              </div>
+            ) : urgentEvent ? (
+              <button
+                type="button"
+                className="hero-urgency"
+                onClick={() => onOpenEvent(urgentEvent)}
+              >
+                <Flame size={15} />
+                <span>
+                  <strong>{urgentEvent.title}</strong> starts at {urgentEvent.time}
+                  {' — only '}<strong>{urgentEvent.spots} spots left</strong>
+                </span>
+                <span className="hero-urgency-cta">Book now <ArrowRight size={13} /></span>
+              </button>
             ) : (
-              <>
-                {greeting}.<br />
-                Find your <em>next rhythm.</em>
-              </>
+              <p className="hero-sub">
+                Discover the best dance experiences in Bengaluru, curated for your kind of movement.
+              </p>
             )}
-          </h2>
-          <p className="hero-sub">
-            {events.length > 0
-              ? `${events.length} workshops live across ${uniqueNeighborhoods} • ${totalSpots} open spots today`
-              : 'Discover the best dance experiences in Bengaluru, curated for your kind of movement.'}
-          </p>
-        </div>
-        <div className="hero-aside">
-          <div className="stat-card">
-            <div className="stat-value-group">
-              <strong>{events.length}</strong>
-              <span className="stat-badge">Live</span>
-            </div>
-            <span>upcoming sessions</span>
           </div>
-          <div className="stat-card">
-            <div className="stat-value-group">
-              <strong>{totalSpots}</strong>
-              <span className="stat-sub-label">spots</span>
-            </div>
-            <span>open for booking</span>
-          </div>
-          <div className="sparkline" title="Live session capacity trend">
-            {sparklineHeights.map((h, i) => (
-              <span key={i} style={{ height: `${h}%` }} />
-            ))}
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {spotlightEvent && (
         <section className="sponsored-spotlight-banner">
