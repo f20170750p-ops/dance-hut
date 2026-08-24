@@ -202,6 +202,8 @@ function App() {
         } catch {
           // ignore
         }
+        setRole(effectiveRole);
+        setActiveTab(effectiveRole === 'dancer' ? 'Discover' : 'Dashboard');
         setProfile({
           id: session.user.id,
           role: effectiveRole,
@@ -212,6 +214,8 @@ function App() {
           configured_roles: configuredRoles,
         });
       } else {
+        setRole(effectiveRole);
+        setActiveTab(effectiveRole === 'dancer' ? 'Discover' : 'Dashboard');
         setProfile(existingProfile);
         try {
           localStorage.setItem('dancehut.activeRole', effectiveRole);
@@ -850,10 +854,24 @@ function App() {
           onUpdate={(updated) => {
             setProfile(updated);
             setRole(updated.role);
+            try {
+              localStorage.setItem('dancehut.activeRole', updated.role);
+            } catch {
+              // ignore
+            }
+            setActiveTab(updated.role === 'dancer' ? 'Discover' : 'Dashboard');
           }}
           onNavigateTab={setActiveTab}
           onSignOut={() => {
             setShowProfileModal(false);
+            try {
+              localStorage.removeItem('dancehut.activeRole');
+              localStorage.removeItem('dancehut.pendingRole');
+            } catch {
+              // ignore
+            }
+            setRole('dancer');
+            setActiveTab('Discover');
             signOut();
           }}
         />

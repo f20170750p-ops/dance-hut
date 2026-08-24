@@ -2,7 +2,9 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { ArrowRight, Building2, Sparkles, X } from 'lucide-react';
 import {
+  getProfile,
   signInWithEmailPassword,
+  signOut,
   signUpWithEmailPassword,
   type UserRole,
 } from '../../services/auth';
@@ -50,6 +52,7 @@ export function EmailAuthModal({ role, onClose }: EmailAuthModalProps) {
       }
 
       localStorage.setItem('dancehut.pendingRole', role);
+      localStorage.setItem('dancehut.activeRole', role);
       if (trimmedName) localStorage.setItem('dancehut.pendingDisplayName', trimmedName);
       if (trimmedStudio) localStorage.setItem('dancehut.pendingStudioName', trimmedStudio);
       if (trimmedChoreo) localStorage.setItem('dancehut.pendingChoreoName', trimmedChoreo);
@@ -63,12 +66,49 @@ export function EmailAuthModal({ role, onClose }: EmailAuthModalProps) {
           role
         )
       : await signInWithEmailPassword(normalizedEmail, password);
-    setLoading(false);
 
     if (result.error) {
+      setLoading(false);
       setError(result.error.message);
       return;
     }
+
+    if (authMode === 'sign-in' && result.data?.user) {
+      // 2-Way Persona Verification Check
+      const { data: userProfile } = await getProfile(result.data.user.id);
+      const configuredRoles: UserRole[] = userProfile?.configured_roles ||
+        (result.data.user.user_metadata?.configured_roles as UserRole[] | undefined) ||
+        (userProfile?.role ? [userProfile.role] : ['dancer']);
+      const studioName = userProfile?.studio_name || result.data.user.user_metadata?.studio_name;
+      const choreoName = userProfile?.choreo_name || result.data.user.user_metadata?.choreo_name;
+
+      const hasStudio = Boolean(studioName && studioName.trim().length > 0) || configuredRoles.includes('studio');
+      const hasChoreo = Boolean(choreoName && choreoName.trim().length > 0) || configuredRoles.includes('choreographer');
+
+      if (role === 'studio' && !hasStudio) {
+        await signOut();
+        setLoading(false);
+        setError('No Studio profile registered with this email account. Please switch to the Sign up tab to register your studio, or select "I\'m a dancer" on the welcome screen to sign in as a dancer.');
+        return;
+      }
+
+      if (role === 'choreographer' && !hasChoreo) {
+        await signOut();
+        setLoading(false);
+        setError('No Choreographer profile registered with this email account. Please switch to the Sign up tab to register your artist profile, or select "I\'m a dancer" on the welcome screen to sign in as a dancer.');
+        return;
+      }
+
+      // Validated: Store active role explicitly matching the sign-in selection
+      try {
+        localStorage.setItem('dancehut.activeRole', role);
+        localStorage.setItem('dancehut.pendingRole', role);
+      } catch {
+        // ignore
+      }
+    }
+
+    setLoading(false);
 
     if (authMode === 'sign-up' && !result.data.session) {
       setSuccessMessage('Account created. Check your email to confirm your account, then sign in.');
