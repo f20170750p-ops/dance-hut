@@ -1307,16 +1307,26 @@ h1 em, h2 em, .studio-banner em { font-family: Georgia, serif; font-weight: 400;
 
 /* Mobile Responsive Adjustments for Messages Page */
 @media (max-width: 768px) {
+  .messages-page-view .tab-heading {
+    margin-bottom: 12px;
+  }
   .messages-layout-card {
     grid-template-columns: 1fr;
-    height: calc(100vh - 160px);
+    height: calc(100dvh - 165px);
     max-height: none;
+    border-radius: 12px;
   }
   .messages-inbox-sidebar.hide-mobile {
     display: none;
   }
   .messages-chat-room.hide-mobile {
     display: none;
+  }
+  .chat-header-bar {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: #ffffff;
   }
   .chat-back-mobile {
     display: flex;

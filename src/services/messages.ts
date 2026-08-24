@@ -249,6 +249,14 @@ export async function getConversations(userId?: string): Promise<{ data: Convers
       };
     });
 
+    const localConvs = getLocalConversations();
+    const existingIds = new Set(conversations.map((c) => c.id));
+    for (const local of localConvs) {
+      if (!existingIds.has(local.id)) {
+        conversations.push(local);
+      }
+    }
+
     return { data: conversations, error: null };
   } catch (err: any) {
     return { data: getLocalConversations(), error: null };
