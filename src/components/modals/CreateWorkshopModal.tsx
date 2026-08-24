@@ -33,7 +33,25 @@ const PRESET_IMAGES = [
   { id: 'rehearsal', label: 'Studio Rehearsal', url: 'https://images.pexels.com/photos/3622614/pexels-photo-3622614.jpeg?auto=compress&cs=tinysrgb&w=900' },
 ];
 
-const STUDIO_VENUES = [
+const VERIFIED_NEIGHBOURHOODS = [
+  'Koramangala 4th Block',
+  'Koramangala 5th Block',
+  'Indiranagar (100ft Road)',
+  'Indiranagar (12th Main)',
+  'HSR Layout Sector 2',
+  'HSR Layout Sector 4',
+  'Church Street (MG Road)',
+  'Jayanagar 4th Block',
+  'Whitefield (ITPB Main Rd)',
+  'Malleshwaram 8th Cross',
+  'JP Nagar 2nd Phase',
+  'Bellandur Outer Ring Rd',
+  'Wilson Garden',
+  'Kalyan Nagar (HRBR Layout)',
+  'Other / Custom Locality',
+];
+
+const PARTNER_VENUES = [
   { name: 'Step & Groove Studio', area: 'Koramangala 4th Block' },
   { name: 'Lourd Vijay Dance Studio', area: 'Indiranagar (100ft Road)' },
   { name: 'Left Foot Right Danceworks', area: 'HSR Layout Sector 2' },
@@ -61,8 +79,9 @@ export function CreateWorkshopModal({
   const [style, setStyle] = useState(DANCE_STYLE_OPTIONS[0]);
   const [date, setDate] = useState(defaultDate);
   const [time, setTime] = useState('18:00 - 19:30');
-  const [selectedStudioIndex, setSelectedStudioIndex] = useState(0);
-  const [customStudioName, setCustomStudioName] = useState('');
+  const [selectedPartnerIndex, setSelectedPartnerIndex] = useState(0);
+  const [selectedNeighbourhood, setSelectedNeighbourhood] = useState(VERIFIED_NEIGHBOURHOODS[0]);
+  const [customStudioName, setCustomStudioName] = useState(isChoreo ? '' : studioName || '');
   const [customLocation, setCustomLocation] = useState('');
   const [host, setHost] = useState(isChoreo ? studioName || '' : '');
   const [price, setPrice] = useState('850');
@@ -74,7 +93,8 @@ export function CreateWorkshopModal({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const isCustomVenue = selectedStudioIndex === STUDIO_VENUES.length - 1;
+  const isCustomPartner = isChoreo && selectedPartnerIndex === PARTNER_VENUES.length - 1;
+  const isCustomLoc = selectedNeighbourhood === 'Other / Custom Locality';
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -90,13 +110,21 @@ export function CreateWorkshopModal({
     setLoading(true);
     setError('');
 
-    const venue = STUDIO_VENUES[selectedStudioIndex];
-    const finalStudio = isCustomVenue
-      ? customStudioName.trim() || 'Dance Studio'
-      : venue.name;
-    const finalLocation = isCustomVenue
-      ? customLocation.trim() || 'Bengaluru'
-      : venue.area;
+    let finalStudio = '';
+    let finalLocation = '';
+
+    if (!isChoreo) {
+      // Studio role: Locked to registered studio name
+      finalStudio = studioName.trim() || customStudioName.trim() || 'Dance Studio';
+      finalLocation = isCustomLoc
+        ? customLocation.trim() || 'Bengaluru'
+        : selectedNeighbourhood;
+    } else {
+      // Choreo role
+      const partner = PARTNER_VENUES[selectedPartnerIndex];
+      finalStudio = isCustomPartner ? customStudioName.trim() || 'Dance Studio' : partner.name;
+      finalLocation = isCustomPartner ? customLocation.trim() || 'Bengaluru' : partner.area;
+    }
 
     const fullTitle =
       isChoreo && songTrack.trim()
@@ -254,42 +282,85 @@ export function CreateWorkshopModal({
                 />
               </label>
 
-              <label className="field-group full-width">
-                <span>Dance Studio Venue *</span>
-                <select
-                  value={selectedStudioIndex}
-                  onChange={(e) => setSelectedStudioIndex(Number(e.target.value))}
-                >
-                  {STUDIO_VENUES.map((ven, idx) => (
-                    <option key={ven.name} value={idx}>
-                      {ven.name} ({ven.area})
-                    </option>
-                  ))}
-                </select>
-              </label>
-
-              {isCustomVenue && (
+              {!isChoreo ? (
                 <>
-                  <label className="field-group">
-                    <span>Studio / Space Name</span>
+                  <label className="field-group full-width">
+                    <span>Registered Studio Venue</span>
                     <input
                       type="text"
-                      placeholder="e.g. Dance District Bangalore"
-                      value={customStudioName}
-                      onChange={(e) => setCustomStudioName(e.target.value)}
-                      required
+                      value={studioName || 'Dance Studio'}
+                      disabled
+                      style={{ background: '#ebe8e1', color: '#4a4640', cursor: 'not-allowed', fontWeight: 600 }}
                     />
                   </label>
-                  <label className="field-group">
-                    <span>Neighborhood / Area</span>
-                    <input
-                      type="text"
-                      placeholder="e.g. Indiranagar 12th Main"
-                      value={customLocation}
-                      onChange={(e) => setCustomLocation(e.target.value)}
-                      required
-                    />
+
+                  <label className="field-group full-width">
+                    <span>Verified Neighbourhood / City Zone *</span>
+                    <select
+                      value={selectedNeighbourhood}
+                      onChange={(e) => setSelectedNeighbourhood(e.target.value)}
+                    >
+                      {VERIFIED_NEIGHBOURHOODS.map((nh) => (
+                        <option key={nh} value={nh}>
+                          {nh}
+                        </option>
+                      ))}
+                    </select>
                   </label>
+
+                  {isCustomLoc && (
+                    <label className="field-group full-width">
+                      <span>Specify Custom Locality / Address *</span>
+                      <input
+                        type="text"
+                        placeholder="e.g. Sarjapur Main Road, Bengaluru"
+                        value={customLocation}
+                        onChange={(e) => setCustomLocation(e.target.value)}
+                        required
+                      />
+                    </label>
+                  )}
+                </>
+              ) : (
+                <>
+                  <label className="field-group full-width">
+                    <span>Partner Dance Studio Venue *</span>
+                    <select
+                      value={selectedPartnerIndex}
+                      onChange={(e) => setSelectedPartnerIndex(Number(e.target.value))}
+                    >
+                      {PARTNER_VENUES.map((ven, idx) => (
+                        <option key={ven.name} value={idx}>
+                          {ven.name} ({ven.area})
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+
+                  {isCustomPartner && (
+                    <>
+                      <label className="field-group">
+                        <span>Custom Studio / Space Name *</span>
+                        <input
+                          type="text"
+                          placeholder="e.g. Dance District Bangalore"
+                          value={customStudioName}
+                          onChange={(e) => setCustomStudioName(e.target.value)}
+                          required
+                        />
+                      </label>
+                      <label className="field-group">
+                        <span>Neighborhood / Area *</span>
+                        <input
+                          type="text"
+                          placeholder="e.g. Indiranagar 12th Main"
+                          value={customLocation}
+                          onChange={(e) => setCustomLocation(e.target.value)}
+                          required
+                        />
+                      </label>
+                    </>
+                  )}
                 </>
               )}
             </div>
