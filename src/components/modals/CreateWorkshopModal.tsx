@@ -26,11 +26,11 @@ interface CreateWorkshopModalProps {
 }
 
 const PRESET_IMAGES = [
-  { label: 'Urban Hip Hop', url: 'https://images.pexels.com/photos/1701194/pexels-photo-1701194.jpeg?auto=compress&cs=tinysrgb&w=900' },
-  { label: 'Contemporary Flow', url: 'https://images.pexels.com/photos/3775127/pexels-photo-3775127.jpeg?auto=compress&cs=tinysrgb&w=900' },
-  { label: 'Heels & Grooves', url: 'https://images.pexels.com/photos/2820884/pexels-photo-2820884.jpeg?auto=compress&cs=tinysrgb&w=900' },
-  { label: 'Afrobeats Vibe', url: 'https://images.pexels.com/photos/2188012/pexels-photo-2188012.jpeg?auto=compress&cs=tinysrgb&w=900' },
-  { label: 'Studio Rehearsal', url: 'https://images.pexels.com/photos/3775127/pexels-photo-3775127.jpeg?auto=compress&cs=tinysrgb&w=900' },
+  { id: 'hiphop', label: 'Urban Hip Hop', url: 'https://images.pexels.com/photos/1701194/pexels-photo-1701194.jpeg?auto=compress&cs=tinysrgb&w=900' },
+  { id: 'contemporary', label: 'Contemporary Flow', url: 'https://images.pexels.com/photos/3775127/pexels-photo-3775127.jpeg?auto=compress&cs=tinysrgb&w=900' },
+  { id: 'heels', label: 'Heels & Grooves', url: 'https://images.pexels.com/photos/2820884/pexels-photo-2820884.jpeg?auto=compress&cs=tinysrgb&w=900' },
+  { id: 'afro', label: 'Afrobeats Vibe', url: 'https://images.pexels.com/photos/2188012/pexels-photo-2188012.jpeg?auto=compress&cs=tinysrgb&w=900' },
+  { id: 'rehearsal', label: 'Studio Rehearsal', url: 'https://images.pexels.com/photos/3622614/pexels-photo-3622614.jpeg?auto=compress&cs=tinysrgb&w=900' },
 ];
 
 const STUDIO_VENUES = [
@@ -67,6 +67,7 @@ export function CreateWorkshopModal({
   const [host, setHost] = useState(isChoreo ? studioName || '' : '');
   const [price, setPrice] = useState('850');
   const [spots, setSpots] = useState(25);
+  const [selectedPresetId, setSelectedPresetId] = useState<string>(PRESET_IMAGES[0].id);
   const [selectedImage, setSelectedImage] = useState(PRESET_IMAGES[0].url);
   const [customImageUrl, setCustomImageUrl] = useState('');
   const [featured, setFeatured] = useState(false);
@@ -334,11 +335,12 @@ export function CreateWorkshopModal({
               {PRESET_IMAGES.map((img) => (
                 <button
                   type="button"
-                  key={img.label}
+                  key={img.id}
                   className={`poster-preset-card ${
-                    selectedImage === img.url && !customImageUrl ? 'selected' : ''
+                    selectedPresetId === img.id && !customImageUrl ? 'selected' : ''
                   }`}
                   onClick={() => {
+                    setSelectedPresetId(img.id);
                     setSelectedImage(img.url);
                     setCustomImageUrl('');
                   }}
