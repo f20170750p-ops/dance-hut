@@ -42,8 +42,14 @@ export function QRScannerModal({
 
     async function startCamera() {
       try {
+        const isHttpNetwork = window.location.protocol === 'http:' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+        if (isHttpNetwork) {
+          setCameraError('Mobile browsers require HTTPS to stream live camera over network IP. Please enter or tap Ticket ID below.');
+          return;
+        }
+
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-          setCameraError('Camera access is not supported on this browser.');
+          setCameraError('Camera API is not supported on this browser context. Please enter Ticket ID manually.');
           return;
         }
 
@@ -65,8 +71,8 @@ export function QRScannerModal({
         if (active) {
           setCameraError(
             err.message?.includes('Permission')
-              ? 'Camera permission was denied. You can still enter the Ticket ID manually.'
-              : 'Unable to access camera. Please enter Ticket ID manually.'
+              ? 'Camera permission was denied. You can enter the Ticket ID manually below.'
+              : 'Unable to access live camera stream. Please enter Ticket ID manually below.'
           );
         }
       }
