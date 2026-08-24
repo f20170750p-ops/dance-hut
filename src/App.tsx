@@ -172,13 +172,21 @@ function App() {
     syncUserProfile();
   }, [session, role]);
 
-  const currentUserName = useMemo(
-    () => getDisplayName(profile, session?.user ?? null),
-    [profile, session?.user]
-  );
-  const currentUserInitials = useMemo(() => getInitials(currentUserName), [currentUserName]);
   const currentUserRole =
     profile?.role ?? (session?.user?.user_metadata?.role as UserRole | undefined) ?? role;
+  const currentUserName = useMemo(
+    () => getDisplayName(profile, session?.user ?? null, currentUserRole),
+    [profile, session?.user, currentUserRole]
+  );
+  const studioDisplayName = useMemo(
+    () => profile?.studio_name || (session?.user?.user_metadata?.studio_name as string | undefined) || currentUserName || 'Dance Studio',
+    [profile, session?.user, currentUserName]
+  );
+  const choreoDisplayName = useMemo(
+    () => profile?.choreo_name || (session?.user?.user_metadata?.choreo_name as string | undefined) || currentUserName || 'Choreographer',
+    [profile, session?.user, currentUserName]
+  );
+  const currentUserInitials = useMemo(() => getInitials(currentUserName), [currentUserName]);
   const currentUserRoleBadge = useMemo(() => getRoleBadge(currentUserRole), [currentUserRole]);
   const userFirstName = useMemo(() => {
     if (!currentUserName || currentUserName === 'Dancer') return '';
@@ -511,7 +519,7 @@ function App() {
           {/* Studio Tabs */}
           {isStudio && activeTab === 'Dashboard' && (
             <StudioOverviewTab
-              studioName={currentUserName}
+              studioName={studioDisplayName}
               events={events}
               bookings={bookings}
               onOpenCreateWorkshop={() => setShowCreateWorkshopModal(true)}
@@ -558,7 +566,7 @@ function App() {
           {/* Choreographer Tabs */}
           {isChoreo && activeTab === 'Dashboard' && (
             <ChoreoOverviewTab
-              choreoName={currentUserName}
+              choreoName={choreoDisplayName}
               events={events}
               onOpenCreateWorkshop={() => setShowCreateWorkshopModal(true)}
               onOpenRoster={(ev) => setSelectedRosterEvent(ev)}
@@ -586,9 +594,9 @@ function App() {
           {isChoreo && activeTab === 'My Portfolio' && (
             <ChoreoProfileTab
               userId={session?.user?.id || 'choreo-user'}
-              currentUserName={currentUserName}
+              currentUserName={choreoDisplayName}
               onProfileUpdated={(newName) => {
-                if (profile) setProfile({ ...profile, display_name: newName });
+                if (profile) setProfile({ ...profile, choreo_name: newName, display_name: newName });
               }}
             />
           )}
@@ -651,7 +659,7 @@ function App() {
       {/* Studio & Choreographer Flow Modals */}
       {showCreateWorkshopModal && (
         <CreateWorkshopModal
-          studioName={currentUserName}
+          studioName={isStudio ? studioDisplayName : choreoDisplayName}
           creatorRole={currentUserRole}
           onClose={() => setShowCreateWorkshopModal(false)}
           onEventCreated={handleEventCreated}
