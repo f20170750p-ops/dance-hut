@@ -51,7 +51,13 @@ import { StudioBroadcastModal } from './components/modals/StudioBroadcastModal';
 import { CitySelectorModal } from './components/modals/CitySelectorModal';
 
 function App() {
-  const [role, setRole] = useState<UserRole>('dancer');
+  const [role, setRole] = useState<UserRole>(() => {
+    try {
+      return (localStorage.getItem('dancehut.activeRole') as UserRole) || 'dancer';
+    } catch {
+      return 'dancer';
+    }
+  });
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
@@ -68,7 +74,14 @@ function App() {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [eventsLoading, setEventsLoading] = useState(true);
   const [eventsError, setEventsError] = useState('');
-  const [activeTab, setActiveTab] = useState('Discover');
+  const [activeTab, setActiveTab] = useState<string>(() => {
+    try {
+      const savedRole = localStorage.getItem('dancehut.activeRole');
+      return savedRole === 'studio' || savedRole === 'choreographer' ? 'Dashboard' : 'Discover';
+    } catch {
+      return 'Discover';
+    }
+  });
   const [selectedEvent, setSelectedEvent] = useState<EventItem | null>(null);
   const [bookedEvent, setBookedEvent] = useState<EventItem | null>(null);
   const [activeBooking, setActiveBooking] = useState<Booking | null>(null);
@@ -135,6 +148,11 @@ function App() {
         await saveProfile(session.user.id, effectiveRole, session.user.email ?? '', effectiveName);
         if (pendingRole) localStorage.removeItem('dancehut.pendingRole');
         if (pendingName) localStorage.removeItem('dancehut.pendingDisplayName');
+        try {
+          localStorage.setItem('dancehut.activeRole', effectiveRole);
+        } catch {
+          // ignore
+        }
         setProfile({
           id: session.user.id,
           role: effectiveRole,
@@ -143,6 +161,11 @@ function App() {
         });
       } else {
         setProfile(existingProfile);
+        try {
+          localStorage.setItem('dancehut.activeRole', existingProfile.role);
+        } catch {
+          // ignore
+        }
       }
     };
 
@@ -164,12 +187,18 @@ function App() {
 
   // Tab synchronization when switching roles
   useEffect(() => {
+    try {
+      localStorage.setItem('dancehut.activeRole', currentUserRole);
+    } catch {
+      // ignore
+    }
+
     if (currentUserRole === 'studio') {
-      if (['Calendar', 'My bookings', 'Saved', 'My Classes', 'My Portfolio'].includes(activeTab)) {
+      if (['Discover', 'Calendar', 'My bookings', 'Saved', 'My Classes', 'My Portfolio'].includes(activeTab)) {
         setActiveTab('Dashboard');
       }
     } else if (currentUserRole === 'choreographer') {
-      if (['Calendar', 'My bookings', 'Saved', 'My Workshops', 'Studio Profile'].includes(activeTab)) {
+      if (['Discover', 'Calendar', 'My bookings', 'Saved', 'My Workshops', 'Studio Profile'].includes(activeTab)) {
         setActiveTab('Dashboard');
       }
     } else {
