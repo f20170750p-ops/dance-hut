@@ -22,6 +22,7 @@ import {
   subscribeToNotifications,
   type NotificationItem,
 } from './services/notifications';
+import { deleteStudioEvent } from './services/studio';
 import { isSupabaseConfigured } from './services/supabase';
 import { useClassCountdown } from './hooks/useClassCountdown';
 
@@ -351,8 +352,13 @@ function App() {
     setTimeout(() => setStudioToastMsg(null), 4000);
   };
 
-  const handleDeleteWorkshop = (eventId: number) => {
+  const handleDeleteWorkshop = async (eventId: number) => {
     setEvents((prev) => prev.filter((e) => e.id !== eventId));
+    try {
+      await deleteStudioEvent(eventId);
+    } catch (err) {
+      console.warn('Error deleting studio event:', err);
+    }
     setStudioToastMsg('Workshop has been cancelled and removed.');
     setTimeout(() => setStudioToastMsg(null), 4000);
   };
