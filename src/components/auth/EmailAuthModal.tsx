@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { ArrowRight, X } from 'lucide-react';
+import { ArrowRight, Building2, Sparkles, X } from 'lucide-react';
 import {
   signInWithEmailPassword,
   signUpWithEmailPassword,
@@ -14,12 +14,18 @@ interface EmailAuthModalProps {
 
 export function EmailAuthModal({ role, onClose }: EmailAuthModalProps) {
   const [fullName, setFullName] = useState('');
+  const [studioName, setStudioName] = useState('');
+  const [choreoName, setChoreoName] = useState('');
+  const [locality, setLocality] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [authMode, setAuthMode] = useState<'sign-in' | 'sign-up'>('sign-in');
   const [successMessage, setSuccessMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const isStudio = role === 'studio';
+  const isChoreo = role === 'choreographer';
 
   const submitPasswordAuth = async (event: FormEvent) => {
     event.preventDefault();
@@ -28,16 +34,34 @@ export function EmailAuthModal({ role, onClose }: EmailAuthModalProps) {
     setLoading(true);
     const normalizedEmail = email.trim().toLowerCase();
     const trimmedName = fullName.trim();
+    const trimmedStudio = studioName.trim();
+    const trimmedChoreo = choreoName.trim();
 
     if (authMode === 'sign-up') {
-      localStorage.setItem('dancehut.pendingRole', role);
-      if (trimmedName) {
-        localStorage.setItem('dancehut.pendingDisplayName', trimmedName);
+      if (isStudio && !trimmedStudio) {
+        setError('Please provide your Studio Brand Name.');
+        setLoading(false);
+        return;
       }
+      if (isChoreo && !trimmedChoreo) {
+        setError('Please provide your Stage / Artist Name.');
+        setLoading(false);
+        return;
+      }
+
+      localStorage.setItem('dancehut.pendingRole', role);
+      if (trimmedName) localStorage.setItem('dancehut.pendingDisplayName', trimmedName);
+      if (trimmedStudio) localStorage.setItem('dancehut.pendingStudioName', trimmedStudio);
+      if (trimmedChoreo) localStorage.setItem('dancehut.pendingChoreoName', trimmedChoreo);
     }
 
     const result = authMode === 'sign-up'
-      ? await signUpWithEmailPassword(normalizedEmail, password, trimmedName, role)
+      ? await signUpWithEmailPassword(
+          normalizedEmail,
+          password,
+          trimmedName || (isStudio ? trimmedStudio : trimmedChoreo),
+          role
+        )
       : await signInWithEmailPassword(normalizedEmail, password);
     setLoading(false);
 
@@ -58,7 +82,17 @@ export function EmailAuthModal({ role, onClose }: EmailAuthModalProps) {
           <X size={18} />
         </button>
         <span className="auth-kicker">
-          {authMode === 'sign-up' ? 'Create your account' : 'Welcome to dancehut'}
+          {authMode === 'sign-up'
+            ? isStudio
+              ? 'Studio Partner Registration'
+              : isChoreo
+              ? 'Choreographer Registration'
+              : 'Create your account'
+            : isStudio
+            ? 'Studio Management Portal'
+            : isChoreo
+            ? 'Choreographer Suite'
+            : 'Welcome to dancehut'}
         </span>
         <h2>{authMode === 'sign-up' ? 'Let’s get you moving.' : 'Welcome back.'}</h2>
         <p>Continue as a {role} with your email address.</p>
@@ -80,18 +114,85 @@ export function EmailAuthModal({ role, onClose }: EmailAuthModalProps) {
         </div>
         <form onSubmit={submitPasswordAuth}>
           {authMode === 'sign-up' && (
-            <label className="auth-field">
-              Full name
-              <input
-                type="text"
-                value={fullName}
-                onChange={(event) => setFullName(event.target.value)}
-                placeholder="e.g. Maya Sharma"
-                autoFocus
-                required
-              />
-            </label>
+            <>
+              {isStudio && (
+                <>
+                  <label className="auth-field">
+                    Studio / Venue Brand Name *
+                    <input
+                      type="text"
+                      value={studioName}
+                      onChange={(event) => setStudioName(event.target.value)}
+                      placeholder="e.g. The Movement House"
+                      autoFocus
+                      required
+                    />
+                  </label>
+                  <label className="auth-field">
+                    Owner / Manager Name *
+                    <input
+                      type="text"
+                      value={fullName}
+                      onChange={(event) => setFullName(event.target.value)}
+                      placeholder="e.g. Rutuvi Narang"
+                      required
+                    />
+                  </label>
+                  <label className="auth-field">
+                    Primary Studio Locality *
+                    <input
+                      type="text"
+                      value={locality}
+                      onChange={(event) => setLocality(event.target.value)}
+                      placeholder="e.g. Koramangala, Bengaluru"
+                      required
+                    />
+                  </label>
+                </>
+              )}
+
+              {isChoreo && (
+                <>
+                  <label className="auth-field">
+                    Artist / Stage Name *
+                    <input
+                      type="text"
+                      value={choreoName}
+                      onChange={(event) => setChoreoName(event.target.value)}
+                      placeholder="e.g. Aria Chen"
+                      autoFocus
+                      required
+                    />
+                  </label>
+                  <label className="auth-field">
+                    Full / Real Name *
+                    <input
+                      type="text"
+                      value={fullName}
+                      onChange={(event) => setFullName(event.target.value)}
+                      placeholder="e.g. Rutuvi Narang"
+                      required
+                    />
+                  </label>
+                </>
+              )}
+
+              {!isStudio && !isChoreo && (
+                <label className="auth-field">
+                  Full name
+                  <input
+                    type="text"
+                    value={fullName}
+                    onChange={(event) => setFullName(event.target.value)}
+                    placeholder="e.g. Maya Sharma"
+                    autoFocus
+                    required
+                  />
+                </label>
+              )}
+            </>
           )}
+
           <label className="auth-field">
             Email address
             <input

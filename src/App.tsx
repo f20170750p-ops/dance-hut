@@ -50,6 +50,7 @@ import { AttendeeRosterModal } from './components/modals/AttendeeRosterModal';
 import { QRScannerModal } from './components/modals/QRScannerModal';
 import { StudioBroadcastModal } from './components/modals/StudioBroadcastModal';
 import { CitySelectorModal } from './components/modals/CitySelectorModal';
+import { RoleOnboardingModal } from './components/modals/RoleOnboardingModal';
 
 function App() {
   const [role, setRole] = useState<UserRole>(() => {
@@ -61,6 +62,7 @@ function App() {
   });
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [onboardingRole, setOnboardingRole] = useState<'studio' | 'choreographer' | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showCitySelector, setShowCitySelector] = useState(false);
@@ -133,22 +135,68 @@ function App() {
     const syncUserProfile = async () => {
       const pendingRole = localStorage.getItem('dancehut.pendingRole') as UserRole | null;
       const pendingName = localStorage.getItem('dancehut.pendingDisplayName');
+      const pendingStudioName = localStorage.getItem('dancehut.pendingStudioName');
+      const pendingChoreoName = localStorage.getItem('dancehut.pendingChoreoName');
       const { data: existingProfile } = await getProfile(session.user.id);
 
-      const effectiveRole = (pendingRole ||
-        existingProfile?.role ||
-        (session.user.user_metadata?.role as UserRole | undefined) ||
-        role) as UserRole;
-      const effectiveName =
+      const targetRole: UserRole = pendingRole || role;
+      let effectiveRole: UserRole = existingProfile?.role || 'dancer';
+      let effectiveName =
         pendingName ||
         existingProfile?.display_name ||
         (session.user.user_metadata?.display_name as string | undefined) ||
         null;
+      let effectiveStudioName =
+        pendingStudioName ||
+        existingProfile?.studio_name ||
+        (session.user.user_metadata?.studio_name as string | undefined) ||
+        null;
+      let effectiveChoreoName =
+        pendingChoreoName ||
+        existingProfile?.choreo_name ||
+        (session.user.user_metadata?.choreo_name as string | undefined) ||
+        null;
+      let configuredRoles: UserRole[] =
+        existingProfile?.configured_roles || (existingProfile?.role ? [existingProfile.role] : ['dancer']);
 
-      if (!existingProfile || pendingRole || pendingName) {
-        await saveProfile(session.user.id, effectiveRole, session.user.email ?? '', effectiveName);
+      // 2-Way Check: Gating unconfigured Studio or Choreographer access
+      if (targetRole === 'studio') {
+        const hasStudioProfile = Boolean(effectiveStudioName && effectiveStudioName.trim().length > 0) || configuredRoles.includes('studio');
+        if (hasStudioProfile) {
+          effectiveRole = 'studio';
+        } else {
+          setOnboardingRole('studio');
+          effectiveRole = 'dancer';
+        }
+      } else if (targetRole === 'choreographer') {
+        const hasChoreoProfile = Boolean(effectiveChoreoName && effectiveChoreoName.trim().length > 0) || configuredRoles.includes('choreographer');
+        if (hasChoreoProfile) {
+          effectiveRole = 'choreographer';
+        } else {
+          setOnboardingRole('choreographer');
+          effectiveRole = 'dancer';
+        }
+      } else {
+        effectiveRole = 'dancer';
+      }
+
+      if (effectiveStudioName) configuredRoles = Array.from(new Set([...configuredRoles, 'studio' as UserRole]));
+      if (effectiveChoreoName) configuredRoles = Array.from(new Set([...configuredRoles, 'choreographer' as UserRole]));
+
+      if (!existingProfile || pendingRole || pendingName || pendingStudioName || pendingChoreoName) {
+        await saveProfile(
+          session.user.id,
+          effectiveRole,
+          session.user.email ?? '',
+          effectiveName,
+          effectiveStudioName,
+          effectiveChoreoName,
+          configuredRoles
+        );
         if (pendingRole) localStorage.removeItem('dancehut.pendingRole');
         if (pendingName) localStorage.removeItem('dancehut.pendingDisplayName');
+        if (pendingStudioName) localStorage.removeItem('dancehut.pendingStudioName');
+        if (pendingChoreoName) localStorage.removeItem('dancehut.pendingChoreoName');
         try {
           localStorage.setItem('dancehut.activeRole', effectiveRole);
         } catch {
@@ -159,11 +207,14 @@ function App() {
           role: effectiveRole,
           display_name: effectiveName,
           email: session.user.email ?? null,
+          studio_name: effectiveStudioName,
+          choreo_name: effectiveChoreoName,
+          configured_roles: configuredRoles,
         });
       } else {
         setProfile(existingProfile);
         try {
-          localStorage.setItem('dancehut.activeRole', existingProfile.role);
+          localStorage.setItem('dancehut.activeRole', effectiveRole);
         } catch {
           // ignore
         }
@@ -813,6 +864,31 @@ function App() {
           currentCity={selectedCity}
           onSelectCity={handleSelectCity}
           onClose={() => setShowCitySelector(false)}
+        />
+      )}
+
+      {onboardingRole && session?.user && (
+        <RoleOnboardingModal
+          userId={session.user.id}
+          userEmail={session.user.email ?? ''}
+          targetRole={onboardingRole}
+          currentProfile={profile}
+          onComplete={(updated) => {
+            setProfile(updated);
+            setRole(updated.role);
+            setOnboardingRole(null);
+            setActiveTab('Dashboard');
+          }}
+          onCancel={() => {
+            setOnboardingRole(null);
+            setRole('dancer');
+            setActiveTab('Discover');
+            try {
+              localStorage.setItem('dancehut.activeRole', 'dancer');
+            } catch {
+              // ignore
+            }
+          }}
         />
       )}
 
