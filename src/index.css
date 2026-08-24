@@ -2508,12 +2508,14 @@ h1 em, h2 em, .studio-banner em { font-family: Georgia, serif; font-weight: 400;
   background: #fbfaf7;
   border: 1px solid #dedbd3;
   border-radius: 14px;
-  overflow: hidden;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   box-shadow: 0 4px 16px rgba(49, 37, 26, 0.03);
 }
 
 .studio-mini-table {
   width: 100%;
+  min-width: 580px;
   border-collapse: collapse;
   text-align: left;
 }
