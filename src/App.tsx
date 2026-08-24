@@ -226,10 +226,9 @@ function App() {
     };
 
     syncUserProfile();
-  }, [session, role]);
+  }, [session]);
 
-  const currentUserRole =
-    profile?.role ?? (session?.user?.user_metadata?.role as UserRole | undefined) ?? role;
+  const currentUserRole = role;
   const currentUserName = useMemo(
     () => getDisplayName(profile, session?.user ?? null, currentUserRole),
     [profile, session?.user, currentUserRole]
