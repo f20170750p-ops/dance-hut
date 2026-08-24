@@ -786,6 +786,7 @@ function App() {
             setProfile(updated);
             setRole(updated.role);
           }}
+          onNavigateTab={setActiveTab}
           onSignOut={() => {
             setShowProfileModal(false);
             signOut();

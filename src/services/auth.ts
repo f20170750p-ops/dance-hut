@@ -8,6 +8,9 @@ export interface UserProfile {
   role: UserRole;
   display_name: string | null;
   email: string | null;
+  studio_name?: string | null;
+  choreo_name?: string | null;
+  configured_roles?: UserRole[];
   created_at?: string;
 }
 
@@ -25,7 +28,7 @@ export async function signUpWithEmailPassword(
       emailRedirectTo: window.location.origin,
       data: {
         ...(trimmedName ? { display_name: trimmedName, full_name: trimmedName } : {}),
-        ...(role ? { role } : {}),
+        ...(role ? { role, configured_roles: [role] } : { role: 'dancer', configured_roles: ['dancer'] }),
       },
     },
   });
@@ -41,9 +44,12 @@ export async function saveProfile(
   userId: string,
   role: UserRole,
   email: string,
-  displayName?: string | null
+  displayName?: string | null,
+  studioName?: string | null,
+  choreoName?: string | null,
+  configuredRoles?: UserRole[]
 ) {
-  const payload: { id: string; role: UserRole; email: string; display_name?: string } = {
+  const payload: any = {
     id: userId,
     role,
     email,
@@ -52,6 +58,9 @@ export async function saveProfile(
   if (trimmedName) {
     payload.display_name = trimmedName;
   }
+  if (studioName) payload.studio_name = studioName.trim();
+  if (choreoName) payload.choreo_name = choreoName.trim();
+  if (configuredRoles) payload.configured_roles = configuredRoles;
 
   const { error } = await supabase.from('profiles').upsert(payload);
   return { error };
@@ -60,7 +69,7 @@ export async function saveProfile(
 export async function getProfile(userId: string): Promise<{ data: UserProfile | null; error: Error | null }> {
   const { data, error } = await supabase
     .from('profiles')
-    .select('id, role, display_name, email, created_at')
+    .select('*')
     .eq('id', userId)
     .maybeSingle();
 
@@ -69,23 +78,46 @@ export async function getProfile(userId: string): Promise<{ data: UserProfile | 
 
 export async function updateProfile(
   userId: string,
-  updates: { display_name?: string; role?: UserRole }
-): Promise<{ data: UserProfile | null; error: Error | null }> {
-  if (updates.display_name !== undefined || updates.role !== undefined) {
-    await supabase.auth.updateUser({
-      data: {
-        ...(updates.display_name !== undefined ? { display_name: updates.display_name, full_name: updates.display_name } : {}),
-        ...(updates.role !== undefined ? { role: updates.role } : {}),
-      },
-    });
+  updates: {
+    display_name?: string;
+    role?: UserRole;
+    studio_name?: string | null;
+    choreo_name?: string | null;
+    configured_roles?: UserRole[];
   }
+): Promise<{ data: UserProfile | null; error: Error | null }> {
+  await supabase.auth.updateUser({
+    data: {
+      ...(updates.display_name !== undefined ? { display_name: updates.display_name, full_name: updates.display_name } : {}),
+      ...(updates.role !== undefined ? { role: updates.role } : {}),
+      ...(updates.studio_name !== undefined ? { studio_name: updates.studio_name } : {}),
+      ...(updates.choreo_name !== undefined ? { choreo_name: updates.choreo_name } : {}),
+      ...(updates.configured_roles !== undefined ? { configured_roles: updates.configured_roles } : {}),
+    },
+  });
 
   const { data, error } = await supabase
     .from('profiles')
     .update(updates)
     .eq('id', userId)
-    .select('id, role, display_name, email, created_at')
+    .select('*')
     .single();
+
+  if (error) {
+    // If update on custom columns fails (e.g. if column doesn't exist yet in remote table), update basic columns
+    const fallbackUpdate: any = {};
+    if (updates.display_name !== undefined) fallbackUpdate.display_name = updates.display_name;
+    if (updates.role !== undefined) fallbackUpdate.role = updates.role;
+
+    const fallbackResult = await supabase
+      .from('profiles')
+      .update(fallbackUpdate)
+      .eq('id', userId)
+      .select('*')
+      .single();
+
+    return { data: (fallbackResult.data as UserProfile | null) ?? null, error: fallbackResult.error ? new Error(fallbackResult.error.message) : null };
+  }
 
   return { data: (data as UserProfile | null) ?? null, error: error ? new Error(error.message) : null };
 }
@@ -109,7 +141,33 @@ export async function getUser(): Promise<User | null> {
   return data.user;
 }
 
-export function getDisplayName(profile: { display_name?: string | null } | null, user: User | null): string {
+export function getDisplayName(
+  profile: { display_name?: string | null; studio_name?: string | null; choreo_name?: string | null; role?: UserRole } | null,
+  user: User | null,
+  roleContext?: UserRole
+): string {
+  const currentRole = roleContext || profile?.role || (user?.user_metadata?.role as UserRole) || 'dancer';
+
+  if (currentRole === 'studio') {
+    if (profile?.studio_name && profile.studio_name.trim().length > 0) {
+      return profile.studio_name.trim();
+    }
+    const metaStudio = user?.user_metadata?.studio_name;
+    if (metaStudio && typeof metaStudio === 'string' && metaStudio.trim().length > 0) {
+      return metaStudio.trim();
+    }
+  }
+
+  if (currentRole === 'choreographer') {
+    if (profile?.choreo_name && profile.choreo_name.trim().length > 0) {
+      return profile.choreo_name.trim();
+    }
+    const metaChoreo = user?.user_metadata?.choreo_name;
+    if (metaChoreo && typeof metaChoreo === 'string' && metaChoreo.trim().length > 0) {
+      return metaChoreo.trim();
+    }
+  }
+
   if (profile?.display_name && profile.display_name.trim().length > 0) {
     return profile.display_name.trim();
   }
@@ -127,7 +185,7 @@ export function getDisplayName(profile: { display_name?: string | null } | null,
     if (formatted) return formatted;
     return emailPrefix;
   }
-  return 'Dancer';
+  return currentRole === 'studio' ? 'Dance Studio' : 'Dancer';
 }
 
 export function getInitials(name: string): string {

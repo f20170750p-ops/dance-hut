@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { Check, Sparkles, UserRound, Users, X } from 'lucide-react';
+import { ArrowRight, Building2, Check, Lock, Sparkles, UserRound, Users, X } from 'lucide-react';
 import type { User } from '@supabase/supabase-js';
 import {
   getDisplayName,
@@ -18,6 +18,7 @@ interface ProfileModalProps {
   onClose: () => void;
   onUpdate: (profile: UserProfile) => void;
   onSignOut: () => void;
+  onNavigateTab?: (tab: string) => void;
 }
 
 export function ProfileModal({
@@ -28,30 +29,72 @@ export function ProfileModal({
   onClose,
   onUpdate,
   onSignOut,
+  onNavigateTab,
 }: ProfileModalProps) {
   const [displayName, setDisplayName] = useState(
     profile?.display_name || user.user_metadata?.display_name || user.user_metadata?.full_name || ''
   );
-  const [selectedRole, setSelectedRole] = useState<UserRole>(
-    profile?.role || (user.user_metadata?.role as UserRole) || 'dancer'
+  const [studioName, setStudioName] = useState(
+    profile?.studio_name || user.user_metadata?.studio_name || ''
   );
+  const [choreoName, setChoreoName] = useState(
+    profile?.choreo_name || user.user_metadata?.choreo_name || ''
+  );
+
+  const initialRole: UserRole = profile?.role || (user.user_metadata?.role as UserRole) || 'dancer';
+  const [selectedRole, setSelectedRole] = useState<UserRole>(initialRole);
+
+  const configuredRoles: UserRole[] = profile?.configured_roles ||
+    (user.user_metadata?.configured_roles as UserRole[] | undefined) ||
+    ['dancer'];
+
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
-  const previewName = displayName.trim() || getDisplayName(profile, user);
+  const isConfigured = (r: UserRole) => {
+    if (r === 'dancer') return true;
+    if (configuredRoles.includes(r)) return true;
+    if (r === 'studio' && studioName.trim().length > 0) return true;
+    if (r === 'choreographer' && choreoName.trim().length > 0) return true;
+    return false;
+  };
+
+  const previewName = selectedRole === 'studio'
+    ? studioName.trim() || 'Dance Studio'
+    : selectedRole === 'choreographer'
+    ? choreoName.trim() || displayName.trim() || 'Choreographer'
+    : displayName.trim() || getDisplayName(profile, user);
+
   const previewInitials = getInitials(previewName);
 
   const handleSave = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
     setSuccess(false);
+
+    if (selectedRole === 'studio' && !studioName.trim()) {
+      setError('Please provide a registered Studio Name to use the Studio portal.');
+      return;
+    }
+    if (selectedRole === 'choreographer' && !choreoName.trim() && !displayName.trim()) {
+      setError('Please provide your Stage / Artist Name.');
+      return;
+    }
+
     setSaving(true);
 
-    const trimmed = displayName.trim();
+    const updatedConfigured = Array.from(new Set([...configuredRoles, selectedRole]));
+    const trimmedName = displayName.trim();
+    const trimmedStudio = studioName.trim();
+    const trimmedChoreo = choreoName.trim();
+
     const { data, error: updateErr } = await updateProfile(user.id, {
-      display_name: trimmed,
+      display_name: trimmedName,
       role: selectedRole,
+      studio_name: trimmedStudio || null,
+      choreo_name: trimmedChoreo || null,
+      configured_roles: updatedConfigured,
     });
 
     setSaving(false);
@@ -61,13 +104,27 @@ export function ProfileModal({
       return;
     }
 
-    if (data) {
-      onUpdate(data);
-      setSuccess(true);
-      setTimeout(() => {
-        onClose();
-      }, 700);
+    const updatedProfile: UserProfile = data || {
+      id: user.id,
+      role: selectedRole,
+      display_name: trimmedName,
+      email: user.email ?? null,
+      studio_name: trimmedStudio || null,
+      choreo_name: trimmedChoreo || null,
+      configured_roles: updatedConfigured,
+    };
+
+    try {
+      localStorage.setItem('dancehut.activeRole', selectedRole);
+    } catch {
+      // ignore
     }
+
+    onUpdate(updatedProfile);
+    setSuccess(true);
+    setTimeout(() => {
+      onClose();
+    }, 600);
   };
 
   const roleOptions: { id: UserRole; label: string; icon: typeof UserRound }[] = [
@@ -91,48 +148,148 @@ export function ProfileModal({
           </div>
         </div>
 
-        <div className="profile-stats-row">
-          <div className="profile-stat-item">
-            <strong>{activeBookingsCount}</strong>
-            <span>Active Bookings</span>
+        {/* Dancer Metrics Only */}
+        {selectedRole === 'dancer' && (
+          <div className="profile-stats-row">
+            <div className="profile-stat-item">
+              <strong>{activeBookingsCount}</strong>
+              <span>Active Bookings</span>
+            </div>
+            <div className="profile-stat-item">
+              <strong>{savedCount}</strong>
+              <span>Saved Classes</span>
+            </div>
           </div>
-          <div className="profile-stat-item">
-            <strong>{savedCount}</strong>
-            <span>Saved Classes</span>
-          </div>
-        </div>
+        )}
 
         <form onSubmit={handleSave}>
-          <label className="auth-field" style={{ marginTop: '12px' }}>
-            Full name / Display name
-            <input
-              type="text"
-              value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
-              placeholder="e.g. Maya Sharma"
-              required
-            />
-          </label>
-
           <div className="profile-role-picker">
-            <span className="profile-role-label">Account Role</span>
+            <span className="profile-role-label">Switch Persona / Role</span>
             <div className="profile-roles-grid">
-              {roleOptions.map(({ id, label, icon: Icon }) => (
-                <button
-                  type="button"
-                  key={id}
-                  className={`profile-role-btn ${selectedRole === id ? 'selected' : ''}`}
-                  onClick={() => setSelectedRole(id)}
-                >
-                  <Icon size={16} />
-                  <span>{label}</span>
-                </button>
-              ))}
+              {roleOptions.map(({ id, label, icon: Icon }) => {
+                const configured = isConfigured(id);
+                return (
+                  <button
+                    type="button"
+                    key={id}
+                    className={`profile-role-btn ${selectedRole === id ? 'selected' : ''} ${!configured ? 'unconfigured-role' : ''}`}
+                    onClick={() => setSelectedRole(id)}
+                  >
+                    <Icon size={16} />
+                    <span>{label}</span>
+                    {!configured && <Lock size={12} style={{ marginLeft: 'auto', opacity: 0.6 }} />}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          <label className="auth-field" style={{ marginTop: '16px' }}>
-            Email address
+          {/* DANCER SPECIFIC FIELDS */}
+          {selectedRole === 'dancer' && (
+            <label className="auth-field" style={{ marginTop: '12px' }}>
+              Full name / Dancer Name
+              <input
+                type="text"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                placeholder="e.g. Maya Sharma"
+                required
+              />
+            </label>
+          )}
+
+          {/* STUDIO SPECIFIC FIELDS */}
+          {selectedRole === 'studio' && (
+            <div style={{ marginTop: '14px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {!isConfigured('studio') && (
+                <div style={{ padding: '10px 12px', background: '#fdf3f2', border: '1px solid #fad2ce', borderRadius: '8px', fontSize: '11px', color: '#b83338' }}>
+                  <strong>Setup Required:</strong> Enter your Studio Name below to activate and switch to your Studio Portal.
+                </div>
+              )}
+              <label className="auth-field">
+                Studio / Venue Brand Name *
+                <input
+                  type="text"
+                  value={studioName}
+                  onChange={(e) => setStudioName(e.target.value)}
+                  placeholder="e.g. The Movement House"
+                  required
+                />
+              </label>
+              <label className="auth-field">
+                Owner / Manager Personal Name
+                <input
+                  type="text"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  placeholder="e.g. Rutuvi Narang"
+                />
+              </label>
+
+              {onNavigateTab && (
+                <button
+                  type="button"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '10px 12px',
+                    background: '#f1ede5',
+                    border: '1px solid #ded8cc',
+                    borderRadius: '8px',
+                    fontSize: '11px',
+                    fontWeight: 600,
+                    color: '#3f3b37',
+                    cursor: 'pointer',
+                    marginTop: '4px',
+                  }}
+                  onClick={() => {
+                    onClose();
+                    onNavigateTab('Studio Profile');
+                  }}
+                >
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Building2 size={14} style={{ color: '#e83b3b' }} />
+                    Edit Venue Address, Rooms & Amenities
+                  </span>
+                  <ArrowRight size={13} />
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* CHOREOGRAPHER SPECIFIC FIELDS */}
+          {selectedRole === 'choreographer' && (
+            <div style={{ marginTop: '14px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {!isConfigured('choreographer') && (
+                <div style={{ padding: '10px 12px', background: '#fdf3f2', border: '1px solid #fad2ce', borderRadius: '8px', fontSize: '11px', color: '#b83338' }}>
+                  <strong>Setup Required:</strong> Enter your Stage / Artist Name to activate your Choreographer Suite.
+                </div>
+              )}
+              <label className="auth-field">
+                Artist / Stage Name *
+                <input
+                  type="text"
+                  value={choreoName}
+                  onChange={(e) => setChoreoName(e.target.value)}
+                  placeholder="e.g. Aria Chen"
+                  required
+                />
+              </label>
+              <label className="auth-field">
+                Real / Full Name
+                <input
+                  type="text"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  placeholder="e.g. Rutuvi Narang"
+                />
+              </label>
+            </div>
+          )}
+
+          <label className="auth-field" style={{ marginTop: '14px' }}>
+            Account Email
             <input
               type="email"
               value={user.email ?? ''}
@@ -146,7 +303,7 @@ export function ProfileModal({
 
           <div className="profile-actions">
             <button className="primary-btn" type="submit" disabled={saving}>
-              {saving ? 'Saving…' : success ? 'Saved!' : 'Save changes'}{' '}
+              {saving ? 'Saving…' : success ? 'Saved!' : `Save & Switch to ${selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)}`}{' '}
               {!saving && !success && <Check size={16} />}
             </button>
             <button
