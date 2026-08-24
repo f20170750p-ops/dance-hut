@@ -20,7 +20,7 @@
 | F-16 | Notifications Tab (N-5) | **Wrong chat mapping bug**: Clicking "Message Host" from the "Bollywood Foundation by Ananya Mehta" notification opened the chat for "Aria / Afro fusion" instead of Ananya Mehta. | All | Critical Bug |
 | F-17 | Contact Modal (CT-1) | Contact Support modal is off-center on mobile. Text and labels need proper alignment. Remove "Open in Mail app" option and provide cleaner alternatives (e.g. WhatsApp / clean in-app submission). | Mobile | UI/UX |
 | F-18 | Profile Modal / Role Switch (PR-3) | When switching role to "Studio", the app experience does not change immediately without a manual reload. Needs instant state sync or clean reload. | All | UX |
-1. change gradient color to red- qr modal
-2. shorten the QR box
-3. make the QR code working: studio app's scanner should identify the QR
-4. add a ticket id
+| F-19 | CheckInCard / Ticket Modal | Change header gradient color to red in QR modal / CheckInCard. | Mobile / All | UI |
+| F-20 | CheckInCard (D-3) | Shorten the QR box height and padding so it takes less vertical space on mobile. | Mobile | UI |
+| F-21 | CheckInCard / QR Scanner | Make the QR code interoperable: studio app's scanner should scan and identify the dancer QR format reliably. | All | Integration |
+| F-22 | Ticket Modal (T-2) | Add visible, human-readable **Ticket ID** (e.g. `DH-TKT-9999`) on the ticket card. | All | UX |
