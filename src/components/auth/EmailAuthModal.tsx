@@ -78,24 +78,32 @@ export function EmailAuthModal({ role, onClose }: EmailAuthModalProps) {
       const { data: userProfile } = await getProfile(result.data.user.id);
       const configuredRoles: UserRole[] = userProfile?.configured_roles ||
         (result.data.user.user_metadata?.configured_roles as UserRole[] | undefined) ||
-        (userProfile?.role ? [userProfile.role] : ['dancer']);
+        (userProfile?.role ? [userProfile.role] : []);
       const studioName = userProfile?.studio_name || result.data.user.user_metadata?.studio_name;
       const choreoName = userProfile?.choreo_name || result.data.user.user_metadata?.choreo_name;
 
-      const hasStudio = Boolean(studioName && studioName.trim().length > 0) || configuredRoles.includes('studio');
-      const hasChoreo = Boolean(choreoName && choreoName.trim().length > 0) || configuredRoles.includes('choreographer');
+      const hasDancer = configuredRoles.includes('dancer') || (userProfile?.role === 'dancer');
+      const hasStudio = Boolean(studioName && studioName.trim().length > 0) || configuredRoles.includes('studio') || (userProfile?.role === 'studio');
+      const hasChoreo = Boolean(choreoName && choreoName.trim().length > 0) || configuredRoles.includes('choreographer') || (userProfile?.role === 'choreographer');
+
+      if (role === 'dancer' && !hasDancer) {
+        await signOut();
+        setLoading(false);
+        setError('No Dancer profile registered with this email account. Please switch to the Sign up tab to create your dancer profile, or select your registered role on the welcome screen.');
+        return;
+      }
 
       if (role === 'studio' && !hasStudio) {
         await signOut();
         setLoading(false);
-        setError('No Studio profile registered with this email account. Please switch to the Sign up tab to register your studio, or select "I\'m a dancer" on the welcome screen to sign in as a dancer.');
+        setError('No Studio profile registered with this email account. Please switch to the Sign up tab to register your studio, or select your registered role on the welcome screen.');
         return;
       }
 
       if (role === 'choreographer' && !hasChoreo) {
         await signOut();
         setLoading(false);
-        setError('No Choreographer profile registered with this email account. Please switch to the Sign up tab to register your artist profile, or select "I\'m a dancer" on the welcome screen to sign in as a dancer.');
+        setError('No Choreographer profile registered with this email account. Please switch to the Sign up tab to register your artist profile, or select your registered role on the welcome screen.');
         return;
       }
 

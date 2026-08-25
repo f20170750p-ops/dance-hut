@@ -46,17 +46,17 @@ export function ProfileModal({
 
   const configuredRoles: UserRole[] = profile?.configured_roles ||
     (user.user_metadata?.configured_roles as UserRole[] | undefined) ||
-    ['dancer'];
+    (profile?.role ? [profile.role] : []);
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
   const isConfigured = (r: UserRole) => {
-    if (r === 'dancer') return true;
     if (configuredRoles.includes(r)) return true;
-    if (r === 'studio' && studioName.trim().length > 0) return true;
-    if (r === 'choreographer' && choreoName.trim().length > 0) return true;
+    if (r === 'dancer') return profile?.role === 'dancer';
+    if (r === 'studio') return Boolean(studioName.trim().length > 0 || profile?.role === 'studio');
+    if (r === 'choreographer') return Boolean(choreoName.trim().length > 0 || profile?.role === 'choreographer');
     return false;
   };
 
