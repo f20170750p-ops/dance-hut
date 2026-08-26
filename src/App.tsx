@@ -50,7 +50,6 @@ import { AttendeeRosterModal } from './components/modals/AttendeeRosterModal';
 import { QRScannerModal } from './components/modals/QRScannerModal';
 import { StudioBroadcastModal } from './components/modals/StudioBroadcastModal';
 import { CitySelectorModal } from './components/modals/CitySelectorModal';
-import { RoleOnboardingModal } from './components/modals/RoleOnboardingModal';
 
 function App() {
   const [role, setRole] = useState<UserRole>(() => {
@@ -62,7 +61,6 @@ function App() {
   });
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [onboardingRole, setOnboardingRole] = useState<'studio' | 'choreographer' | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showCitySelector, setShowCitySelector] = useState(false);
@@ -162,20 +160,10 @@ function App() {
       // 2-Way Check: Gating unconfigured Studio or Choreographer access
       if (targetRole === 'studio') {
         const hasStudioProfile = Boolean(effectiveStudioName && effectiveStudioName.trim().length > 0) || configuredRoles.includes('studio');
-        if (hasStudioProfile) {
-          effectiveRole = 'studio';
-        } else {
-          setOnboardingRole('studio');
-          effectiveRole = 'dancer';
-        }
+        effectiveRole = hasStudioProfile ? 'studio' : 'dancer';
       } else if (targetRole === 'choreographer') {
         const hasChoreoProfile = Boolean(effectiveChoreoName && effectiveChoreoName.trim().length > 0) || configuredRoles.includes('choreographer');
-        if (hasChoreoProfile) {
-          effectiveRole = 'choreographer';
-        } else {
-          setOnboardingRole('choreographer');
-          effectiveRole = 'dancer';
-        }
+        effectiveRole = hasChoreoProfile ? 'choreographer' : 'dancer';
       } else {
         effectiveRole = 'dancer';
       }
@@ -857,6 +845,7 @@ function App() {
         <ProfileModal
           user={session.user}
           profile={profile}
+          currentRole={currentUserRole}
           activeBookingsCount={bookings.length}
           savedCount={saved.length}
           onClose={() => setShowProfileModal(false)}
@@ -891,31 +880,6 @@ function App() {
           currentCity={selectedCity}
           onSelectCity={handleSelectCity}
           onClose={() => setShowCitySelector(false)}
-        />
-      )}
-
-      {onboardingRole && session?.user && (
-        <RoleOnboardingModal
-          userId={session.user.id}
-          userEmail={session.user.email ?? ''}
-          targetRole={onboardingRole}
-          currentProfile={profile}
-          onComplete={(updated) => {
-            setProfile(updated);
-            setRole(updated.role);
-            setOnboardingRole(null);
-            setActiveTab('Dashboard');
-          }}
-          onCancel={() => {
-            setOnboardingRole(null);
-            setRole('dancer');
-            setActiveTab('Discover');
-            try {
-              localStorage.setItem('dancehut.activeRole', 'dancer');
-            } catch {
-              // ignore
-            }
-          }}
         />
       )}
 

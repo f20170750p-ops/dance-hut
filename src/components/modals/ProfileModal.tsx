@@ -13,6 +13,7 @@ import {
 interface ProfileModalProps {
   user: User;
   profile: UserProfile | null;
+  currentRole: UserRole;
   activeBookingsCount: number;
   savedCount: number;
   onClose: () => void;
@@ -24,6 +25,7 @@ interface ProfileModalProps {
 export function ProfileModal({
   user,
   profile,
+  currentRole,
   activeBookingsCount,
   savedCount,
   onClose,
@@ -41,23 +43,18 @@ export function ProfileModal({
     profile?.choreo_name || user.user_metadata?.choreo_name || ''
   );
 
-  const initialRole: UserRole = profile?.role || (user.user_metadata?.role as UserRole) || 'dancer';
-  const [selectedRole, setSelectedRole] = useState<UserRole>(initialRole);
+  const [selectedRole, setSelectedRole] = useState<UserRole>(currentRole);
 
   const configuredRoles: UserRole[] = profile?.configured_roles ||
     (user.user_metadata?.configured_roles as UserRole[] | undefined) ||
-    (profile?.role ? [profile.role] : []);
+    (profile?.role ? [profile.role] : [currentRole]);
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
   const isConfigured = (r: UserRole) => {
-    if (configuredRoles.includes(r)) return true;
-    if (r === 'dancer') return profile?.role === 'dancer';
-    if (r === 'studio') return Boolean(studioName.trim().length > 0 || profile?.role === 'studio');
-    if (r === 'choreographer') return Boolean(choreoName.trim().length > 0 || profile?.role === 'choreographer');
-    return false;
+    return configuredRoles.includes(r);
   };
 
   const previewName = selectedRole === 'studio'
@@ -74,7 +71,7 @@ export function ProfileModal({
     setSuccess(false);
 
     if (selectedRole === 'studio' && !studioName.trim()) {
-      setError('Please provide a registered Studio Name to use the Studio portal.');
+      setError('Please provide your registered Studio Name.');
       return;
     }
     if (selectedRole === 'choreographer' && !choreoName.trim() && !displayName.trim()) {
@@ -84,7 +81,6 @@ export function ProfileModal({
 
     setSaving(true);
 
-    const updatedConfigured = Array.from(new Set([...configuredRoles, selectedRole]));
     const trimmedName = displayName.trim();
     const trimmedStudio = studioName.trim();
     const trimmedChoreo = choreoName.trim();
@@ -94,7 +90,7 @@ export function ProfileModal({
       role: selectedRole,
       studio_name: trimmedStudio || null,
       choreo_name: trimmedChoreo || null,
-      configured_roles: updatedConfigured,
+      configured_roles: configuredRoles,
     });
 
     setSaving(false);
@@ -111,7 +107,7 @@ export function ProfileModal({
       email: user.email ?? null,
       studio_name: trimmedStudio || null,
       choreo_name: trimmedChoreo || null,
-      configured_roles: updatedConfigured,
+      configured_roles: configuredRoles,
     };
 
     try {
