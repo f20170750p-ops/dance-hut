@@ -177,12 +177,23 @@ export function ProfileModal({
                   <button
                     type="button"
                     key={id}
-                    className={`profile-role-btn ${selectedRole === id ? 'selected' : ''} ${!configured ? 'unconfigured-role' : ''}`}
-                    onClick={() => setSelectedRole(id)}
+                    disabled={!configured}
+                    className={`profile-role-btn ${selectedRole === id ? 'selected' : ''} ${!configured ? 'unconfigured-role disabled' : ''}`}
+                    onClick={() => {
+                      if (configured) {
+                        setSelectedRole(id);
+                      }
+                    }}
+                    title={!configured ? `${label} profile not registered with this account` : `Switch to ${label}`}
+                    style={{
+                      opacity: configured ? 1 : 0.4,
+                      cursor: configured ? 'pointer' : 'not-allowed',
+                      pointerEvents: configured ? 'auto' : 'none',
+                    }}
                   >
                     <Icon size={16} />
                     <span>{label}</span>
-                    {!configured && <Lock size={12} style={{ marginLeft: 'auto', opacity: 0.6 }} />}
+                    {!configured && <Lock size={12} style={{ marginLeft: 'auto', opacity: 0.8 }} />}
                   </button>
                 );
               })}
@@ -206,11 +217,6 @@ export function ProfileModal({
           {/* STUDIO SPECIFIC FIELDS */}
           {selectedRole === 'studio' && (
             <div style={{ marginTop: '14px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {!isConfigured('studio') && (
-                <div style={{ padding: '10px 12px', background: '#fdf3f2', border: '1px solid #fad2ce', borderRadius: '8px', fontSize: '11px', color: '#b83338' }}>
-                  <strong>Setup Required:</strong> Enter your Studio Name below to activate and switch to your Studio Portal.
-                </div>
-              )}
               <label className="auth-field">
                 Studio / Venue Brand Name *
                 <input
@@ -266,11 +272,6 @@ export function ProfileModal({
           {/* CHOREOGRAPHER SPECIFIC FIELDS */}
           {selectedRole === 'choreographer' && (
             <div style={{ marginTop: '14px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {!isConfigured('choreographer') && (
-                <div style={{ padding: '10px 12px', background: '#fdf3f2', border: '1px solid #fad2ce', borderRadius: '8px', fontSize: '11px', color: '#b83338' }}>
-                  <strong>Setup Required:</strong> Enter your Stage / Artist Name to activate your Choreographer Suite.
-                </div>
-              )}
               <label className="auth-field">
                 Artist / Stage Name *
                 <input
