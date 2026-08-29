@@ -1,5 +1,5 @@
-import { Flame, Heart, MapPin, Users } from 'lucide-react';
-import type { EventItem } from '../../services/events';
+import { CalendarClock, Flame, Heart, MapPin, Users } from 'lucide-react';
+import { type EventItem, getBookingStatus } from '../../services/events';
 
 interface EventCardProps {
   event: EventItem;
@@ -9,8 +9,10 @@ interface EventCardProps {
 }
 
 export function EventCard({ event, saved, onSave, onOpen }: EventCardProps) {
-  const isUrgent = event.spots > 0 && event.spots <= 3;
-  const isPopular = event.spots > 3 && event.spots <= 7;
+  const bookingStatus = getBookingStatus(event.dateKey || event.date);
+  const isAdvanceRestricted = bookingStatus.isAdvanceRestricted;
+  const isUrgent = !isAdvanceRestricted && event.spots > 0 && event.spots <= 3;
+  const isPopular = !isAdvanceRestricted && event.spots > 3 && event.spots <= 7;
   const soldOut = event.spots <= 0;
   const bookedEstimate = Math.max(4, 20 - event.spots);
 
@@ -33,10 +35,14 @@ export function EventCard({ event, saved, onSave, onOpen }: EventCardProps) {
           </button>
         </div>
         <span
-          className={`spots-badge ${soldOut ? 'sold-out' : isUrgent ? 'urgent' : isPopular ? 'popular' : ''}`}
+          className={`spots-badge ${soldOut ? 'sold-out' : isAdvanceRestricted ? 'advance-badge' : isUrgent ? 'urgent' : isPopular ? 'popular' : ''}`}
         >
           {soldOut ? (
             'Sold out'
+          ) : isAdvanceRestricted ? (
+            <>
+              <CalendarClock size={11} /> Opens soon
+            </>
           ) : isUrgent ? (
             <>
               <Flame size={11} /> Only {event.spots} left
@@ -51,8 +57,9 @@ export function EventCard({ event, saved, onSave, onOpen }: EventCardProps) {
           <div className="event-date">
             {event.date} <span>·</span> {event.time}
           </div>
-          {isUrgent && <span className="urgency-pill">🔥 Filling fast</span>}
-          {!isUrgent && event.featured && <span className="trending-pill">✦ Spotlight</span>}
+          {isAdvanceRestricted && <span className="advance-pill">⏳ Opens 30d prior</span>}
+          {!isAdvanceRestricted && isUrgent && <span className="urgency-pill">🔥 Filling fast</span>}
+          {!isAdvanceRestricted && !isUrgent && event.featured && <span className="trending-pill">✦ Spotlight</span>}
         </div>
         <h4>{event.title}</h4>
         <p>

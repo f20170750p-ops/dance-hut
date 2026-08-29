@@ -1,5 +1,6 @@
 import {
   ArrowRight,
+  CalendarClock,
   Clock3,
   Flame,
   MapPin,
@@ -10,7 +11,7 @@ import {
   Users,
   X,
 } from 'lucide-react';
-import type { EventItem } from '../../services/events';
+import { type EventItem, getBookingStatus } from '../../services/events';
 
 interface EventModalProps {
   event: EventItem;
@@ -30,10 +31,15 @@ export function EventModal({
   onMessageHost,
 }: EventModalProps) {
   const soldOut = event.spots <= 0;
+  const bookingStatus = getBookingStatus(event.dateKey || event.date);
+  const isAdvanceRestricted = bookingStatus.isAdvanceRestricted;
+
   const statusMessage =
     error ||
     (alreadyBooked
       ? 'You have already booked this class. You can find it in My bookings.'
+      : isAdvanceRestricted
+      ? (bookingStatus.message || 'Bookings open 30 days prior to class date.')
       : soldOut
       ? 'This class is sold out. Please choose another session.'
       : '');
@@ -114,6 +120,8 @@ export function EventModal({
             <div className="urgency-icon-wrap">
               {soldOut ? (
                 <Users size={16} />
+              ) : isAdvanceRestricted ? (
+                <CalendarClock size={16} />
               ) : event.spots <= 3 ? (
                 <Flame size={16} />
               ) : (
@@ -124,6 +132,8 @@ export function EventModal({
               <strong>
                 {soldOut
                   ? 'Sold out for this session'
+                  : isAdvanceRestricted
+                  ? 'Advance Class Scheduled'
                   : event.spots <= 3
                   ? `Selling fast · Only ${event.spots} spots left!`
                   : `Trending workshop in ${event.location}`}
@@ -131,6 +141,8 @@ export function EventModal({
               <span>
                 {soldOut
                   ? 'Check other dates or upcoming workshops'
+                  : isAdvanceRestricted
+                  ? (bookingStatus.message || 'Bookings open 30 days prior to class date')
                   : `${Math.max(4, 20 - event.spots)} dancers booked recently · Instant QR check-in`}
               </span>
             </div>
@@ -149,14 +161,16 @@ export function EventModal({
           <button
             className="primary-btn book-btn"
             onClick={onBook}
-            disabled={soldOut || alreadyBooked}
+            disabled={soldOut || alreadyBooked || isAdvanceRestricted}
           >
             {alreadyBooked
               ? 'Already booked'
+              : isAdvanceRestricted
+              ? 'Booking opens soon'
               : soldOut
               ? 'Sold out'
               : 'Book this session'}{' '}
-            {!soldOut && !alreadyBooked && <ArrowRight size={17} />}
+            {!soldOut && !alreadyBooked && !isAdvanceRestricted && <ArrowRight size={17} />}
           </button>
           <span className="modal-note">
             <Ticket size={14} /> Instant confirmation with a QR ticket

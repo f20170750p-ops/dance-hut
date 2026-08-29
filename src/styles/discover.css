@@ -957,6 +957,15 @@
   border-radius: 4px;
 }
 
+.advance-pill {
+  font: 9px 'DM Mono';
+  color: #4b5563;
+  font-weight: 600;
+  background: #f3f4f6;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
 .trending-pill {
   font: 9px 'DM Mono';
   color: #b45309;
@@ -964,6 +973,11 @@
   background: #fef3c7;
   padding: 2px 6px;
   border-radius: 4px;
+}
+
+.spots-badge.advance-badge {
+  background: rgba(55, 65, 81, 0.88);
+  color: #f3f4f6;
 }
 
 .card-social-proof {
