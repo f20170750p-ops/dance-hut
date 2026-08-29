@@ -581,7 +581,26 @@ export function NotificationsTab({
           filteredNotifications.map((notif) => {
             const badge = getTypeBadge(notif.type);
             const BadgeIcon = badge.icon;
-            const targetEvent = events.find((e) => e.id === notif.eventId);
+            const matchedEvent = events.find((e) => e.id === notif.eventId);
+            const targetEvent: EventItem | undefined =
+              matchedEvent ||
+              (notif.eventTitle && notif.eventHost
+                ? {
+                    id: notif.eventId || 0,
+                    title: notif.eventTitle,
+                    style: 'Open Style',
+                    dateKey: '',
+                    date: notif.eventDate || 'Upcoming',
+                    time: '',
+                    location: notif.eventStudio || '',
+                    studio: notif.eventStudio || 'Studio Partner',
+                    host: notif.eventHost,
+                    price: '₹0',
+                    spots: 25,
+                    image: '',
+                    featured: false,
+                  }
+                : undefined);
             const userBooking = bookings.find((b) => b.event_id === notif.eventId);
             const isSaved = notif.eventId ? saved.includes(notif.eventId) : false;
 

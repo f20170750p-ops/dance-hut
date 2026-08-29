@@ -395,7 +395,9 @@ export async function startOrGetInstructorChat(
 
   // Check if a conversation with this instructor or for this event exists
   const existing = localConvs.find(
-    (c) => c.participant.name.toLowerCase() === instructorName.toLowerCase() || (eventId && c.eventId === eventId)
+    (c) =>
+      c.participant.name.toLowerCase() === instructorName.toLowerCase() ||
+      (Boolean(eventId) && c.eventId === eventId)
   );
 
   if (existing) {

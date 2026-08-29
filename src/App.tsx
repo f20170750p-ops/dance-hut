@@ -387,14 +387,15 @@ function App() {
 
   const handleMessageHost = async (event: EventItem) => {
     setSelectedEvent(null);
-    if (session?.user) {
-      const { conversation } = await startOrGetInstructorChat(
-        session.user.id,
-        event.host,
-        event.id,
-        event.title,
-        event.studio
-      );
+    const userId = session?.user?.id || profile?.id || 'current-user';
+    const { conversation } = await startOrGetInstructorChat(
+      userId,
+      event.host,
+      event.id,
+      event.title,
+      event.studio
+    );
+    if (conversation) {
       setActiveConversationId(conversation.id);
     }
     setActiveTab('Messages');

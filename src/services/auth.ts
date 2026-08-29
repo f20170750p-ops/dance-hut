@@ -119,7 +119,7 @@ export async function updateProfile(
     return { data: (fallbackResult.data as UserProfile | null) ?? null, error: fallbackResult.error ? new Error(fallbackResult.error.message) : null };
   }
 
-  return { data: (data as UserProfile | null) ?? null, error: error ? new Error(error.message) : null };
+  return { data: (data as UserProfile | null) ?? null, error: null };
 }
 
 export async function signOut() {
