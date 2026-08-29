@@ -742,7 +742,20 @@ h1 em, h2 em, .studio-banner em { font-family: Georgia, serif; font-weight: 400;
 }
 @media (max-width: 600px) { .event-grid .event-card { flex-basis: 82%; } }
 @media (max-width: 900px) { .welcome-page { padding: clamp(12px, 2vh, 20px) 16px; }.sidebar { width: 225px; flex-basis: 225px; }.content { padding-left: 28px; padding-right: 28px; }.topbar { padding-right: 28px; }.lower-grid { grid-template-columns: 1fr; } }
-@media (max-width: 680px) { .welcome-page { padding: clamp(10px, 1.8vh, 16px) 16px; }.nav-note { display: none; }.sidebar { position: fixed; z-index: 100; left: -250px; transition: .25s; box-shadow: 15px 0 35px #201b151c; }.sidebar.open { left: 0; }.close-menu, .menu-trigger, .mobile-brand { display: block; }.close-menu { border: 0; background: transparent; float: right; margin-top: 4px; }.sidebar-head { display: flex; justify-content: space-between; }.mobile-brand { display: inline-flex; align-items: center; font-family: 'Space Grotesk'; font-weight: 700; font-size: 17px; letter-spacing: -.05em; }.mobile-brand .brand-mark { margin-right: 5px; vertical-align: middle; }.topbar { position: sticky; top: 0; z-index: 40; height: 64px; justify-content: space-between; padding: 0 14px; background: rgba(253, 251, 247, 0.96); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: 0 1px 4px rgba(49, 37, 26, 0.05); }.topbar-left { display: flex !important; align-items: center; gap: 8px; }.menu-trigger { border: 0; background: transparent; padding: 4px; color: #3c3834; display: flex; align-items: center; }.topbar-right { gap: 8px; }.city-pill { display: inline-flex !important; padding: 5px 8px; font-size: 11px; gap: 4px; }.city-pill .city-pill-name { max-width: 72px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }.city-pill .city-chevron { display: none; }.content { padding: 25px 16px 50px; }.hero-row { align-items: start; }.hero-row h2 { font-size: 48px; }.hero-sub { font-size: 12px; }.hero-aside { display: none; }.quick-styles-row { margin: -16px 0 28px; }.search-row { margin: 34px 0; }.search-box { height: 44px; padding: 0 12px; }.search-box input { font-size: 11px; }.filter-btn { padding: 0 12px; }.filter-btn span { display: none; }.filters { flex-wrap: wrap; margin-top: -15px; }.filters .clear-filter { margin-left: 0; }.section-head h3 { font-size: 21px; }.text-btn { font-size: 10px; }.event-grid { grid-template-columns: 1fr; gap: 15px; }.event-image { height: 210px; }.lower-grid { margin-top: 46px; }.banner-art { min-width: 150px; }.banner-figure { right: 18px; font-size: 130px; }.circle-one { width: 200px; height: 200px; right: -70px; }.circle-two { right: 70px; }.studio-banner { min-height: 260px; }.next-up { padding: 20px; }.event-modal { grid-template-columns: 1fr; max-height: 95vh; }.modal-image { min-height: 210px; max-height: 220px; }.modal-body { padding: 25px 22px 25px; }.modal-title-row h2 { font-size: 28px; }.toast { left: 20px; right: 20px; bottom: 20px; min-width: 0; }.desktop-only { display: none; } }
+.sidebar-backdrop { display: none; }
+@media (max-width: 680px) {
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(33, 28, 27, 0.45);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    z-index: 95;
+    animation: backdropFade .2s ease;
+  }
+}
+@keyframes backdropFade { from { opacity: 0; } to { opacity: 1; } }
 
 /* ==========================================================================
    MESSAGES TAB & REALTIME CHAT STYLES (THEME-CONSISTENT)

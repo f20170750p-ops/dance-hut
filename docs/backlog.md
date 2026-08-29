@@ -11,26 +11,15 @@ This document tracks all active, unresolved tasks and UX enhancements for the Da
 
 | # | Priority | Issue / Feature | Area | Status | Description |
 |---|:---:|---|---|:---:|---|
-| 1 | **P1** | **Mobile Sidebar Outside-Click / Backdrop Dismiss** | Navigation / Mobile UI | 🟡 Queued | Automatically close the mobile sidebar drawer when tapping anywhere on the main page or backdrop, instead of requiring an explicit click on the `X` button. |
-| 2 | **P1** | **Explore Studios Placement & Discovery Flow** | Discover Tab | 🟡 Queued | Connect the inactive "Explore studios" CTA in the Discover feed banner to a dedicated partner studio explorer modal or directory. |
-| 3 | **P1** | **Class Detail Social Proof & Urgency Metrics** | Workshop Cards / Modals | 🟡 Queued | Display real-time urgency and social proof indicators (e.g., *"8 dancers booked recently"*, *"Only 2 spots left"*). |
-| 4 | **P2** | **Human-Readable Ticket ID on Ticket Modal** | Ticket Modal | 🟡 Queued | Display a visible confirmation code (e.g., `DH-TKT-2026-X`) below the QR code for seamless front-desk manual check-in. |
-| 5 | **P2** | **Search-Responsive Style Chip Counts** | Discover Tab | 🟡 Queued | Make style filter pill counts dynamic so they reflect the active search query rather than global totals. |
-| 6 | **P2** | **Custom Email Sender on Signup** | Auth / Supabase Config | 🟡 Queued | Replace default Supabase confirmation email sender with custom SMTP provider (e.g. Resend, Brevo) in Supabase Auth settings. |
+| 1 | **P1** | **Explore Studios Placement & Discovery Flow** | Discover Tab | 🟡 Queued | Connect the inactive "Explore studios" CTA in the Discover feed banner to a dedicated partner studio explorer modal or directory. |
+| 2 | **P1** | **Class Detail Social Proof & Urgency Metrics** | Workshop Cards / Modals | 🟡 Queued | Display real-time urgency and social proof indicators (e.g., *"8 dancers booked recently"*, *"Only 2 spots left"*). |
+| 3 | **P2** | **Human-Readable Ticket ID on Ticket Modal** | Ticket Modal | 🟡 Queued | Display a visible confirmation code (e.g., `DH-TKT-2026-X`) below the QR code for seamless front-desk manual check-in. |
+| 4 | **P2** | **Search-Responsive Style Chip Counts** | Discover Tab | 🟡 Queued | Make style filter pill counts dynamic so they reflect the active search query rather than global totals. |
+| 5 | **P2** | **Custom Email Sender on Signup** | Auth / Supabase Config | 🟡 Queued | Replace default Supabase confirmation email sender with custom SMTP provider (e.g. Resend, Brevo) in Supabase Auth settings. |
 
 ---
 
 ## 🔍 Detailed Breakdown & Solutions
-
-### 3. Mobile Sidebar Outside-Click / Backdrop Dismiss
-* **Status**: 🟡 Queued
-* **Impacted Components**: `Sidebar.tsx`, `App.tsx`, `index.css`
-* **Problem**: When the mobile navigation side drawer is opened, tapping on the main page content does nothing. The user is forced to find and explicitly click the small `X` close button at the top corner of the sidebar.
-* **Solution**:
-  1. Render a semi-transparent backdrop overlay (`.sidebar-backdrop`) behind the open mobile sidebar.
-  2. Attach an `onClick={() => setShowMenu(false)}` handler to the backdrop / outside container so tapping anywhere outside the sidebar immediately dismisses it.
-
----
 
 ### 4. Explore Studios Placement & Discovery Flow
 * **Status**: 🟡 Queued

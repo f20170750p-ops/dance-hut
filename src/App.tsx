@@ -491,6 +491,14 @@ function App() {
         onSignOut={() => signOut()}
       />
 
+      {showMenu && (
+        <div
+          className="sidebar-backdrop"
+          onClick={() => setShowMenu(false)}
+          aria-label="Close navigation menu"
+        />
+      )}
+
       <div className="main-area">
         <Topbar
           setShowMenu={setShowMenu}
