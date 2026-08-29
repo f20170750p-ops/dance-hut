@@ -1,105 +1,77 @@
-# 📋 DanceHut MVP Problem Tracker & Task Backlog
+# 📋 DanceHut MVP Task Backlog
 
-> **Tracked Issues, Fixes, and Implementation Status**
+> **Active Issues & Pending Features To Be Done**  
+> *Last updated: 2026-08-29*
 
-This document tracks all identified feedback items, UX friction points, and implementation progress for the DanceHut MVP.
+This document tracks all active, unresolved tasks and UX enhancements for the DanceHut MVP. Resolved items have been pruned to keep this backlog focused strictly on pending work.
 
 ---
 
-## 🎯 Current Status Summary
+## 🎯 Active Tasks Summary
 
-| # | Issue / Requirement | Status | Scope / Resolution Plan |
-|---|---|:---:|---|
-| 1 | **Custom Email Sender on Signup** | 🟡 Queued | Replace default Supabase confirmation email sender with custom SMTP provider (e.g. Resend, Sendgrid) in Supabase Auth settings. |
-| 2 | **Dynamic User Name Display** | 🟢 Resolved | Replaced hardcoded *"Aria Kapoor"* with dynamic user profile from Supabase `profiles` table + full name capture on signup. |
-| 3 | **Google Maps Redirection for Booked Class** | 🔴 In Progress | Add Google Maps navigation link (`https://www.google.com/maps/search/?api=1&query=...`) using venue address across bookings list, calendar, and ticket modal. |
-| 4 | **Interactive Profile Icons** | 🟢 Resolved | Made top-right avatar and top-left profile card open the dynamic Profile Modal with editing and sign out. |
-| 5 | **Interactive Location Selector** | 🟡 Queued | Make location selector pill clickable with active city info ("Bengaluru") and "More cities coming soon" modal/dropdown. |
-| 6 | **"Talk to our team" Support Action** | 🟡 Queued | Connect support card to direct email (`mailto:`) or WhatsApp support link. |
-| 7 | **"Your Space" Navigation & Realtime Messages** | 🟢 Resolved | Built Supabase Realtime-powered MessagesModal with conversation threads, quick inquiry prompts, and direct workshop instructor questions from class cards. Connected Preferences to ProfileModal. |
-| 8 | **Discover Page Top Hero Relevance** | 🟢 Resolved | Rendered dynamic current date with live pulse, real-time class & spot metrics from Supabase, active contextual copy, and 1-click style filter shortcuts. |
-| 9 | **Explore Studios Placement & Action** | 🟡 Queued | Reposition Explore Studios CTA and connect to an informative studio discovery modal/section. |
-| 10 | **Welcome Page Art Panel Scroll Issue** | 🟢 Resolved (2026-08-23) | Removed decorative `welcome-art` card collage (SUNDAY GROOVE, "move with us", etc.) from `WelcomeView` — caused overflow and scroll issues on mobile. |
-| 11 | **Welcome Page Footer Scroll Issue** | 🟢 Resolved (2026-08-23) | Removed `welcome-footer` section ("Dance classes, reimagined." + "Scroll to explore") from `WelcomeView` — added unnecessary page height and scroll on smaller screens. |
-| 12 | **Auth Modal Supabase Disclaimer Text** | 🟢 Resolved (2026-08-23) | Removed "Your email and password are securely managed by Supabase." text from `EmailAuthModal`. |
-| 13 | **Smart Hero Subtitle + QR Check-in Takeover** | 🟢 Resolved (2026-08-23) | Replaced vanity stat metrics with contextual countdown/urgency subtitle. Hero section is dynamically replaced by a scannable QR ticket 15 minutes prior to class. |
-| 14 | **Class Detail Social Proof Metrics** | 🟡 Queued | Display real-time urgency/social proof on class cards/modals (e.g., "8 dancers booked a class in the last hour"). |
+| # | Priority | Issue / Feature | Area | Status | Description |
+|---|:---:|---|---|:---:|---|
+| 1 | **P0** | **Google Maps Redirection for Workshop Locations** | Dancers / Bookings | 🔴 In Progress | Add clickable Google Maps navigation link (`https://www.google.com/maps/search/?api=1&query=...`) across `TicketModal`, `BookingsTab`, `CalendarTab`, and `EventModal`. |
+| 2 | **P1** | **Explore Studios Placement & Discovery Flow** | Discover Tab | 🟡 Queued | Connect the inactive "Explore studios" CTA in the Discover feed banner to a dedicated partner studio explorer modal or directory. |
+| 3 | **P1** | **Class Detail Social Proof & Urgency Metrics** | Workshop Cards / Modals | 🟡 Queued | Display real-time urgency and social proof indicators (e.g., *"8 dancers booked recently"*, *"Only 2 spots left"*). |
+| 4 | **P2** | **Human-Readable Ticket ID on Ticket Modal** | Ticket Modal | 🟡 Queued | Display a visible confirmation code (e.g., `DH-TKT-2026-X`) below the QR code for seamless front-desk manual check-in. |
+| 5 | **P2** | **Search-Responsive Style Chip Counts** | Discover Tab | 🟡 Queued | Make style filter pill counts dynamic so they reflect the active search query rather than global totals. |
+| 6 | **P2** | **Custom Email Sender on Signup** | Auth / Supabase Config | 🟡 Queued | Replace default Supabase confirmation email sender with custom SMTP provider (e.g. Resend, Brevo) in Supabase Auth settings. |
 
 ---
 
 ## 🔍 Detailed Breakdown & Solutions
 
-### 1. SignUp Confirmation Email Sender
-* **Problem**: Verification emails arrive from Supabase's default sender (`noreply@mail.app.supabase.io`) rather than a custom domain.
-* **Solution**: Configure custom SMTP (AWS SES, Resend, Brevo, or SendGrid) in the Supabase Dashboard under `Authentication -> Email Templates -> SMTP Settings`.
-
-### 2. Dynamic User Profile Name [RESOLVED]
-* **Resolution**: Captured full name at signup, synced with `profiles` table, generated dynamic initials, and added real-time profile editing modal.
-
-### 3. Location Redirection to Google Maps
-* **Problem**: Users cannot easily open directions to the workshop venue.
-* **Solution**: Standardize venue address data and render a clickable Google Maps query link (`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.venue_address + ', ' + event.city)}`).
-
-### 4. Interactive Profile Avatars [RESOLVED]
-* **Resolution**: Connected all avatar buttons to `ProfileModal`, supporting display name updates, role switching, and session sign out.
-
-### 5. Location Selector Pill
-* **Problem**: Header location badge is currently static.
-* **Solution**: Add interactive city picker dropdown with active city indicator and future expansion notification.
-
-### 6. "Talk to our team" Support
-* **Problem**: Sidebar support card has no click handler.
-* **Solution**: Bind to `mailto:support@dancehut.com` or WhatsApp quick chat.
-
-### 7. "Your Space" Quick Links & Realtime Messages [RESOLVED]
-* **Resolution**: Implemented `MessagesModal` with full conversation split-pane view, search filter, unread indicators, and real-time message stream. Added quick-prompt inquiry buttons for common workshop questions and integrated a 1-click "Message Host" trigger on workshop cards. Connected Preferences directly to `ProfileModal`.
-
-### 8. Discover Hero Refresh [RESOLVED]
-* **Resolution**: Replaced static date and fixed copy with real-time dynamic date formatting (`Intl.DateTimeFormat`) and a glowing pulse live indicator. Computed dynamic upcoming sessions, total open spots, and unique partner studios count directly from active Supabase events. Added 1-click popular style shortcut tags under the search bar for effortless category discovery.
-
-### 9. Explore Studios Button
-* **Problem**: CTA button is unclickable and feels misplaced.
-* **Solution**: Improve positioning within the Discover feed and open a studio preview modal highlighting featured partner studios.
-
-### 10. Welcome Page Art Panel Scroll Issue [RESOLVED — 2026-08-23]
-* **Problem**: The decorative art panel (`welcome-art`) on the login/welcome page — containing the card collage with "SUNDAY GROOVE", "move with us" circle, "01 — DISCOVER", etc. — caused overflow and scroll issues, especially on mobile devices.
-* **Resolution**: Removed the entire `welcome-art` div from `WelcomeView.tsx`. The welcome page now shows only the functional auth content (role picker, login buttons).
-
-### 11. Welcome Page Footer Scroll Issue [RESOLVED — 2026-08-23]
-* **Problem**: The `welcome-footer` section ("Dance classes, reimagined." + "Scroll to explore →") added unnecessary page height and forced scrolling on smaller screens.
-* **Resolution**: Removed the `<footer>` element from `WelcomeView.tsx`.
-
-### 12. Auth Modal Supabase Disclaimer Text [RESOLVED — 2026-08-23]
-* **Problem**: The subtext *"Your email and password are securely managed by Supabase."* at the bottom of the Email Auth Modal was redundant and cluttered the auth dialog.
-* **Resolution**: Removed the `<span className="auth-legal">` element from `EmailAuthModal.tsx`.
+### 1. Google Maps Redirection for Workshop Locations
+* **Status**: 🔴 In Progress
+* **Impacted Components**: `TicketModal.tsx`, `BookingsTab.tsx`, `CalendarTab.tsx`, `EventModal.tsx`
+* **Problem**: While `CheckInCard.tsx` and `StudioProfileTab.tsx` feature working Google Maps query links, dancers clicking venue addresses in their Bookings tab, Ticket Modal, or Class Details modal cannot directly launch navigation.
+* **Solution**: Standardize venue address resolution and bind address elements to:
+  ```ts
+  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.studio + ', ' + event.location + ', Bengaluru')}`
+  ```
 
 ---
 
-## 🏢 Studio Portal Implementation Roadmap (Phase 2)
-
-| # | Epic / Feature | Status | Scope & Implementation Plan | Target View |
-|---|---|:---:|---|---|
-| S-1 | **Studio Workspace View Routing** | 🟢 Resolved | Conditionally render Studio-specific navigation & dashboard when `profile.role === 'studio'`. | `App.tsx` & `Sidebar.tsx` |
-| S-2 | **Studio Dashboard Overview** | 🟢 Resolved | Render key metrics cards (Active workshops, booked capacity, total revenue, check-in rate) and today's schedule timeline with live roster links. | `StudioOverviewTab.tsx` |
-| S-3 | **Create Workshop Modal / Flow** | 🟢 Resolved | Multi-step interactive event creator form linked directly to Supabase `events` table. | `CreateWorkshopModal.tsx` |
-| S-4 | **Workshop Management Feed** | 🟢 Resolved | Filterable list of hosted classes with Edit, Cancel, Duplicate, and Roster management triggers. | `StudioWorkshopsTab.tsx` |
-| S-5 | **Live Attendee Roster & Manual Check-in** | 🟢 Resolved | Searchable roster of confirmed dancers with 1-click status toggle (`booked` -> `attended`). | `AttendeeRosterModal.tsx` |
-| S-6 | **QR Ticket Scanner for Front Desk** | 🟢 Resolved | Camera QR barcode scanner verifying Supabase ticket payloads and confirming attendance with instant feedback. | `QRScannerModal.tsx` |
-| S-7 | **Studio Announcements Broadcast** | 🟢 Resolved | Dispatch notifications with alert templates to all enrolled dancers of a workshop via `notify_event_audience`. | `StudioBroadcastModal.tsx` |
-| S-8 | **Studio Profile & Room Management** | 🟢 Resolved | Manage studio profile, Google Maps venue location, amenities checklist, and room capacities. | `StudioProfileTab.tsx` |
+### 2. Explore Studios Placement & Discovery Flow
+* **Status**: 🟡 Queued
+* **Impacted Components**: `DiscoverTab.tsx` (lower grid banner)
+* **Problem**: The "Explore studios" CTA button on the "Good energy lives here" banner has no `onClick` handler.
+* **Solution**:
+  1. Reposition the studio showcase block for better natural feed flow.
+  2. Implement an interactive Studio Explorer modal / drawer previewing featured studios, their locations, amenities, and hosted workshops.
 
 ---
 
-## 💃 Choreographer Portal Implementation Roadmap (Phase 1)
+### 3. Class Detail Social Proof & Urgency Metrics
+* **Status**: 🟡 Queued
+* **Impacted Components**: `EventCard.tsx`, `EventModal.tsx`
+* **Problem**: Class cards lack immediate urgency cues that drive ticket booking conversion.
+* **Solution**: Compute and display dynamic social proof tags:
+  * *"Selling fast · Only X spots left"*
+  * *"X dancers booked in the last 24h"*
+  * *"Trending in Indiranagar"*
 
-| # | Epic / Feature | Status | Scope & Implementation Plan | Target View |
-|---|---|:---:|---|---|
-| C-1 | **Choreographer Role-Based Routing** | 🟢 Resolved | Conditional navigation and tab synchronization when `profile.role === 'choreographer'`. | `App.tsx` & `Sidebar.tsx` |
-| C-2 | **Choreographer Dashboard Overview** | 🟢 Resolved | Real-time creator KPI cards (Upcoming masterclasses, student count, gross revenue, fill rate), next class spotlight countdown card, and teaching schedule timeline. | `ChoreoOverviewTab.tsx` |
-| C-3 | **Host Workshop Flow (Creator Mode)** | 🟢 Resolved | Class creation wizard with song track input, skill level picker (Beginner/Intermediate/Advanced/All Levels), partner studio venue selector / custom space, price & spot caps. | `CreateWorkshopModal.tsx` |
-| C-4 | **My Classes Management Feed** | 🟢 Resolved | Searchable & filterable feed of hosted masterclasses with student roster triggers, song prep notes, 1-click class share, and class cancellation. | `ChoreoWorkshopsTab.tsx` |
-| C-5 | **Live Student Roster View** | 🟢 Resolved | Searchable roster of confirmed students for each class with 1-click attendance marking. | `AttendeeRosterModal.tsx` |
-| C-6 | **Song Track & Routine Prep Broadcasts** | 🟢 Resolved | Dispatch song releases, footwear guidelines, and warm-up tips directly to registered dancers. | `StudioBroadcastModal.tsx` |
-| C-7 | **Choreographer Portfolio & Brand Profile** | 🟢 Resolved | Artist profile with stage name, bio, signature styles selector, Instagram handle, and video showreel showcase with live dancer card preview. | `ChoreoProfileTab.tsx` |
+---
 
+### 4. Human-Readable Ticket ID on Ticket Modal
+* **Status**: 🟡 Queued
+* **Impacted Components**: `TicketModal.tsx`
+* **Problem**: If front-desk camera scanning fails or user has screen brightness issues, studio staff need an immediate manual verification code.
+* **Solution**: Display a formatted ticket ID badge (e.g., `DH-TKT-${bookingId ?? event.id}`) directly below the QR code frame with a 1-click copy action.
 
+---
+
+### 5. Search-Responsive Style Chip Counts
+* **Status**: 🟡 Queued
+* **Impacted Components**: `DiscoverTab.tsx`
+* **Problem**: When a text search is active (e.g. "Groove"), style chips still show total unfiltered database counts (e.g. "All styles (7)"), confusing users when filtered results are fewer.
+* **Solution**: Compute chip badge counts from the filtered event dataset matching the active search term.
+
+---
+
+### 6. Custom Email Sender on Signup
+* **Status**: 🟡 Queued
+* **Impacted Components**: Supabase Dashboard (Auth -> Email Templates -> SMTP Settings)
+* **Problem**: Verification and welcome emails arrive from Supabase default sender (`noreply@mail.app.supabase.io`) rather than a branded address.
+* **Solution**: Configure custom SMTP credentials via Resend, Brevo, or SendGrid in Supabase Auth settings to send from `noreply@dancehut.com`.
