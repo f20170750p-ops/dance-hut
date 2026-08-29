@@ -50,6 +50,7 @@ export function ContactModal({
   const [priority, setPriority] = useState<'normal' | 'urgent'>('normal');
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [ticketRef, setTicketRef] = useState('');
   const [error, setError] = useState('');
 
   const adminEmail = 'admin@dancehut.com';
@@ -67,17 +68,30 @@ export function ContactModal({
 
     try {
       // Simulate dispatching contact email request to backend / admin mailbox
-      await new Promise((resolve) => setTimeout(resolve, 800));
+      await new Promise((resolve) => setTimeout(resolve, 650));
 
-      // Construct a mailto backup or background log
-      const formattedSubject = `[DanceHut ${category.toUpperCase()}] ${subject || 'Support Request'} (${currentUserRole})`;
-      const formattedBody = `From: ${name || 'Anonymous'} <${email}>\nRole: ${currentUserRole}\nCategory: ${category}\nPriority: ${priority}\n\nMessage:\n${message}`;
+      const refId = `DH-${Math.floor(1000 + Math.random() * 9000)}`;
+      setTicketRef(refId);
 
-      console.log('Contact support submission:', {
-        to: adminEmail,
-        subject: formattedSubject,
-        body: formattedBody,
-      });
+      // Persist in local storage support tickets list for in-app tracking
+      try {
+        const existing = JSON.parse(localStorage.getItem('dancehut.support_tickets') || '[]');
+        const newTicket = {
+          id: refId,
+          name: name.trim() || 'Anonymous',
+          email: email.trim(),
+          category,
+          priority,
+          subject: subject.trim() || CATEGORIES.find((c) => c.id === category)?.label,
+          message: message.trim(),
+          role: currentUserRole,
+          createdAt: new Date().toISOString(),
+          status: 'received',
+        };
+        localStorage.setItem('dancehut.support_tickets', JSON.stringify([newTicket, ...existing]));
+      } catch {
+        // ignore
+      }
 
       setSubmitted(true);
     } catch (err) {
@@ -121,10 +135,13 @@ export function ContactModal({
             <div className="contact-success-icon">
               <CheckCircle2 size={36} />
             </div>
-            <h3>Message Sent to Admins</h3>
+            {ticketRef && (
+              <span className="contact-ticket-pill">Ticket #{ticketRef}</span>
+            )}
+            <h3>Support Request Received</h3>
             <p>
-              Thank you! Our support and admin team have received your message. We will review
-              your issue and follow up at <strong>{email}</strong> as soon as possible.
+              Thank you! Our support and admin team have received your request. We will review
+              your ticket and follow up at <strong>{email}</strong> as soon as possible.
             </p>
             <div className="contact-success-actions">
               <button

@@ -11,23 +11,14 @@ This document tracks all active, unresolved tasks and UX enhancements for the Da
 
 | # | Priority | Issue / Feature | Area | Status | Description |
 |---|:---:|---|---|:---:|---|
-| 1 | **P3** | **Contact Support Modal Mobile Polish & In-App Submission** | Support / Modal (`F-17`) | 🟡 Queued | Improve mobile padding/alignment and streamline in-app feedback submission without relying solely on mailto links. |
-| 2 | **P3** | **Maximum Booking Window Policy & Logic** | Booking Logic (`F-5`) | 🟡 Queued | Define maximum advance booking window (e.g. 14–30 days) and add boundary checks/badges. |
-| 3 | **P2** | **Custom Email Sender on Signup** | Auth / Supabase Config | 🟡 Queued | Replace default Supabase confirmation email sender with custom SMTP provider (e.g. Resend, Brevo) in Supabase Auth settings. |
+| 1 | **P3** | **Maximum Booking Window Policy & Logic** | Booking Logic (`F-5`) | 🟡 Queued | Define maximum advance booking window (e.g. 14–30 days) and add boundary checks/badges. |
+| 2 | **P2** | **Custom Email Sender on Signup** | Auth / Supabase Config | 🟡 Queued | Replace default Supabase confirmation email sender with custom SMTP provider (e.g. Resend, Brevo) in Supabase Auth settings. |
 
 ---
 
 ## 🔍 Detailed Breakdown & Solutions
 
-### 1. Contact Support Modal Mobile Polish & In-App Submission
-* **Status**: 🟡 Queued
-* **Priority**: **P3 (UI / UX)**
-* **Feedback Refs**: `F-17`
-* **Impacted Components**: `src/components/modals/ContactModal.tsx`, `src/styles/modals.css`
-* **Problem**: Modal padding is tight on small screens and submission relies primarily on client-side mailto links.
-* **Solution**: Optimize responsive padding (`16px` on mobile), provide clean in-app confirmation state, and preserve mailto as secondary fallback.
-
-### 2. Maximum Booking Window Policy & Logic
+### 1. Maximum Booking Window Policy & Logic
 * **Status**: 🟡 Queued
 * **Priority**: **P3 (Design / Logic)**
 * **Feedback Refs**: `F-5`
@@ -35,7 +26,7 @@ This document tracks all active, unresolved tasks and UX enhancements for the Da
 * **Problem**: No boundary limit exists for booking workshops months into the future.
 * **Solution**: Establish booking window threshold (e.g., maximum 30 days in advance) and disable/badge booking actions for workshops beyond the allowable window.
 
-### 3. Custom Email Sender on Signup
+### 2. Custom Email Sender on Signup
 * **Status**: 🟡 Queued
 * **Priority**: **P2**
 * **Impacted Components**: Supabase Dashboard (Auth -> Email Templates -> SMTP Settings)

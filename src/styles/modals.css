@@ -889,6 +889,17 @@
   margin: 0 0 12px;
 }
 
+.contact-ticket-pill {
+  display: inline-flex;
+  align-items: center;
+  font: 600 11px 'DM Mono', monospace;
+  color: #16a34a;
+  background: #dcfce7;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid #bbf7d0;
+}
+
 .contact-error-banner {
   display: flex;
   align-items: center;
@@ -900,6 +911,33 @@
   color: #c53030;
   font-size: 12px;
   margin-bottom: 10px;
+}
+
+@media (max-width: 600px) {
+  .contact-modal {
+    padding: 24px 16px 20px;
+    border-radius: 12px;
+  }
+  .contact-modal-head {
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .contact-modal-head h2 {
+    font-size: 18px;
+  }
+  .contact-form-footer {
+    flex-direction: column-reverse;
+    gap: 12px;
+    align-items: stretch;
+  }
+  .contact-btn-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+  }
+  .contact-alt-link {
+    justify-content: center;
+  }
 }
 
 /* 5. Studio Broadcast Modal */
