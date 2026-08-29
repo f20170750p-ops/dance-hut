@@ -11,27 +11,16 @@ This document tracks all active, unresolved tasks and UX enhancements for the Da
 
 | # | Priority | Issue / Feature | Area | Status | Description |
 |---|:---:|---|---|:---:|---|
-| 1 | **P1** | **Single-Viewport No-Scroll Login Screen** | Welcome / Auth View | 🟡 Queued | Ensure the Login/Welcome screen fits strictly into a single viewport (`100dvh`) without any vertical page scrolling on both web and mobile screens. |
-| 2 | **P1** | **Mobile Sidebar Outside-Click / Backdrop Dismiss** | Navigation / Mobile UI | 🟡 Queued | Automatically close the mobile sidebar drawer when tapping anywhere on the main page or backdrop, instead of requiring an explicit click on the `X` button. |
-| 3 | **P1** | **Explore Studios Placement & Discovery Flow** | Discover Tab | 🟡 Queued | Connect the inactive "Explore studios" CTA in the Discover feed banner to a dedicated partner studio explorer modal or directory. |
-| 4 | **P1** | **Class Detail Social Proof & Urgency Metrics** | Workshop Cards / Modals | 🟡 Queued | Display real-time urgency and social proof indicators (e.g., *"8 dancers booked recently"*, *"Only 2 spots left"*). |
-| 5 | **P2** | **Human-Readable Ticket ID on Ticket Modal** | Ticket Modal | 🟡 Queued | Display a visible confirmation code (e.g., `DH-TKT-2026-X`) below the QR code for seamless front-desk manual check-in. |
-| 6 | **P2** | **Search-Responsive Style Chip Counts** | Discover Tab | 🟡 Queued | Make style filter pill counts dynamic so they reflect the active search query rather than global totals. |
-| 7 | **P2** | **Custom Email Sender on Signup** | Auth / Supabase Config | 🟡 Queued | Replace default Supabase confirmation email sender with custom SMTP provider (e.g. Resend, Brevo) in Supabase Auth settings. |
+| 1 | **P1** | **Mobile Sidebar Outside-Click / Backdrop Dismiss** | Navigation / Mobile UI | 🟡 Queued | Automatically close the mobile sidebar drawer when tapping anywhere on the main page or backdrop, instead of requiring an explicit click on the `X` button. |
+| 2 | **P1** | **Explore Studios Placement & Discovery Flow** | Discover Tab | 🟡 Queued | Connect the inactive "Explore studios" CTA in the Discover feed banner to a dedicated partner studio explorer modal or directory. |
+| 3 | **P1** | **Class Detail Social Proof & Urgency Metrics** | Workshop Cards / Modals | 🟡 Queued | Display real-time urgency and social proof indicators (e.g., *"8 dancers booked recently"*, *"Only 2 spots left"*). |
+| 4 | **P2** | **Human-Readable Ticket ID on Ticket Modal** | Ticket Modal | 🟡 Queued | Display a visible confirmation code (e.g., `DH-TKT-2026-X`) below the QR code for seamless front-desk manual check-in. |
+| 5 | **P2** | **Search-Responsive Style Chip Counts** | Discover Tab | 🟡 Queued | Make style filter pill counts dynamic so they reflect the active search query rather than global totals. |
+| 6 | **P2** | **Custom Email Sender on Signup** | Auth / Supabase Config | 🟡 Queued | Replace default Supabase confirmation email sender with custom SMTP provider (e.g. Resend, Brevo) in Supabase Auth settings. |
 
 ---
 
 ## 🔍 Detailed Breakdown & Solutions
-
-### 2. Single-Viewport No-Scroll Login Screen
-* **Status**: 🟡 Queued
-* **Impacted Components**: `WelcomeView.tsx`, `index.css`
-* **Problem**: The login/welcome page currently requires vertical scrolling on both mobile and desktop screens to view all auth actions and persona selector cards. It exceeds the viewport height.
-* **Solution**:
-  1. Constrain `.welcome-view` to `height: 100dvh; max-height: 100dvh; overflow: hidden;`.
-  2. Optimize padding, typography scale, and card spacing across the persona switcher and auth buttons so the entire welcome interface fits cleanly in a single screen on both mobile devices (e.g., 384×824) and desktop displays.
-
----
 
 ### 3. Mobile Sidebar Outside-Click / Backdrop Dismiss
 * **Status**: 🟡 Queued
