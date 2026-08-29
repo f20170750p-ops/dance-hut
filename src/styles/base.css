@@ -267,24 +267,42 @@ h1, h2, h3, h4, p {
 
 .modal-close {
   position: absolute;
-  z-index: 2;
-  top: 14px;
-  right: 14px;
-  width: 32px;
-  height: 32px;
-  display: grid;
-  place-items: center;
-  border: 0;
+  z-index: 10;
+  top: 18px;
+  right: 18px;
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ded9ce;
   border-radius: 50%;
-  background: white;
-  color: #4a4540;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #5c564f;
+  box-shadow: 0 2px 8px rgba(35, 25, 20, 0.08);
   cursor: pointer;
-  transition: background 0.15s ease, transform 0.15s ease;
+  padding: 0;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .modal-close:hover {
-  background: #f0ece3;
-  transform: scale(1.05);
+  background: #fff1f0;
+  border-color: #f87171;
+  color: #e83b3b;
+  box-shadow: 0 4px 12px rgba(232, 59, 59, 0.18);
+  transform: scale(1.06);
+}
+
+.modal-close:active {
+  background: #fee2e2;
+  transform: scale(0.94);
+}
+
+.modal-close:focus-visible {
+  outline: 2px solid #e83b3b;
+  outline-offset: 2px;
 }
 
 /* Global Toast Notifications */

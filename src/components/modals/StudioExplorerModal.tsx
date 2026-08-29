@@ -119,7 +119,12 @@ export function StudioExplorerModal({
         role="dialog"
         aria-modal="true"
       >
-        <button className="modal-close" onClick={onClose} aria-label="Close studio explorer">
+        <button
+          type="button"
+          className="modal-close"
+          onClick={onClose}
+          aria-label="Close studio explorer"
+        >
           <X size={18} />
         </button>
 

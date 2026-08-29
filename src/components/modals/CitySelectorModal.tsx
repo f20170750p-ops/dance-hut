@@ -59,7 +59,7 @@ export function CitySelectorModal({
           onClick={onClose}
           aria-label="Close city selector"
         >
-          <X size={16} />
+          <X size={18} />
         </button>
 
         <div className="city-modal-head">

@@ -26,10 +26,10 @@ export function EventCard({ event, saved, onSave, onOpen }: EventCardProps) {
               e.stopPropagation();
               onSave();
             }}
-            className={saved ? 'saved' : ''}
+            className={`event-save-btn ${saved ? 'saved' : ''}`}
             aria-label={saved ? 'Unsave class' : 'Save class'}
           >
-            <Heart size={17} fill={saved ? 'currentColor' : 'none'} />
+            <Heart size={16} fill={saved ? 'currentColor' : 'none'} />
           </button>
         </div>
         <span

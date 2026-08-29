@@ -126,7 +126,12 @@ export function EmailAuthModal({ role, onClose }: EmailAuthModalProps) {
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="auth-modal" onClick={(event) => event.stopPropagation()}>
-        <button className="modal-close" onClick={onClose} aria-label="Close sign in">
+        <button
+          type="button"
+          className="modal-close"
+          onClick={onClose}
+          aria-label="Close sign in"
+        >
           <X size={18} />
         </button>
         <span className="auth-kicker">

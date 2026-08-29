@@ -874,21 +874,38 @@
 }
 
 .modal-close-icon {
-  width: 32px;
-  height: 32px;
-  border: 1px solid #dedbd3;
-  background: #fff;
+  width: 34px;
+  height: 34px;
+  border: 1px solid #ded9ce;
+  background: #ffffff;
   border-radius: 8px;
-  display: grid;
-  place-items: center;
-  color: #79746d;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #5c564f;
+  box-shadow: 0 2px 6px rgba(35, 25, 20, 0.05);
   cursor: pointer;
-  transition: all 0.15s ease;
+  padding: 0;
+  flex-shrink: 0;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .modal-close-icon:hover {
-  border-color: #e83b3b;
+  background: #fff1f0;
+  border-color: #f87171;
   color: #e83b3b;
+  box-shadow: 0 4px 12px rgba(232, 59, 59, 0.15);
+  transform: scale(1.05);
+}
+
+.modal-close-icon:active {
+  background: #fee2e2;
+  transform: scale(0.95);
+}
+
+.modal-close-icon:focus-visible {
+  outline: 2px solid #e83b3b;
+  outline-offset: 2px;
 }
 
 /* Create Workshop Modal */

@@ -136,7 +136,12 @@ export function ProfileModal({
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="profile-modal" onClick={(e) => e.stopPropagation()}>
-        <button className="modal-close" onClick={onClose} aria-label="Close profile">
+        <button
+          type="button"
+          className="modal-close"
+          onClick={onClose}
+          aria-label="Close profile"
+        >
           <X size={18} />
         </button>
 

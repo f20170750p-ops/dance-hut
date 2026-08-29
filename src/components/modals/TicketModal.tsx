@@ -27,7 +27,12 @@ export function TicketModal({ event, bookingId, onClose }: TicketModalProps) {
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="ticket-modal" onClick={(e) => e.stopPropagation()}>
-        <button className="modal-close" onClick={onClose} aria-label="Close ticket">
+        <button
+          type="button"
+          className="modal-close"
+          onClick={onClose}
+          aria-label="Close ticket"
+        >
           <X size={18} />
         </button>
         <div className="ticket-success">

@@ -629,6 +629,33 @@
   box-shadow: 0 4px 14px rgba(232, 59, 59, 0.25);
 }
 
+.broadcast-close-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #ded9ce;
+  background: #ffffff;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #5c564f;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.broadcast-close-btn:hover {
+  background: #fff1f0;
+  border-color: #f87171;
+  color: #e83b3b;
+  transform: scale(1.05);
+}
+
+.broadcast-close-btn:active {
+  transform: scale(0.95);
+  background: #fee2e2;
+}
+
 .mark-all-btn {
   display: inline-flex;
   align-items: center;

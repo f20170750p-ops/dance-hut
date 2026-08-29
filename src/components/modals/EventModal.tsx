@@ -41,7 +41,12 @@ export function EventModal({
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="event-modal" onClick={(e) => e.stopPropagation()}>
-        <button className="modal-close" onClick={onClose} aria-label="Close modal">
+        <button
+          type="button"
+          className="modal-close"
+          onClick={onClose}
+          aria-label="Close modal"
+        >
           <X size={18} />
         </button>
         <img

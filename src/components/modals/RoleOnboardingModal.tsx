@@ -107,7 +107,12 @@ export function RoleOnboardingModal({
   return (
     <div className="modal-backdrop" onClick={onCancel}>
       <div className="auth-modal" style={{ maxWidth: '480px' }} onClick={(e) => e.stopPropagation()}>
-        <button className="modal-close" onClick={onCancel} aria-label="Cancel onboarding">
+        <button
+          type="button"
+          className="modal-close"
+          onClick={onCancel}
+          aria-label="Cancel onboarding"
+        >
           <X size={18} />
         </button>
 
