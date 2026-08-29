@@ -792,6 +792,8 @@ h1 em, h2 em, .studio-banner em { font-family: Georgia, serif; font-weight: 400;
 .style-chip:hover { border-color: #c4c0b6; background: #fdfcfb; transform: translateY(-1px); }
 .style-chip.active { background: #2b2927; border-color: #2b2927; color: #fff; }
 .style-chip.active small { color: #f2a3a1; }
+.style-chip.zero-count { opacity: 0.6; border-style: dashed; }
+.style-chip.zero-count:hover { opacity: 0.9; }
 @media (max-width: 900px) {
   .sponsored-spotlight-banner {
     grid-template-columns: 1fr;

@@ -72,18 +72,23 @@ export function DiscoverTab({
     setDateFilter('Any date');
   };
 
-  const visibleEvents = useMemo(() => {
+  const searchMatchingEvents = useMemo(() => {
     return events.filter((event) => {
       const matchesQuery = [event.title, event.style, event.location, event.studio, event.host]
         .join(' ')
         .toLowerCase()
         .includes(query.toLowerCase());
-      const matchesStyle = styleFilter === 'All styles' || event.style === styleFilter;
       const matchesLocation = locationFilter === 'All locations' || event.location === locationFilter;
       const matchesDate = dateFilter === 'Any date' || event.date === dateFilter;
-      return matchesQuery && matchesStyle && matchesLocation && matchesDate;
+      return matchesQuery && matchesLocation && matchesDate;
     });
-  }, [dateFilter, events, locationFilter, query, styleFilter]);
+  }, [dateFilter, events, locationFilter, query]);
+
+  const visibleEvents = useMemo(() => {
+    return searchMatchingEvents.filter((event) => {
+      return styleFilter === 'All styles' || event.style === styleFilter;
+    });
+  }, [searchMatchingEvents, styleFilter]);
 
   const styles = useMemo(() => [...new Set(events.map((event) => event.style))], [events]);
   const locations = useMemo(() => [...new Set(events.map((event) => event.location))], [events]);
@@ -258,15 +263,15 @@ export function DiscoverTab({
             className={`style-chip ${styleFilter === 'All styles' ? 'active' : ''}`}
             onClick={() => setStyleFilter('All styles')}
           >
-            All styles ({events.length})
+            All styles ({searchMatchingEvents.length})
           </button>
           {styles.map((style) => {
-            const count = events.filter((e) => e.style === style).length;
+            const count = searchMatchingEvents.filter((e) => e.style === style).length;
             return (
               <button
                 type="button"
                 key={style}
-                className={`style-chip ${styleFilter === style ? 'active' : ''}`}
+                className={`style-chip ${styleFilter === style ? 'active' : ''} ${count === 0 ? 'zero-count' : ''}`}
                 onClick={() => setStyleFilter(styleFilter === style ? 'All styles' : style)}
               >
                 {style} <small>({count})</small>
