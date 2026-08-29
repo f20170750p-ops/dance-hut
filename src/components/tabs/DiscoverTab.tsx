@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useRef, useEffect } from 'react';
 import {
   ArrowRight,
   CalendarDays,
@@ -6,9 +6,11 @@ import {
   Clock3,
   Flame,
   MapPin,
+  Navigation,
   Search,
   SlidersHorizontal,
   Sparkles,
+  Ticket,
 } from 'lucide-react';
 import type { Booking } from '../../services/bookings';
 import type { EventItem } from '../../services/events';
@@ -68,6 +70,44 @@ export function DiscoverTab({
   });
   const [showFilters, setShowFilters] = useState(false);
   const [showStudioExplorer, setShowStudioExplorer] = useState(false);
+  const [showNextUpMenu, setShowNextUpMenu] = useState(false);
+  const nextUpMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (nextUpMenuRef.current && !nextUpMenuRef.current.contains(e.target as Node)) {
+        setShowNextUpMenu(false);
+      }
+    }
+    if (showNextUpMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showNextUpMenu]);
+
+  const upcomingTarget = bookedEvent || countdownEvent;
+
+  const bookedDateParts = useMemo(() => {
+    if (!upcomingTarget) return { day: '18', month: 'AUG' };
+    try {
+      if (upcomingTarget.dateKey) {
+        const d = new Date(`${upcomingTarget.dateKey}T00:00:00`);
+        if (!isNaN(d.getTime())) {
+          return {
+            day: String(d.getDate()),
+            month: d.toLocaleString('en-IN', { month: 'short' }).toUpperCase(),
+          };
+        }
+      }
+      const parts = upcomingTarget.date.split(/[\s,]+/);
+      if (parts.length >= 3) {
+        return { day: parts[1], month: parts[2].toUpperCase() };
+      }
+    } catch {}
+    return { day: '18', month: 'AUG' };
+  }, [upcomingTarget]);
 
   const handleSelectStudio = (studioName: string) => {
     setQuery(studioName);
@@ -428,27 +468,106 @@ export function DiscoverTab({
         </div>
 
         <div className="next-up">
-          <div className="section-head compact">
+          <div className="section-head compact next-up-head">
             <div>
               <span className="section-kicker">Your week</span>
               <h3>Next up</h3>
             </div>
-            <button type="button" className="dots-btn">•••</button>
+            <div className="next-up-action-wrap" ref={nextUpMenuRef}>
+              <button
+                type="button"
+                className={`dots-btn ${showNextUpMenu ? 'active' : ''}`}
+                onClick={() => setShowNextUpMenu(!showNextUpMenu)}
+                aria-label="Upcoming class actions"
+                aria-expanded={showNextUpMenu}
+              >
+                •••
+              </button>
+
+              {showNextUpMenu && (
+                <div className="next-up-dropdown">
+                  {upcomingTarget ? (
+                    <>
+                      <button
+                        type="button"
+                        className="next-up-menu-item"
+                        onClick={() => {
+                          setShowNextUpMenu(false);
+                          onViewTicket();
+                        }}
+                      >
+                        <Ticket size={14} />
+                        <span>View Pass / Ticket</span>
+                      </button>
+                      <a
+                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                          upcomingTarget.studio + ', ' + upcomingTarget.location + ', Bengaluru'
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="next-up-menu-item"
+                        onClick={() => setShowNextUpMenu(false)}
+                      >
+                        <Navigation size={14} />
+                        <span>Navigate to Studio</span>
+                      </a>
+                      <button
+                        type="button"
+                        className="next-up-menu-item"
+                        onClick={() => {
+                          setShowNextUpMenu(false);
+                          onOpenEvent(upcomingTarget);
+                        }}
+                      >
+                        <SlidersHorizontal size={14} />
+                        <span>Manage Booking</span>
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        type="button"
+                        className="next-up-menu-item"
+                        onClick={() => {
+                          setShowNextUpMenu(false);
+                          onNavigateTab('Calendar');
+                        }}
+                      >
+                        <CalendarDays size={14} />
+                        <span>View Class Calendar</span>
+                      </button>
+                      <button
+                        type="button"
+                        className="next-up-menu-item"
+                        onClick={() => {
+                          setShowNextUpMenu(false);
+                          window.scrollTo({ top: 300, behavior: 'smooth' });
+                        }}
+                      >
+                        <Sparkles size={14} />
+                        <span>Find a Workshop</span>
+                      </button>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
-          {bookedEvent ? (
+
+          {upcomingTarget ? (
             <button
               type="button"
               className="upcoming-item"
               onClick={onViewTicket}
             >
               <div className="date-block">
-                <strong>18</strong>
-                <span>AUG</span>
+                <strong>{bookedDateParts.day}</strong>
+                <span>{bookedDateParts.month}</span>
               </div>
               <div>
-                <strong>{bookedEvent.title}</strong>
+                <strong>{upcomingTarget.title}</strong>
                 <span>
-                  {bookedEvent.time} · {bookedEvent.location}
+                  {upcomingTarget.time} · {upcomingTarget.studio}
                 </span>
               </div>
               <span className="upcoming-check">
