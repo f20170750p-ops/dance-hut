@@ -16,6 +16,7 @@ import type { CountdownPhase } from '../../hooks/useClassCountdown';
 import { EventCard } from '../common/EventCard';
 import { CheckInCard } from '../common/CheckInCard';
 import { StudioExplorerModal } from '../modals/StudioExplorerModal';
+import { DatePickerPopover, type DateFilterValue } from '../common/DatePickerPopover';
 
 interface DiscoverTabProps {
   events: EventItem[];
@@ -61,7 +62,10 @@ export function DiscoverTab({
   const [query, setQuery] = useState('');
   const [styleFilter, setStyleFilter] = useState('All styles');
   const [locationFilter, setLocationFilter] = useState('All locations');
-  const [dateFilter, setDateFilter] = useState('Any date');
+  const [dateFilter, setDateFilter] = useState<DateFilterValue>({
+    type: 'any',
+    label: 'Any date',
+  });
   const [showFilters, setShowFilters] = useState(false);
   const [showStudioExplorer, setShowStudioExplorer] = useState(false);
 
@@ -69,7 +73,7 @@ export function DiscoverTab({
     setQuery(studioName);
     setStyleFilter('All styles');
     setLocationFilter('All locations');
-    setDateFilter('Any date');
+    setDateFilter({ type: 'any', label: 'Any date' });
   };
 
   const searchMatchingEvents = useMemo(() => {
@@ -79,7 +83,31 @@ export function DiscoverTab({
         .toLowerCase()
         .includes(query.toLowerCase());
       const matchesLocation = locationFilter === 'All locations' || event.location === locationFilter;
-      const matchesDate = dateFilter === 'Any date' || event.date === dateFilter;
+
+      let matchesDate = true;
+      if (dateFilter.type === 'specific' && dateFilter.dateKey) {
+        matchesDate = event.dateKey === dateFilter.dateKey || event.date === dateFilter.label;
+      } else if (dateFilter.type === 'preset' && dateFilter.presetKey) {
+        const today = new Date();
+        const todayStr = today.toISOString().split('T')[0];
+        const evDate = event.dateKey ? new Date(event.dateKey) : new Date();
+
+        if (dateFilter.presetKey === 'today') {
+          matchesDate = event.dateKey === todayStr;
+        } else if (dateFilter.presetKey === 'tomorrow') {
+          const tomorrow = new Date(today);
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          const tomorrowStr = tomorrow.toISOString().split('T')[0];
+          matchesDate = event.dateKey === tomorrowStr;
+        } else if (dateFilter.presetKey === 'weekend') {
+          const dayOfWeek = evDate.getDay();
+          matchesDate = dayOfWeek === 0 || dayOfWeek === 6;
+        } else if (dateFilter.presetKey === 'week') {
+          const diffDays = (evDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
+          matchesDate = diffDays >= 0 && diffDays <= 7;
+        }
+      }
+
       return matchesQuery && matchesLocation && matchesDate;
     });
   }, [dateFilter, events, locationFilter, query]);
@@ -283,20 +311,14 @@ export function DiscoverTab({
 
       {showFilters && (
         <div className="filters">
-          <label>
-            When
-            <select
+          <div className="filter-group">
+            <span className="filter-label">When</span>
+            <DatePickerPopover
               value={dateFilter}
-              onChange={(event) => setDateFilter(event.target.value)}
-            >
-              <option>Any date</option>
-              {events.map((event) => (
-                <option key={event.id} value={event.date}>
-                  {event.date}
-                </option>
-              ))}
-            </select>
-          </label>
+              onChange={setDateFilter}
+              events={events}
+            />
+          </div>
           <label>
             Style
             <select
@@ -325,7 +347,7 @@ export function DiscoverTab({
             type="button"
             className="clear-filter"
             onClick={() => {
-              setDateFilter('Any date');
+              setDateFilter({ type: 'any', label: 'Any date' });
               setStyleFilter('All styles');
               setLocationFilter('All locations');
               setShowFilters(false);
