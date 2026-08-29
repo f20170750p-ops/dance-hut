@@ -1,7 +1,0 @@
-1. SignUp sends a confirmation email from Supabase instead of the app email id.
-3. We are not getting the location for the booked class redirected to the google maps
-5. The location icon is not clickable
-6. Talk to our team is not working
-7. Your space links (Messages, Notification and Preferences are not working)
-9. Explore studios button is not clickable, and it also feels to not be in the right location
-10. When I click on the calendar, there's no way to identify if there are any events on a certain date. The dates on which I have booked an event, its highlighed. But for dates on which there's an event, we should add a dot underneath that date.
