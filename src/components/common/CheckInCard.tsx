@@ -12,7 +12,7 @@ interface CheckInCardProps {
 }
 
 export function CheckInCard({ event, bookingId, timeLabel, phase }: CheckInCardProps) {
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
   const ticketValue = `dancehut:booking:${bookingId ?? event.id}`;
 
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(

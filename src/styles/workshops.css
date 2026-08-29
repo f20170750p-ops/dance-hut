@@ -329,7 +329,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 16px 24px;
-  background: linear-gradient(90deg, #e83b3b, #ef8c4e);
+  background: linear-gradient(135deg, #e83b3b 0%, #c92c32 100%);
   border: 0;
   color: white;
   cursor: pointer;
@@ -482,6 +482,33 @@
 .checkin-navigate:hover {
   background: #3d3a37;
   border-color: #55504a;
+}
+
+@media (max-width: 600px) {
+  .checkin-header {
+    padding: 12px 16px;
+  }
+  .checkin-body {
+    padding: 20px 16px 18px;
+    gap: 18px;
+  }
+  .checkin-qr-area {
+    padding: 16px 14px;
+    max-width: 250px;
+    gap: 10px;
+    border-radius: 12px;
+  }
+  .checkin-qr-frame {
+    padding: 8px;
+  }
+  .checkin-qr-frame svg {
+    width: 130px !important;
+    height: 130px !important;
+  }
+  .checkin-details {
+    padding: 14px 0;
+    gap: 12px;
+  }
 }
 
 /* Event Modal / Workshop Detail Modal */
