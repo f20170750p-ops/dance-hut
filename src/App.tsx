@@ -684,6 +684,7 @@ function App() {
           {activeTab === 'Notifications' && (
             <NotificationsTab
               currentUserId={session?.user?.id || 'current-user'}
+              currentRole={role}
               notifications={notifications}
               setNotifications={setNotifications}
               events={events}

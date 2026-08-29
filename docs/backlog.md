@@ -11,27 +11,18 @@ This document tracks all active, unresolved tasks and UX enhancements for the Da
 
 | # | Priority | Issue / Feature | Area | Status | Description |
 |---|:---:|---|---|:---:|---|
-| 1 | **P2** | **Notification Broadcaster Simulator Mobile & UX Polish** | Notifications (`F-13`, `F-14`, `F-15`) | 🟡 Queued | Fix mobile card overflow, auto-close simulator upon send, and scope class selector to booked workshops for dancers. |
-| 2 | **P2** | **Discover Date Filter Interactive Calendar Picker** | Discover (`F-4`) | 🟡 Queued | Replace static date dropdown filter with an interactive calendar popover / date-picker modal. |
-| 3 | **P2** | **"Next Up" Card Action Menu Implementation** | Discover (`F-11`) | 🟡 Queued | Connect three-dot `•••` action menu on Next Up card to View Ticket, Maps Navigation, and Booking Management. |
-| 4 | **P3** | **Spotlight Multi-Item Carousel / Auto-Scroll** | Discover (`F-3`) | 🟡 Queued | Implement horizontal carousel indicators and auto-scrolling when multiple featured workshops are spotlighted. |
-| 5 | **P3** | **Contact Support Modal Mobile Polish & In-App Submission** | Support / Modal (`F-17`) | 🟡 Queued | Improve mobile padding/alignment and streamline in-app feedback submission without relying solely on mailto links. |
-| 6 | **P3** | **Maximum Booking Window Policy & Logic** | Booking Logic (`F-5`) | 🟡 Queued | Define maximum advance booking window (e.g. 14–30 days) and add boundary checks/badges. |
-| 7 | **P2** | **Custom Email Sender on Signup** | Auth / Supabase Config | 🟡 Queued | Replace default Supabase confirmation email sender with custom SMTP provider (e.g. Resend, Brevo) in Supabase Auth settings. |
+| 1 | **P2** | **Discover Date Filter Interactive Calendar Picker** | Discover (`F-4`) | 🟡 Queued | Replace static date dropdown filter with an interactive calendar popover / date-picker modal. |
+| 2 | **P2** | **"Next Up" Card Action Menu Implementation** | Discover (`F-11`) | 🟡 Queued | Connect three-dot `•••` action menu on Next Up card to View Ticket, Maps Navigation, and Booking Management. |
+| 3 | **P3** | **Spotlight Multi-Item Carousel / Auto-Scroll** | Discover (`F-3`) | 🟡 Queued | Implement horizontal carousel indicators and auto-scrolling when multiple featured workshops are spotlighted. |
+| 4 | **P3** | **Contact Support Modal Mobile Polish & In-App Submission** | Support / Modal (`F-17`) | 🟡 Queued | Improve mobile padding/alignment and streamline in-app feedback submission without relying solely on mailto links. |
+| 5 | **P3** | **Maximum Booking Window Policy & Logic** | Booking Logic (`F-5`) | 🟡 Queued | Define maximum advance booking window (e.g. 14–30 days) and add boundary checks/badges. |
+| 6 | **P2** | **Custom Email Sender on Signup** | Auth / Supabase Config | 🟡 Queued | Replace default Supabase confirmation email sender with custom SMTP provider (e.g. Resend, Brevo) in Supabase Auth settings. |
 
 ---
 
 ## 🔍 Detailed Breakdown & Solutions
 
-### 1. Notification Broadcaster Simulator Mobile & UX Polish
-* **Status**: 🟡 Queued
-* **Priority**: **P2 (Bug / UX)**
-* **Feedback Refs**: `F-13`, `F-14`, `F-15`
-* **Impacted Components**: `src/components/tabs/NotificationsTab.tsx`, `src/styles/messages.css`
-* **Problem**: Broadcaster simulator panel causes horizontal overflow on mobile screens; stays open after broadcasting; and lets dancers select workshops they are not enrolled in.
-* **Solution**: Constrain form grid to single column on mobile (`max-width: 600px`), automatically collapse/hide panel upon successful dispatch, and filter selector options to user's booked workshops when in dancer mode.
-
-### 2. Discover Date Filter Interactive Calendar Picker
+### 1. Discover Date Filter Interactive Calendar Picker
 * **Status**: 🟡 Queued
 * **Priority**: **P2 (Feature)**
 * **Feedback Refs**: `F-4`
@@ -39,7 +30,7 @@ This document tracks all active, unresolved tasks and UX enhancements for the Da
 * **Problem**: Date filter currently uses a static select dropdown with limited preset dates.
 * **Solution**: Integrate a clean calendar popover/modal allowing dancers to pick specific dates or date ranges to filter workshops dynamically.
 
-### 3. "Next Up" Card Action Menu Implementation
+### 2. "Next Up" Card Action Menu Implementation
 * **Status**: 🟡 Queued
 * **Priority**: **P2 (Feature)**
 * **Feedback Refs**: `F-11`
@@ -47,7 +38,7 @@ This document tracks all active, unresolved tasks and UX enhancements for the Da
 * **Problem**: The three-dot `•••` action button on the "Next up" upcoming class card is currently non-interactive.
 * **Solution**: Attach a dropdown menu with active actions: View Ticket (opens `TicketModal`), Navigate (opens Google Maps location), and Manage Booking (Cancel/Reschedule).
 
-### 4. Spotlight Multi-Item Carousel / Auto-Scroll
+### 3. Spotlight Multi-Item Carousel / Auto-Scroll
 * **Status**: 🟡 Queued
 * **Priority**: **P3 (Design / Enhancement)**
 * **Feedback Refs**: `F-3`
@@ -55,7 +46,7 @@ This document tracks all active, unresolved tasks and UX enhancements for the Da
 * **Problem**: When multiple featured workshops are marked for Spotlight, only the first is shown or they stack vertically.
 * **Solution**: Add horizontal carousel pagination with slide indicators and subtle auto-advancing timer that pauses on hover/touch.
 
-### 5. Contact Support Modal Mobile Polish & In-App Submission
+### 4. Contact Support Modal Mobile Polish & In-App Submission
 * **Status**: 🟡 Queued
 * **Priority**: **P3 (UI / UX)**
 * **Feedback Refs**: `F-17`
@@ -63,7 +54,7 @@ This document tracks all active, unresolved tasks and UX enhancements for the Da
 * **Problem**: Modal padding is tight on small screens and submission relies primarily on client-side mailto links.
 * **Solution**: Optimize responsive padding (`16px` on mobile), provide clean in-app confirmation state, and preserve mailto as secondary fallback.
 
-### 6. Maximum Booking Window Policy & Logic
+### 5. Maximum Booking Window Policy & Logic
 * **Status**: 🟡 Queued
 * **Priority**: **P3 (Design / Logic)**
 * **Feedback Refs**: `F-5`
@@ -71,7 +62,7 @@ This document tracks all active, unresolved tasks and UX enhancements for the Da
 * **Problem**: No boundary limit exists for booking workshops months into the future.
 * **Solution**: Establish booking window threshold (e.g., maximum 30 days in advance) and disable/badge booking actions for workshops beyond the allowable window.
 
-### 7. Custom Email Sender on Signup
+### 6. Custom Email Sender on Signup
 * **Status**: 🟡 Queued
 * **Priority**: **P2**
 * **Impacted Components**: Supabase Dashboard (Auth -> Email Templates -> SMTP Settings)

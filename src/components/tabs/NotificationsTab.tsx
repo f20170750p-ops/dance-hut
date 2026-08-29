@@ -31,8 +31,11 @@ import {
 import type { EventItem } from '../../services/events';
 import type { Booking } from '../../services/bookings';
 
+import type { UserRole } from '../../services/auth';
+
 interface NotificationsTabProps {
   currentUserId: string;
+  currentRole?: UserRole;
   notifications: NotificationItem[];
   setNotifications: React.Dispatch<React.SetStateAction<NotificationItem[]>>;
   events: EventItem[];
@@ -68,6 +71,7 @@ function formatRelativeTime(isoString: string): string {
 
 export function NotificationsTab({
   currentUserId,
+  currentRole,
   notifications,
   setNotifications,
   events,
@@ -85,9 +89,18 @@ export function NotificationsTab({
     null
   );
 
+  const selectableEvents = useMemo(() => {
+    if (currentRole === 'dancer') {
+      const bookedEventIds = new Set(bookings.map((b) => b.event_id));
+      const userBooked = events.filter((e) => bookedEventIds.has(e.id));
+      return userBooked.length > 0 ? userBooked : events;
+    }
+    return events;
+  }, [currentRole, bookings, events]);
+
   // Broadcaster form state
   const [selectedEventId, setSelectedEventId] = useState<number>(
-    events[0]?.id ?? 1
+    selectableEvents[0]?.id ?? events[0]?.id ?? 1
   );
   const [broadcastType, setBroadcastType] = useState<NotificationType>('location_change');
   const [customTitle, setCustomTitle] = useState('Studio Venue Update');
@@ -99,8 +112,8 @@ export function NotificationsTab({
   const [broadcasting, setBroadcasting] = useState(false);
 
   const selectedTargetEvent = useMemo(
-    () => events.find((e) => e.id === Number(selectedEventId)) || events[0],
-    [events, selectedEventId]
+    () => selectableEvents.find((e) => e.id === Number(selectedEventId)) || selectableEvents[0] || events[0],
+    [selectableEvents, selectedEventId, events]
   );
 
   // Sync default form values when changing broadcast type
@@ -154,6 +167,7 @@ export function NotificationsTab({
     });
 
     setBroadcasting(false);
+    setShowBroadcaster(false);
     setBroadcastSuccess({
       count: res.recipientCount,
       title: customTitle,
@@ -357,7 +371,7 @@ export function NotificationsTab({
                   onChange={(e) => {
                     const id = Number(e.target.value);
                     setSelectedEventId(id);
-                    const target = events.find((ev) => ev.id === id);
+                    const target = selectableEvents.find((ev) => ev.id === id);
                     if (target && broadcastType === 'location_change') {
                       setOldValue(target.location);
                     } else if (target && broadcastType === 'time_change') {
@@ -365,7 +379,7 @@ export function NotificationsTab({
                     }
                   }}
                 >
-                  {events.map((ev) => (
+                  {selectableEvents.map((ev) => (
                     <option key={ev.id} value={ev.id}>
                       {ev.title} • {ev.studio} ({ev.date})
                     </option>
