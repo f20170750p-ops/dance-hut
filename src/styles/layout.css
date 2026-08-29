@@ -382,6 +382,9 @@
 }
 
 @media (max-width: 680px) {
+  :root {
+    --topbar-height: 64px;
+  }
   .sidebar {
     position: fixed;
     z-index: 100;
@@ -433,7 +436,7 @@
     position: sticky;
     top: 0;
     z-index: 40;
-    height: 64px;
+    height: var(--topbar-height, 64px);
     justify-content: space-between;
     padding: 0 14px;
     background: rgba(253, 251, 247, 0.96);

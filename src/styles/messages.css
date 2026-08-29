@@ -12,8 +12,8 @@
 .messages-layout-card {
   display: grid;
   grid-template-columns: 320px 1fr;
-  height: calc(100vh - 220px);
-  min-height: 560px;
+  height: calc(100vh - var(--topbar-height, 82px) - 130px);
+  min-height: 520px;
   max-height: 760px;
   background: #ffffff;
   border: 1px solid #dfdbd2;
@@ -1171,9 +1171,11 @@
   }
   .messages-layout-card {
     grid-template-columns: 1fr;
-    height: calc(100dvh - 165px);
+    height: calc(100dvh - var(--topbar-height, 64px) - 85px);
+    min-height: 480px;
     max-height: none;
     border-radius: 12px;
+    overflow: hidden;
   }
   .messages-inbox-sidebar.hide-mobile {
     display: none;
@@ -1181,14 +1183,38 @@
   .messages-chat-room.hide-mobile {
     display: none;
   }
+  .messages-chat-room {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
   .chat-room-header {
+    flex-shrink: 0;
     position: sticky;
     top: 0;
-    z-index: 5;
+    z-index: 10;
     background: #ffffff;
+    padding: 12px 14px;
+    border-bottom: 1px solid #ebe8e1;
   }
   .chat-back-mobile {
     display: flex;
+  }
+  .chat-messages-scroll {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    padding: 14px;
+  }
+  .chat-prompts-bar {
+    flex-shrink: 0;
+    padding: 6px 12px;
+  }
+  .chat-composer-bar {
+    flex-shrink: 0;
+    padding: 10px 14px;
   }
   .notifications-header-wrapper {
     flex-direction: column;
