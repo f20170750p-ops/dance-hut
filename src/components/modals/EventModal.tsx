@@ -1,4 +1,15 @@
-import { ArrowRight, Clock3, MapPin, MessageCircle, Ticket, UserRound, X } from 'lucide-react';
+import {
+  ArrowRight,
+  Clock3,
+  Flame,
+  MapPin,
+  MessageCircle,
+  Sparkles,
+  Ticket,
+  UserRound,
+  Users,
+  X,
+} from 'lucide-react';
 import type { EventItem } from '../../services/events';
 
 interface EventModalProps {
@@ -93,6 +104,33 @@ export function EventModal({
               </span>
             </div>
           </div>
+
+          <div className="modal-urgency-strip">
+            <div className="urgency-icon-wrap">
+              {soldOut ? (
+                <Users size={16} />
+              ) : event.spots <= 3 ? (
+                <Flame size={16} />
+              ) : (
+                <Sparkles size={16} />
+              )}
+            </div>
+            <div className="urgency-text">
+              <strong>
+                {soldOut
+                  ? 'Sold out for this session'
+                  : event.spots <= 3
+                  ? `Selling fast · Only ${event.spots} spots left!`
+                  : `Trending workshop in ${event.location}`}
+              </strong>
+              <span>
+                {soldOut
+                  ? 'Check other dates or upcoming workshops'
+                  : `${Math.max(4, 20 - event.spots)} dancers booked recently · Instant QR check-in`}
+              </span>
+            </div>
+          </div>
+
           <p className="modal-description">
             Come as you are. Leave with a new groove. This intimate session is built
             for good music, clear guidance, and the kind of energy that makes you

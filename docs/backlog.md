@@ -11,25 +11,13 @@ This document tracks all active, unresolved tasks and UX enhancements for the Da
 
 | # | Priority | Issue / Feature | Area | Status | Description |
 |---|:---:|---|---|:---:|---|
-| 1 | **P1** | **Class Detail Social Proof & Urgency Metrics** | Workshop Cards / Modals | 🟡 Queued | Display real-time urgency and social proof indicators (e.g., *"8 dancers booked recently"*, *"Only 2 spots left"*). |
-| 2 | **P2** | **Human-Readable Ticket ID on Ticket Modal** | Ticket Modal | 🟡 Queued | Display a visible confirmation code (e.g., `DH-TKT-2026-X`) below the QR code for seamless front-desk manual check-in. |
-| 3 | **P2** | **Search-Responsive Style Chip Counts** | Discover Tab | 🟡 Queued | Make style filter pill counts dynamic so they reflect the active search query rather than global totals. |
-| 4 | **P2** | **Custom Email Sender on Signup** | Auth / Supabase Config | 🟡 Queued | Replace default Supabase confirmation email sender with custom SMTP provider (e.g. Resend, Brevo) in Supabase Auth settings. |
+| 1 | **P2** | **Human-Readable Ticket ID on Ticket Modal** | Ticket Modal | 🟡 Queued | Display a visible confirmation code (e.g., `DH-TKT-2026-X`) below the QR code for seamless front-desk manual check-in. |
+| 2 | **P2** | **Search-Responsive Style Chip Counts** | Discover Tab | 🟡 Queued | Make style filter pill counts dynamic so they reflect the active search query rather than global totals. |
+| 3 | **P2** | **Custom Email Sender on Signup** | Auth / Supabase Config | 🟡 Queued | Replace default Supabase confirmation email sender with custom SMTP provider (e.g. Resend, Brevo) in Supabase Auth settings. |
 
 ---
 
 ## 🔍 Detailed Breakdown & Solutions
-
-### 5. Class Detail Social Proof & Urgency Metrics
-* **Status**: 🟡 Queued
-* **Impacted Components**: `EventCard.tsx`, `EventModal.tsx`
-* **Problem**: Class cards lack immediate urgency cues that drive ticket booking conversion.
-* **Solution**: Compute and display dynamic social proof tags:
-  * *"Selling fast · Only X spots left"*
-  * *"X dancers booked in the last 24h"*
-  * *"Trending in Indiranagar"*
-
----
 
 ### 6. Human-Readable Ticket ID on Ticket Modal
 * **Status**: 🟡 Queued
