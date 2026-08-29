@@ -1,4 +1,5 @@
-import { CalendarDays, Check, MapPin, Sparkles, X } from 'lucide-react';
+import { useState } from 'react';
+import { CalendarDays, Check, Copy, MapPin, Sparkles, X } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import type { EventItem } from '../../services/events';
 
@@ -9,7 +10,19 @@ interface TicketModalProps {
 }
 
 export function TicketModal({ event, bookingId, onClose }: TicketModalProps) {
+  const [copied, setCopied] = useState(false);
+  const ticketId = `DH-TKT-2026-${String(bookingId ?? event.id).padStart(4, '0')}`;
   const ticketValue = `dancehut:booking:${bookingId ?? event.id}`;
+
+  const handleCopyCode = async () => {
+    try {
+      await navigator.clipboard.writeText(ticketId);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // ignore
+    }
+  };
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
@@ -37,6 +50,28 @@ export function TicketModal({ event, bookingId, onClose }: TicketModalProps) {
           <div className="qr-corner corner-b" />
           <div className="qr-corner corner-c" />
           <div className="qr-corner corner-d" />
+        </div>
+
+        <div
+          className={`ticket-code-pill ${copied ? 'copied' : ''}`}
+          onClick={handleCopyCode}
+          role="button"
+          tabIndex={0}
+          title="Click to copy confirmation code"
+        >
+          <span className="ticket-code-label">TICKET ID</span>
+          <strong>{ticketId}</strong>
+          <span className="copy-code-badge">
+            {copied ? (
+              <>
+                <Check size={12} /> Copied
+              </>
+            ) : (
+              <>
+                <Copy size={12} /> Copy
+              </>
+            )}
+          </span>
         </div>
         <div className="ticket-details">
           <div>

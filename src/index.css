@@ -544,6 +544,14 @@ h1 em, h2 em, .studio-banner em { font-family: Georgia, serif; font-weight: 400;
 .corner-b { top: 10px; right: 10px; border-left: 0; border-bottom: 0; border-radius: 0 5px 0 0; }
 .corner-c { bottom: 10px; left: 10px; border-right: 0; border-top: 0; border-radius: 0 0 0 5px; }
 .corner-d { bottom: 10px; right: 10px; border-left: 0; border-top: 0; border-radius: 0 0 5px 0; }
+.ticket-code-pill { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: #ede8df; border: 1px solid #ddd7cb; border-radius: 8px; padding: 6px 12px; margin: -10px auto 20px; cursor: pointer; transition: background 0.15s, border-color 0.15s, transform 0.15s; user-select: none; }
+.ticket-code-pill:hover { background: #e4decfe0; border-color: #cbbeab; transform: translateY(-1px); }
+.ticket-code-pill.copied { background: #d8f0df; border-color: #b0e0c0; color: #226b3c; }
+.ticket-code-label { font: 9px 'DM Mono'; letter-spacing: 0.1em; color: #878177; }
+.ticket-code-pill strong { font: 600 12px 'Space Grotesk'; letter-spacing: 0.05em; color: #2e2a26; }
+.ticket-code-pill.copied strong { color: #1e6337; }
+.copy-code-badge { display: inline-flex; align-items: center; gap: 3px; font: 10px 'DM Mono'; color: #7a7369; padding: 2px 6px; border-radius: 4px; background: rgba(255, 255, 255, 0.7); }
+.ticket-code-pill.copied .copy-code-badge { background: #c5ebd1; color: #1d6136; font-weight: 600; }
 .ticket-details { border-top: 1px dashed #d8d3ca; border-bottom: 1px dashed #d8d3ca; padding: 16px 0; margin-bottom: 24px; display: flex; flex-direction: column; gap: 13px; }
 .ticket-details > div, .ticket-details > a { display: flex; gap: 11px; align-items: center; color: #e83b3b; text-decoration: none; }
 .ticket-details > a:hover strong { color: #e83b3b; text-decoration: underline; }

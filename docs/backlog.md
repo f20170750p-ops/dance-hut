@@ -11,21 +11,12 @@ This document tracks all active, unresolved tasks and UX enhancements for the Da
 
 | # | Priority | Issue / Feature | Area | Status | Description |
 |---|:---:|---|---|:---:|---|
-| 1 | **P2** | **Human-Readable Ticket ID on Ticket Modal** | Ticket Modal | 🟡 Queued | Display a visible confirmation code (e.g., `DH-TKT-2026-X`) below the QR code for seamless front-desk manual check-in. |
-| 2 | **P2** | **Search-Responsive Style Chip Counts** | Discover Tab | 🟡 Queued | Make style filter pill counts dynamic so they reflect the active search query rather than global totals. |
-| 3 | **P2** | **Custom Email Sender on Signup** | Auth / Supabase Config | 🟡 Queued | Replace default Supabase confirmation email sender with custom SMTP provider (e.g. Resend, Brevo) in Supabase Auth settings. |
+| 1 | **P2** | **Search-Responsive Style Chip Counts** | Discover Tab | 🟡 Queued | Make style filter pill counts dynamic so they reflect the active search query rather than global totals. |
+| 2 | **P2** | **Custom Email Sender on Signup** | Auth / Supabase Config | 🟡 Queued | Replace default Supabase confirmation email sender with custom SMTP provider (e.g. Resend, Brevo) in Supabase Auth settings. |
 
 ---
 
 ## 🔍 Detailed Breakdown & Solutions
-
-### 6. Human-Readable Ticket ID on Ticket Modal
-* **Status**: 🟡 Queued
-* **Impacted Components**: `TicketModal.tsx`
-* **Problem**: If front-desk camera scanning fails or user has screen brightness issues, studio staff need an immediate manual verification code.
-* **Solution**: Display a formatted ticket ID badge (e.g., `DH-TKT-${bookingId ?? event.id}`) directly below the QR code frame with a 1-click copy action.
-
----
 
 ### 7. Search-Responsive Style Chip Counts
 * **Status**: 🟡 Queued
