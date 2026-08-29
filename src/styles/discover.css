@@ -679,6 +679,86 @@
   color: #fff;
 }
 
+.spotlight-counter-badge {
+  font: 600 10px 'DM Mono', monospace;
+  color: #a8a29e;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 4px 8px;
+  border-radius: 6px;
+  margin-left: auto;
+}
+
+.spotlight-carousel-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 8px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.spotlight-indicators {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.spotlight-indicator-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.spotlight-indicator-dot:hover {
+  background: rgba(255, 255, 255, 0.5);
+  transform: scale(1.15);
+}
+
+.spotlight-indicator-dot.active {
+  width: 22px;
+  border-radius: 5px;
+  background: #e83b3b;
+  box-shadow: 0 0 10px rgba(232, 59, 59, 0.5);
+}
+
+.spotlight-nav-arrows {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.spotlight-arrow-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  color: #d6d3cd;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.15s ease;
+}
+
+.spotlight-arrow-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.spotlight-arrow-btn:active {
+  transform: scale(0.95);
+}
+
 .sponsored-banner-right {
   height: 180px;
   border-radius: 12px;

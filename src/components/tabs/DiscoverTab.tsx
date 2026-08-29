@@ -3,6 +3,8 @@ import {
   ArrowRight,
   CalendarDays,
   Check,
+  ChevronLeft,
+  ChevronRight,
   Clock3,
   Flame,
   MapPin,
@@ -160,10 +162,32 @@ export function DiscoverTab({
 
   const styles = useMemo(() => [...new Set(events.map((event) => event.style))], [events]);
   const locations = useMemo(() => [...new Set(events.map((event) => event.location))], [events]);
-  const spotlightEvent = useMemo(() => {
-    if (!events.length) return null;
-    return events.find((e) => e.featured) || events.find((e) => e.spots > 0) || events[0];
+
+  const spotlightEvents = useMemo(() => {
+    if (!events.length) return [];
+    const featured = events.filter((e) => e.featured);
+    if (featured.length > 0) return featured;
+    return events.slice(0, 3);
   }, [events]);
+
+  const [activeSpotlightIndex, setActiveSpotlightIndex] = useState(0);
+  const [isSpotlightPaused, setIsSpotlightPaused] = useState(false);
+
+  useEffect(() => {
+    if (spotlightEvents.length <= 1 || isSpotlightPaused) return;
+    const timer = setInterval(() => {
+      setActiveSpotlightIndex((prev) => (prev + 1) % spotlightEvents.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [spotlightEvents.length, isSpotlightPaused]);
+
+  useEffect(() => {
+    if (activeSpotlightIndex >= spotlightEvents.length && spotlightEvents.length > 0) {
+      setActiveSpotlightIndex(0);
+    }
+  }, [spotlightEvents.length, activeSpotlightIndex]);
+
+  const spotlightEvent = spotlightEvents[activeSpotlightIndex] || spotlightEvents[0] || null;
 
   // Urgency: find the class with fewest spots (but > 0) for State B
   const urgentEvent = useMemo(() => {
@@ -238,7 +262,13 @@ export function DiscoverTab({
       )}
 
       {spotlightEvent && (
-        <section className="sponsored-spotlight-banner">
+        <section
+          className="sponsored-spotlight-banner"
+          onMouseEnter={() => setIsSpotlightPaused(true)}
+          onMouseLeave={() => setIsSpotlightPaused(false)}
+          onTouchStart={() => setIsSpotlightPaused(true)}
+          onTouchEnd={() => setIsSpotlightPaused(false)}
+        >
           <div className="sponsored-banner-left">
             <div className="sponsored-tag-row">
               <span className="sponsored-tag">
@@ -246,9 +276,16 @@ export function DiscoverTab({
               </span>
               <span className="sponsored-style-badge">{spotlightEvent.style}</span>
               <span className="sponsored-spots-badge">{spotlightEvent.spots} spots left</span>
+              {spotlightEvents.length > 1 && (
+                <span className="spotlight-counter-badge">
+                  {activeSpotlightIndex + 1} / {spotlightEvents.length}
+                </span>
+              )}
             </div>
-            <h3 className="sponsored-title">{spotlightEvent.title}</h3>
-            <div className="sponsored-meta-row">
+            <h3 className="sponsored-title" key={`title-${spotlightEvent.id}`}>
+              {spotlightEvent.title}
+            </h3>
+            <div className="sponsored-meta-row" key={`meta-${spotlightEvent.id}`}>
               <span>
                 <Clock3 size={14} /> {spotlightEvent.date} · {spotlightEvent.time}
               </span>
@@ -289,6 +326,49 @@ export function DiscoverTab({
                 View details
               </button>
             </div>
+
+            {spotlightEvents.length > 1 && (
+              <div className="spotlight-carousel-controls">
+                <div className="spotlight-indicators">
+                  {spotlightEvents.map((ev, idx) => (
+                    <button
+                      key={ev.id}
+                      type="button"
+                      className={`spotlight-indicator-dot ${idx === activeSpotlightIndex ? 'active' : ''}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveSpotlightIndex(idx);
+                      }}
+                      aria-label={`Slide ${idx + 1}: ${ev.title}`}
+                    />
+                  ))}
+                </div>
+                <div className="spotlight-nav-arrows">
+                  <button
+                    type="button"
+                    className="spotlight-arrow-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveSpotlightIndex((prev) => (prev === 0 ? spotlightEvents.length - 1 : prev - 1));
+                    }}
+                    aria-label="Previous featured workshop"
+                  >
+                    <ChevronLeft size={15} />
+                  </button>
+                  <button
+                    type="button"
+                    className="spotlight-arrow-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveSpotlightIndex((prev) => (prev + 1) % spotlightEvents.length);
+                    }}
+                    aria-label="Next featured workshop"
+                  >
+                    <ChevronRight size={15} />
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
           <div
             className="sponsored-banner-right"
@@ -296,6 +376,7 @@ export function DiscoverTab({
             role="button"
             tabIndex={0}
             title="Click to view workshop details"
+            key={`img-${spotlightEvent.id}`}
           >
             <img src={spotlightEvent.image} alt={spotlightEvent.title} />
             <div className="sponsored-image-overlay">
