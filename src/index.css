@@ -530,9 +530,16 @@ h1 em, h2 em, .studio-banner em { font-family: Georgia, serif; font-weight: 400;
 .corner-c { bottom: 10px; left: 10px; border-right: 0; border-top: 0; border-radius: 0 0 0 5px; }
 .corner-d { bottom: 10px; right: 10px; border-left: 0; border-top: 0; border-radius: 0 0 5px 0; }
 .ticket-details { border-top: 1px dashed #d8d3ca; border-bottom: 1px dashed #d8d3ca; padding: 16px 0; margin-bottom: 24px; display: flex; flex-direction: column; gap: 13px; }
-.ticket-details > div { display: flex; gap: 11px; align-items: center; color: #e83b3b; }
+.ticket-details > div, .ticket-details > a { display: flex; gap: 11px; align-items: center; color: #e83b3b; text-decoration: none; }
+.ticket-details > a:hover strong { color: #e83b3b; text-decoration: underline; }
 .ticket-details span { display: flex; flex-direction: column; gap: 3px; text-align: left; color: #929089; font-size: 10px; }
-.ticket-details strong { color: #393531; font-size: 11px; }
+.ticket-details strong { color: #393531; font-size: 11px; transition: color 0.15s ease; }
+.details-list > div, .details-list > a { display: flex; gap: 12px; padding: 9px 0; color: #e83b3b; text-decoration: none; }
+.details-list > a:hover strong { color: #e83b3b; text-decoration: underline; }
+.booking-location-link { display: inline-flex; align-items: center; gap: 5px; margin-top: 4px; color: #87817a; font-size: 11px; text-decoration: none; transition: color 0.15s ease; }
+.booking-location-link:hover { color: #e83b3b; }
+.calendar-location-link { color: #827b74; font-size: 10px; text-decoration: none; transition: color 0.15s ease; }
+.calendar-location-link:hover { color: #e83b3b; text-decoration: underline; }
 @keyframes slideUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 .event-grid { max-height: 720px; overflow-y: auto; padding: 3px 8px 12px 2px; scrollbar-color: #d9aaa1 transparent; scrollbar-width: thin; }
 

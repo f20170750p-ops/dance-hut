@@ -46,13 +46,21 @@ export function TicketModal({ event, bookingId, onClose }: TicketModalProps) {
               {event.time}
             </span>
           </div>
-          <div>
+          <a
+            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+              event.studio + ', ' + event.location + ', Bengaluru'
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ticket-location-link"
+            title="Open in Google Maps"
+          >
             <MapPin size={15} />
             <span>
               <strong>{event.studio}</strong>
               {event.location}
             </span>
-          </div>
+          </a>
           <div>
             <Sparkles size={15} />
             <span>

@@ -11,29 +11,17 @@ This document tracks all active, unresolved tasks and UX enhancements for the Da
 
 | # | Priority | Issue / Feature | Area | Status | Description |
 |---|:---:|---|---|:---:|---|
-| 1 | **P0** | **Google Maps Redirection for Workshop Locations** | Dancers / Bookings | 🔴 In Progress | Add clickable Google Maps navigation link (`https://www.google.com/maps/search/?api=1&query=...`) across `TicketModal`, `BookingsTab`, `CalendarTab`, and `EventModal`. |
-| 2 | **P1** | **Single-Viewport No-Scroll Login Screen** | Welcome / Auth View | 🟡 Queued | Ensure the Login/Welcome screen fits strictly into a single viewport (`100dvh`) without any vertical page scrolling on both web and mobile screens. |
-| 3 | **P1** | **Mobile Sidebar Outside-Click / Backdrop Dismiss** | Navigation / Mobile UI | 🟡 Queued | Automatically close the mobile sidebar drawer when tapping anywhere on the main page or backdrop, instead of requiring an explicit click on the `X` button. |
-| 4 | **P1** | **Explore Studios Placement & Discovery Flow** | Discover Tab | 🟡 Queued | Connect the inactive "Explore studios" CTA in the Discover feed banner to a dedicated partner studio explorer modal or directory. |
-| 5 | **P1** | **Class Detail Social Proof & Urgency Metrics** | Workshop Cards / Modals | 🟡 Queued | Display real-time urgency and social proof indicators (e.g., *"8 dancers booked recently"*, *"Only 2 spots left"*). |
-| 6 | **P2** | **Human-Readable Ticket ID on Ticket Modal** | Ticket Modal | 🟡 Queued | Display a visible confirmation code (e.g., `DH-TKT-2026-X`) below the QR code for seamless front-desk manual check-in. |
-| 7 | **P2** | **Search-Responsive Style Chip Counts** | Discover Tab | 🟡 Queued | Make style filter pill counts dynamic so they reflect the active search query rather than global totals. |
-| 8 | **P2** | **Custom Email Sender on Signup** | Auth / Supabase Config | 🟡 Queued | Replace default Supabase confirmation email sender with custom SMTP provider (e.g. Resend, Brevo) in Supabase Auth settings. |
+| 1 | **P1** | **Single-Viewport No-Scroll Login Screen** | Welcome / Auth View | 🟡 Queued | Ensure the Login/Welcome screen fits strictly into a single viewport (`100dvh`) without any vertical page scrolling on both web and mobile screens. |
+| 2 | **P1** | **Mobile Sidebar Outside-Click / Backdrop Dismiss** | Navigation / Mobile UI | 🟡 Queued | Automatically close the mobile sidebar drawer when tapping anywhere on the main page or backdrop, instead of requiring an explicit click on the `X` button. |
+| 3 | **P1** | **Explore Studios Placement & Discovery Flow** | Discover Tab | 🟡 Queued | Connect the inactive "Explore studios" CTA in the Discover feed banner to a dedicated partner studio explorer modal or directory. |
+| 4 | **P1** | **Class Detail Social Proof & Urgency Metrics** | Workshop Cards / Modals | 🟡 Queued | Display real-time urgency and social proof indicators (e.g., *"8 dancers booked recently"*, *"Only 2 spots left"*). |
+| 5 | **P2** | **Human-Readable Ticket ID on Ticket Modal** | Ticket Modal | 🟡 Queued | Display a visible confirmation code (e.g., `DH-TKT-2026-X`) below the QR code for seamless front-desk manual check-in. |
+| 6 | **P2** | **Search-Responsive Style Chip Counts** | Discover Tab | 🟡 Queued | Make style filter pill counts dynamic so they reflect the active search query rather than global totals. |
+| 7 | **P2** | **Custom Email Sender on Signup** | Auth / Supabase Config | 🟡 Queued | Replace default Supabase confirmation email sender with custom SMTP provider (e.g. Resend, Brevo) in Supabase Auth settings. |
 
 ---
 
 ## 🔍 Detailed Breakdown & Solutions
-
-### 1. Google Maps Redirection for Workshop Locations
-* **Status**: 🔴 In Progress
-* **Impacted Components**: `TicketModal.tsx`, `BookingsTab.tsx`, `CalendarTab.tsx`, `EventModal.tsx`
-* **Problem**: While `CheckInCard.tsx` and `StudioProfileTab.tsx` feature working Google Maps query links, dancers clicking venue addresses in their Bookings tab, Ticket Modal, or Class Details modal cannot directly launch navigation.
-* **Solution**: Standardize venue address resolution and bind address elements to:
-  ```ts
-  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.studio + ', ' + event.location + ', Bengaluru')}`
-  ```
-
----
 
 ### 2. Single-Viewport No-Scroll Login Screen
 * **Status**: 🟡 Queued

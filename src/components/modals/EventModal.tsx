@@ -50,13 +50,21 @@ export function EventModal({
             <span className="modal-price">{event.price}</span>
           </div>
           <div className="details-list">
-            <div>
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                event.studio + ', ' + event.location + ', Bengaluru'
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="modal-location-link"
+              title="Open venue in Google Maps"
+            >
               <MapPin size={17} />
               <span>
                 <strong>{event.studio}</strong>
                 {event.location}
               </span>
-            </div>
+            </a>
             <div className="instructor-detail-row">
               <UserRound size={17} />
               <div className="instructor-info-wrap">

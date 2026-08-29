@@ -137,9 +137,17 @@ export function CalendarTab({
                 <div className="date-booking" key={booking.id}>
                   <div>
                     <strong>{event.title}</strong>
-                    <span>
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                        event.studio + ', ' + event.location + ', Bengaluru'
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="calendar-location-link"
+                      title="Open in Google Maps"
+                    >
                       {event.time} · {event.studio}
-                    </span>
+                    </a>
                   </div>
                   <button
                     type="button"

@@ -1,4 +1,4 @@
-import { Ticket } from 'lucide-react';
+import { MapPin, Ticket } from 'lucide-react';
 import type { Booking } from '../../services/bookings';
 import type { EventItem } from '../../services/events';
 import { EmptyTab } from '../common/EmptyTab';
@@ -41,9 +41,18 @@ export function BookingsTab({ bookings, onViewTicket, onFindClass }: BookingsTab
                 <p>
                   {event.date} · {event.time}
                 </p>
-                <p>
-                  {event.studio} · {event.location}
-                </p>
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                    event.studio + ', ' + event.location + ', Bengaluru'
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="booking-location-link"
+                  title="Open in Google Maps"
+                >
+                  <MapPin size={13} />
+                  <span>{event.studio} · {event.location}</span>
+                </a>
               </div>
               <button
                 type="button"
