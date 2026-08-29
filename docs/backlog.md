@@ -11,25 +11,14 @@ This document tracks all active, unresolved tasks and UX enhancements for the Da
 
 | # | Priority | Issue / Feature | Area | Status | Description |
 |---|:---:|---|---|:---:|---|
-| 1 | **P1** | **Explore Studios Placement & Discovery Flow** | Discover Tab | 🟡 Queued | Connect the inactive "Explore studios" CTA in the Discover feed banner to a dedicated partner studio explorer modal or directory. |
-| 2 | **P1** | **Class Detail Social Proof & Urgency Metrics** | Workshop Cards / Modals | 🟡 Queued | Display real-time urgency and social proof indicators (e.g., *"8 dancers booked recently"*, *"Only 2 spots left"*). |
-| 3 | **P2** | **Human-Readable Ticket ID on Ticket Modal** | Ticket Modal | 🟡 Queued | Display a visible confirmation code (e.g., `DH-TKT-2026-X`) below the QR code for seamless front-desk manual check-in. |
-| 4 | **P2** | **Search-Responsive Style Chip Counts** | Discover Tab | 🟡 Queued | Make style filter pill counts dynamic so they reflect the active search query rather than global totals. |
-| 5 | **P2** | **Custom Email Sender on Signup** | Auth / Supabase Config | 🟡 Queued | Replace default Supabase confirmation email sender with custom SMTP provider (e.g. Resend, Brevo) in Supabase Auth settings. |
+| 1 | **P1** | **Class Detail Social Proof & Urgency Metrics** | Workshop Cards / Modals | 🟡 Queued | Display real-time urgency and social proof indicators (e.g., *"8 dancers booked recently"*, *"Only 2 spots left"*). |
+| 2 | **P2** | **Human-Readable Ticket ID on Ticket Modal** | Ticket Modal | 🟡 Queued | Display a visible confirmation code (e.g., `DH-TKT-2026-X`) below the QR code for seamless front-desk manual check-in. |
+| 3 | **P2** | **Search-Responsive Style Chip Counts** | Discover Tab | 🟡 Queued | Make style filter pill counts dynamic so they reflect the active search query rather than global totals. |
+| 4 | **P2** | **Custom Email Sender on Signup** | Auth / Supabase Config | 🟡 Queued | Replace default Supabase confirmation email sender with custom SMTP provider (e.g. Resend, Brevo) in Supabase Auth settings. |
 
 ---
 
 ## 🔍 Detailed Breakdown & Solutions
-
-### 4. Explore Studios Placement & Discovery Flow
-* **Status**: 🟡 Queued
-* **Impacted Components**: `DiscoverTab.tsx` (lower grid banner)
-* **Problem**: The "Explore studios" CTA button on the "Good energy lives here" banner has no `onClick` handler.
-* **Solution**:
-  1. Reposition the studio showcase block for better natural feed flow.
-  2. Implement an interactive Studio Explorer modal / drawer previewing featured studios, their locations, amenities, and hosted workshops.
-
----
 
 ### 5. Class Detail Social Proof & Urgency Metrics
 * **Status**: 🟡 Queued

@@ -15,6 +15,7 @@ import type { EventItem } from '../../services/events';
 import type { CountdownPhase } from '../../hooks/useClassCountdown';
 import { EventCard } from '../common/EventCard';
 import { CheckInCard } from '../common/CheckInCard';
+import { StudioExplorerModal } from '../modals/StudioExplorerModal';
 
 interface DiscoverTabProps {
   events: EventItem[];
@@ -62,6 +63,14 @@ export function DiscoverTab({
   const [locationFilter, setLocationFilter] = useState('All locations');
   const [dateFilter, setDateFilter] = useState('Any date');
   const [showFilters, setShowFilters] = useState(false);
+  const [showStudioExplorer, setShowStudioExplorer] = useState(false);
+
+  const handleSelectStudio = (studioName: string) => {
+    setQuery(studioName);
+    setStyleFilter('All styles');
+    setLocationFilter('All locations');
+    setDateFilter('Any date');
+  };
 
   const visibleEvents = useMemo(() => {
     return events.filter((event) => {
@@ -376,7 +385,11 @@ export function DiscoverTab({
               <em>lives here.</em>
             </h3>
             <p>From first steps to full-out freestyle. Find your people and your pace.</p>
-            <button type="button" className="light-btn">
+            <button
+              type="button"
+              className="light-btn"
+              onClick={() => setShowStudioExplorer(true)}
+            >
               Explore studios <ArrowRight size={15} />
             </button>
           </div>
@@ -426,6 +439,13 @@ export function DiscoverTab({
           )}
         </div>
       </section>
+
+      <StudioExplorerModal
+        isOpen={showStudioExplorer}
+        onClose={() => setShowStudioExplorer(false)}
+        events={events}
+        onSelectStudio={handleSelectStudio}
+      />
     </>
   );
 }
