@@ -397,15 +397,18 @@
 .profile-actions .primary-btn {
   flex: 1;
   margin: 0;
+  padding: 11px 18px;
+  font-size: 13px;
+  border-radius: 8px;
 }
 
 .profile-signout-btn {
   border: 1px solid #dedbd3;
   border-radius: 8px;
-  padding: 13px 18px;
+  padding: 11px 16px;
   background: transparent;
   color: #c0393d;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   display: flex;
   align-items: center;

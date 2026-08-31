@@ -305,7 +305,7 @@ export function ProfileModal({
 
           <div className="profile-actions">
             <button className="primary-btn" type="submit" disabled={saving}>
-              {saving ? 'Saving…' : success ? 'Saved!' : `Save & Switch to ${selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)}`}{' '}
+              {saving ? 'Saving…' : success ? 'Saved!' : 'Save'}{' '}
               {!saving && !success && <Check size={16} />}
             </button>
             <button
