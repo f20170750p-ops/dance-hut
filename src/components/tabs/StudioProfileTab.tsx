@@ -162,10 +162,28 @@ export function StudioProfileTab({
               <span>Primary Neighborhood / Area</span>
               <input
                 type="text"
+                list="verified-neighbourhoods"
                 value={neighborhood}
                 onChange={(e) => setNeighborhood(e.target.value)}
+                placeholder="e.g. Indiranagar, Bengaluru"
                 required
               />
+              <datalist id="verified-neighbourhoods">
+                <option value="Koramangala 4th Block, Bengaluru" />
+                <option value="Koramangala 5th Block, Bengaluru" />
+                <option value="Indiranagar (100ft Road), Bengaluru" />
+                <option value="Indiranagar (12th Main), Bengaluru" />
+                <option value="HSR Layout Sector 2, Bengaluru" />
+                <option value="HSR Layout Sector 4, Bengaluru" />
+                <option value="Church Street (MG Road), Bengaluru" />
+                <option value="Jayanagar 4th Block, Bengaluru" />
+                <option value="Whitefield (ITPB Main Rd), Bengaluru" />
+                <option value="JP Nagar 2nd Phase, Bengaluru" />
+                <option value="Malleshwaram 8th Cross, Bengaluru" />
+                <option value="Bellandur Outer Ring Rd, Bengaluru" />
+                <option value="Wilson Garden, Bengaluru" />
+                <option value="Kalyan Nagar (HRBR Layout), Bengaluru" />
+              </datalist>
             </label>
 
             <label className="field-group">

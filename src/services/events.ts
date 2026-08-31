@@ -93,3 +93,21 @@ export async function getEvents() {
     error,
   };
 }
+
+export async function deleteEvent(eventId: number): Promise<{ error: any }> {
+  try {
+    const existingCustom = JSON.parse(localStorage.getItem('dancehut.customEvents') || '[]');
+    const filtered = existingCustom.filter((e: any) => e.id !== eventId);
+    localStorage.setItem('dancehut.customEvents', JSON.stringify(filtered));
+  } catch {
+    // ignore
+  }
+
+  const { error } = await supabase
+    .from('events')
+    .delete()
+    .eq('id', eventId);
+
+  return { error };
+}
+
