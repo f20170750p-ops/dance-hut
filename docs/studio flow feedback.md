@@ -6,38 +6,6 @@
 
 ---
 
-## 1. 🛡️ Role Gating, Profiles & Multi-Persona Architecture
-
-### 1.1 Role Switch Gating (Uncreated Profiles)
-* **Issue**: Users can switch to `Studio` or `Choreographer` roles even if they have never created or set up a studio/choreo profile.
-* **Expected**: If a user has not set up a Studio or Choreographer profile yet, that option in the role switcher should be **greyed out / disabled** with a prompt (e.g. *"Set up Studio Profile to unlock"*).
-* **Severity**: High (Security & UX)
-
-### 1.2 Multi-Profile Support per Email
-* **Issue**: All roles currently share a single flat profile object and name.
-* **Expected**: The same email account can hold up to **1 Dancer profile, 1 Choreographer profile, and 1 Studio profile**. Switching roles should switch context completely to that isolated persona without cross-contamination.
-* **Severity**: High (Architecture)
-
-### 1.3 Role Persistence & Initial Tab on Reload
-* **Issue**: When logged in as Studio, reloading the app always defaults back to the Dancer flow (`Discover` tab) initially. Only clicking the `Dashboard` tab switches to the studio experience.
-* **Expected**: If user is in `Studio` role, page reload should immediately load the **Studio Dashboard** (`activeTab: 'Dashboard'`) without showing or flashing the Dancer Discover tab.
-* **Severity**: Medium (UX)
-
-### 1.4 Studio Profile Page & Separation of Studio Name vs User Name
-* **Issue**:
-  1. Profile modal treats user's personal name as the studio name.
-  2. Studio profile modal still displays dancer metrics (*"4 active bookings"*, *"Saved classes"*), which is irrelevant to a studio owner.
-* **Expected**:
-  1. Profile modal should have two separate fields: **Owner / Manager Name** and **Studio Name**.
-  2. Remove active bookings and saved classes counters when in Studio mode.
-  3. Provide a direct link in the profile modal to the **Studio Profile Tab** for editing rooms, amenities, and full venue details.
-* **Severity**: High (UX & Branding)
-
-### 1.5 Studio Onboarding Flow
-* **Issue**: First-time sign up as a Studio does not capture essential studio information.
-* **Expected**: When a user signs up as a Studio, show an initial onboarding step to capture required baseline info (Studio Name, Address / Locality, Contact Phone). All other details (Amenities, Room Capacities, Photos) remain optional and editable later.
-* **Severity**: High (Onboarding)
-
 ---
 
 ## 2. 📊 Dashboard & UI Display Bugs
@@ -112,11 +80,6 @@
 
 | ID | Title | Component | Priority | Status |
 |---|---|---|:---:|:---:|
-| S-1 | Role switch gating (grey out uncreated profiles) | `ProfileModal.tsx`, `App.tsx` | P0 | 🔴 Open |
-| S-2 | Multi-profile architecture (1 per role per email) | `auth.ts`, `App.tsx` | P0 | 🔴 Open |
-| S-3 | Studio reload loads Discover tab first | `App.tsx` | P1 | 🔴 Open |
-| S-4 | Studio Name vs Personal Name in Profile & Hero | `ProfileModal.tsx`, `StudioOverviewTab.tsx` | P1 | 🔴 Open |
-| S-5 | Studio first-time onboarding flow | `WelcomeView.tsx`, `auth.ts` | P1 | 🔴 Open |
 | S-6 | Upcoming schedule table mobile scroll | `StudioOverviewTab.tsx`, `index.css` | P1 | 🔴 Open |
 | S-7 | Poster presets multi-selection bug | `CreateWorkshopModal.tsx` | P1 | 🔴 Open |
 | S-8 | Workshop publish RLS policy error | Supabase RLS / `CreateWorkshopModal.tsx` | P0 | 🔴 Open |

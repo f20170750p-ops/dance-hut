@@ -77,7 +77,19 @@ function App() {
   const [eventsError, setEventsError] = useState('');
   const [activeTab, setActiveTab] = useState<string>(() => {
     try {
-      const savedRole = localStorage.getItem('dancehut.activeRole');
+      const savedRole = (localStorage.getItem('dancehut.activeRole') as UserRole) || 'dancer';
+      const savedTab = localStorage.getItem('dancehut.activeTab');
+      if (savedTab) {
+        if (savedRole === 'studio' && ['Dashboard', 'My Workshops', 'Studio Profile', 'Messages', 'Notifications'].includes(savedTab)) {
+          return savedTab;
+        }
+        if (savedRole === 'choreographer' && ['Dashboard', 'My Classes', 'My Portfolio', 'Messages', 'Notifications'].includes(savedTab)) {
+          return savedTab;
+        }
+        if (savedRole === 'dancer' && ['Discover', 'Calendar', 'My bookings', 'Saved', 'Messages', 'Notifications'].includes(savedTab)) {
+          return savedTab;
+        }
+      }
       return savedRole === 'studio' || savedRole === 'choreographer' ? 'Dashboard' : 'Discover';
     } catch {
       return 'Discover';
@@ -236,10 +248,11 @@ function App() {
     return currentUserName.split(' ')[0];
   }, [currentUserName]);
 
-  // Tab synchronization when switching roles
+  // Tab synchronization when switching roles & persist active tab
   useEffect(() => {
     try {
       localStorage.setItem('dancehut.activeRole', currentUserRole);
+      localStorage.setItem('dancehut.activeTab', activeTab);
     } catch {
       // ignore
     }
@@ -257,7 +270,7 @@ function App() {
         setActiveTab('Discover');
       }
     }
-  }, [currentUserRole]);
+  }, [currentUserRole, activeTab]);
 
   useEffect(() => {
     if (!session?.user) return;
@@ -311,7 +324,8 @@ function App() {
   };
 
   const handleNavigateHome = () => {
-    setActiveTab('Discover');
+    const homeTab = role === 'studio' || role === 'choreographer' ? 'Dashboard' : 'Discover';
+    setActiveTab(homeTab);
     setShowMenu(false);
   };
 
@@ -503,8 +517,8 @@ function App() {
         />
 
         <main className="content">
-          {/* Universal Discover Tab (accessible to dancer, studio & choreographer) */}
-          {activeTab === 'Discover' && (
+          {/* Discover Tab (for Dancer persona) */}
+          {isDancer && activeTab === 'Discover' && (
             <DiscoverTab
               events={events}
               eventsLoading={eventsLoading}

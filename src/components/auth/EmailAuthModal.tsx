@@ -19,6 +19,7 @@ export function EmailAuthModal({ role, onClose }: EmailAuthModalProps) {
   const [studioName, setStudioName] = useState('');
   const [choreoName, setChoreoName] = useState('');
   const [locality, setLocality] = useState('');
+  const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [authMode, setAuthMode] = useState<'sign-in' | 'sign-up'>('sign-in');
@@ -38,6 +39,7 @@ export function EmailAuthModal({ role, onClose }: EmailAuthModalProps) {
     const trimmedName = fullName.trim();
     const trimmedStudio = studioName.trim();
     const trimmedChoreo = choreoName.trim();
+    const trimmedPhone = phone.trim();
 
     if (authMode === 'sign-up') {
       if (isStudio && !trimmedStudio) {
@@ -56,6 +58,7 @@ export function EmailAuthModal({ role, onClose }: EmailAuthModalProps) {
       if (trimmedName) localStorage.setItem('dancehut.pendingDisplayName', trimmedName);
       if (trimmedStudio) localStorage.setItem('dancehut.pendingStudioName', trimmedStudio);
       if (trimmedChoreo) localStorage.setItem('dancehut.pendingChoreoName', trimmedChoreo);
+      if (trimmedPhone) localStorage.setItem('dancehut.pendingPhone', trimmedPhone);
     }
 
     const result = authMode === 'sign-up'
@@ -198,6 +201,16 @@ export function EmailAuthModal({ role, onClose }: EmailAuthModalProps) {
                       value={locality}
                       onChange={(event) => setLocality(event.target.value)}
                       placeholder="e.g. Koramangala, Bengaluru"
+                      required
+                    />
+                  </label>
+                  <label className="auth-field">
+                    Contact Phone *
+                    <input
+                      type="tel"
+                      value={phone}
+                      onChange={(event) => setPhone(event.target.value)}
+                      placeholder="e.g. +91 98765 43210"
                       required
                     />
                   </label>
