@@ -8,6 +8,7 @@ import {
   Clock3,
   MapPin,
   Navigation,
+  QrCode,
   Search,
   SlidersHorizontal,
   Sparkles,
@@ -38,7 +39,7 @@ interface DiscoverTabProps {
   onBook: (event: EventItem) => void;
   onToggleSave: (eventId: number) => void;
   onOpenEvent: (event: EventItem) => void;
-  onViewTicket: () => void;
+  onViewTicket: (event?: EventItem, booking?: Booking) => void;
   onNavigateTab: (tab: string) => void;
 }
 
@@ -188,6 +189,24 @@ export function DiscoverTab({
     }
   }, [spotlightEvents.length, activeSpotlightIndex]);
 
+  const upcomingBookingItem = useMemo(() => {
+    const validBookings = bookings
+      .filter((b) => b.status === 'booked')
+      .map((b) => ({
+        booking: b,
+        event: events.find((e) => e.id === b.event_id),
+      }))
+      .filter((item): item is { booking: Booking; event: EventItem } => Boolean(item.event));
+
+    if (!validBookings.length) return null;
+
+    return [...validBookings].sort((a, b) => {
+      const dateA = a.event.dateKey ? new Date(`${a.event.dateKey}T00:00:00`).getTime() : 0;
+      const dateB = b.event.dateKey ? new Date(`${b.event.dateKey}T00:00:00`).getTime() : 0;
+      return dateA - dateB;
+    })[0];
+  }, [bookings, events]);
+
   const spotlightEvent = spotlightEvents[activeSpotlightIndex] || spotlightEvents[0] || null;
 
   const isQRActive = countdownPhase === 'checkin' || countdownPhase === 'in-progress';
@@ -203,7 +222,55 @@ export function DiscoverTab({
         />
       )}
 
-      {spotlightEvent && (
+      {!isQRActive && upcomingBookingItem ? (
+        <section
+          className="upcoming-booking-hero-banner"
+          onClick={() => onViewTicket(upcomingBookingItem.event, upcomingBookingItem.booking)}
+          role="button"
+          tabIndex={0}
+          title="Click to view ticket and QR code"
+        >
+          <div className="upcoming-hero-left">
+            <div className="upcoming-hero-tags">
+              <span className="upcoming-hero-pill">
+                <Ticket size={13} /> Your Upcoming Booking
+              </span>
+              <span className="upcoming-hero-badge">{upcomingBookingItem.event.style}</span>
+              <span className="upcoming-hero-confirmed">Confirmed</span>
+            </div>
+            <h3 className="upcoming-hero-title">{upcomingBookingItem.event.title}</h3>
+            <div className="upcoming-hero-meta">
+              <span>
+                <Clock3 size={14} /> {upcomingBookingItem.event.date} · {upcomingBookingItem.event.time}
+              </span>
+              <span>
+                <MapPin size={14} /> {upcomingBookingItem.event.studio} · {upcomingBookingItem.event.location}
+              </span>
+              <span>
+                with <strong>{upcomingBookingItem.event.host}</strong>
+              </span>
+            </div>
+            <div className="upcoming-hero-actions">
+              <button
+                type="button"
+                className="primary-btn upcoming-ticket-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onViewTicket(upcomingBookingItem.event, upcomingBookingItem.booking);
+                }}
+              >
+                <QrCode size={16} /> View Ticket & QR Code
+              </button>
+            </div>
+          </div>
+          <div className="upcoming-hero-right">
+            <img src={upcomingBookingItem.event.image} alt={upcomingBookingItem.event.title} />
+            <div className="upcoming-hero-qr-badge">
+              <QrCode size={15} /> Pass Ready
+            </div>
+          </div>
+        </section>
+      ) : spotlightEvent ? (
         <section
           className="sponsored-spotlight-banner"
           onMouseEnter={() => setIsSpotlightPaused(true)}
@@ -331,7 +398,7 @@ export function DiscoverTab({
             </div>
           </div>
         </section>
-      )}
+      ) : null}
 
       <section className="search-row">
         <div className="search-box">

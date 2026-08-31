@@ -524,7 +524,13 @@ function App() {
                 setBookingError('');
                 setSelectedEvent(event);
               }}
-              onViewTicket={() => setShowTicket(true)}
+              onViewTicket={(event, booking) => {
+                const targetEvent = event || countdownEvent || bookedEvent;
+                const targetBooking = booking || nextBooking || activeBooking;
+                if (targetEvent) setBookedEvent(targetEvent);
+                if (targetBooking) setActiveBooking(targetBooking);
+                setShowTicket(true);
+              }}
               onNavigateTab={setActiveTab}
             />
           )}
