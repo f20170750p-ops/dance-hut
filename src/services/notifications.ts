@@ -215,6 +215,35 @@ export async function markNotificationAsRead(notificationId: string): Promise<{ 
 }
 
 /**
+ * Mark a single notification as unread
+ */
+export async function markNotificationAsUnread(notificationId: string): Promise<{ error: any }> {
+  if (isSupabaseConfigured) {
+    try {
+      const { error } = await supabase
+        .from('notifications')
+        .update({ read: false })
+        .eq('id', notificationId);
+      if (!error) {
+        const local = getStoredNotifications().map((n) =>
+          n.id === notificationId ? { ...n, read: false } : n
+        );
+        saveStoredNotifications(local);
+        return { error: null };
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  const local = getStoredNotifications().map((n) =>
+    n.id === notificationId ? { ...n, read: false } : n
+  );
+  saveStoredNotifications(local);
+  return { error: null };
+}
+
+/**
  * Mark all notifications for a user as read
  */
 export async function markAllNotificationsAsRead(userId: string): Promise<{ error: any }> {

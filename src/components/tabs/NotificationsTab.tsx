@@ -25,6 +25,7 @@ import {
   broadcastEventUpdate,
   markAllNotificationsAsRead,
   markNotificationAsRead,
+  markNotificationAsUnread,
   deleteNotification,
   clearAllNotifications,
 } from '../../services/notifications';
@@ -202,6 +203,13 @@ export function NotificationsTab({
       prev.map((n) => (n.id === id ? { ...n, read: true } : n))
     );
     await markNotificationAsRead(id);
+  };
+
+  const handleMarkAsUnread = async (id: string) => {
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, read: false } : n))
+    );
+    await markNotificationAsUnread(id);
   };
 
   const handleMarkAllAsRead = async () => {
@@ -730,12 +738,21 @@ export function NotificationsTab({
                         type="button"
                         className="notif-read-toggle"
                         onClick={() => handleMarkAsRead(notif.id)}
+                        title="Mark as read"
                       >
                         <Check size={13} />
                         <span>Mark read</span>
                       </button>
                     ) : (
-                      <span className="notif-read-status">Read</span>
+                      <button
+                        type="button"
+                        className="notif-read-toggle is-read"
+                        onClick={() => handleMarkAsUnread(notif.id)}
+                        title="Mark as unread"
+                      >
+                        <Bell size={13} />
+                        <span>Mark unread</span>
+                      </button>
                     )}
                   </div>
                 </div>

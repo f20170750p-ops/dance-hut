@@ -1340,6 +1340,14 @@
   color: #348854;
 }
 
+.notif-read-toggle.is-read {
+  color: #a8a29e;
+}
+
+.notif-read-toggle.is-read:hover {
+  color: #e83b3b;
+}
+
 .notif-read-status {
   font: 10px 'DM Mono', monospace;
   color: #b1aca4;
