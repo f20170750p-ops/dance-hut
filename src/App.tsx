@@ -429,6 +429,7 @@ function App() {
 
   const bookingsWithEvents = useMemo(() => {
     return bookings
+      .filter((booking) => !booking.status || booking.status === 'booked')
       .map((booking) => ({
         booking,
         event: events.find((event) => event.id === booking.event_id),
@@ -461,7 +462,7 @@ function App() {
         currentUserInitials={currentUserInitials}
         currentUserRoleBadge={currentUserRoleBadge}
         currentUserRole={currentUserRole}
-        bookingsCount={bookings.length}
+        bookingsCount={bookingsWithEvents.length}
         studioEventsCount={events.length}
         unreadMessagesCount={1}
         unreadNotificationsCount={unreadNotificationsCount}
@@ -852,7 +853,7 @@ function App() {
           user={session.user}
           profile={profile}
           currentRole={currentUserRole}
-          activeBookingsCount={bookings.length}
+          activeBookingsCount={bookingsWithEvents.length}
           savedCount={saved.length}
           onClose={() => setShowProfileModal(false)}
           onUpdate={(updated) => {
