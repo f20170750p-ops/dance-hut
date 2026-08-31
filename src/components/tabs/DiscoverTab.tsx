@@ -164,10 +164,12 @@ export function DiscoverTab({
 
   const spotlightEvents = useMemo(() => {
     if (!events.length) return [];
-    const featured = events.filter((e) => e.featured);
+    const bookedEventIds = new Set(bookings.map((b) => b.event_id));
+    const unbookedEvents = events.filter((e) => !bookedEventIds.has(e.id));
+    const featured = unbookedEvents.filter((e) => e.featured);
     if (featured.length > 0) return featured;
-    return events.slice(0, 3);
-  }, [events]);
+    return unbookedEvents.slice(0, 3);
+  }, [events, bookings]);
 
   const [activeSpotlightIndex, setActiveSpotlightIndex] = useState(0);
   const [isSpotlightPaused, setIsSpotlightPaused] = useState(false);
@@ -316,9 +318,14 @@ export function DiscoverTab({
             role="button"
             tabIndex={0}
             title="Click to view workshop details"
-            key={`img-${spotlightEvent.id}`}
+            key={`img-box-${spotlightEvent.id}`}
           >
-            <img src={spotlightEvent.image} alt={spotlightEvent.title} />
+            <img
+              key={`img-${spotlightEvent.id}`}
+              src={spotlightEvent.image}
+              alt={spotlightEvent.title}
+              loading="eager"
+            />
             <div className="sponsored-image-overlay">
               <span className="sponsored-price-pill">{spotlightEvent.price}</span>
             </div>
