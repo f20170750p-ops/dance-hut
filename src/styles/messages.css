@@ -1369,6 +1369,9 @@
   .messages-page-view .tab-heading {
     margin-bottom: 12px;
   }
+  .messages-page-view.in-chat-mode .tab-heading {
+    display: none;
+  }
   .messages-layout-card {
     grid-template-columns: 1fr;
     height: calc(100dvh - var(--topbar-height, 64px) - 85px);
@@ -1376,6 +1379,10 @@
     max-height: none;
     border-radius: 12px;
     overflow: hidden;
+  }
+  .messages-page-view.in-chat-mode .messages-layout-card {
+    height: calc(100dvh - var(--topbar-height, 64px) - 20px);
+    margin: 0;
   }
   .messages-inbox-sidebar.hide-mobile {
     display: none;

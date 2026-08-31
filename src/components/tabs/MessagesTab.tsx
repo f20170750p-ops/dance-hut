@@ -187,7 +187,7 @@ export function MessagesTab({
   });
 
   return (
-    <section className="tab-view messages-page-view">
+    <section className={`tab-view messages-page-view ${mobileView === 'chat' ? 'in-chat-mode' : ''}`}>
       <div className="tab-heading">
         <span className="section-kicker">Your space</span>
         <h2>Messages & Inquiries</h2>
