@@ -6,7 +6,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Clock3,
-  Flame,
   MapPin,
   Navigation,
   Search,
@@ -189,76 +188,17 @@ export function DiscoverTab({
 
   const spotlightEvent = spotlightEvents[activeSpotlightIndex] || spotlightEvents[0] || null;
 
-  // Urgency: find the class with fewest spots (but > 0) for State B
-  const urgentEvent = useMemo(() => {
-    const available = events.filter((e) => e.spots > 0);
-    if (!available.length) return null;
-    return available.reduce((min, e) => (e.spots < min.spots ? e : min), available[0]);
-  }, [events]);
-
   const isQRActive = countdownPhase === 'checkin' || countdownPhase === 'in-progress';
 
   return (
     <>
-      {isQRActive && countdownEvent ? (
+      {isQRActive && countdownEvent && (
         <CheckInCard
           event={countdownEvent}
           bookingId={countdownBookingId}
           timeLabel={countdownLabel}
           phase={countdownPhase}
         />
-      ) : (
-        <section className="hero-row">
-          <div>
-            <div className="eyebrow">
-              <span className="eyebrow-dot pulse" /> Live schedule · Bengaluru · {formattedToday}
-            </div>
-            <h2>
-              {userFirstName ? (
-                <>
-                  {greeting}, <em>{userFirstName}.</em>
-                  <br />
-                  What's your rhythm today?
-                </>
-              ) : (
-                <>
-                  {greeting}.<br />
-                  Find your <em>next rhythm.</em>
-                </>
-              )}
-            </h2>
-            {countdownPhase === 'countdown' && countdownEvent ? (
-              <div className="hero-countdown">
-                <Clock3 size={15} />
-                <span>
-                  <strong>{countdownEvent.title}</strong> in{' '}
-                  <span className="hero-countdown-time">{countdownLabel}</span>
-                  {' — '}{countdownEvent.time} · {countdownEvent.studio}
-                </span>
-                <button type="button" className="text-btn" onClick={onViewTicket}>
-                  View ticket <ArrowRight size={14} />
-                </button>
-              </div>
-            ) : urgentEvent ? (
-              <button
-                type="button"
-                className="hero-urgency"
-                onClick={() => onOpenEvent(urgentEvent)}
-              >
-                <Flame size={15} />
-                <span>
-                  <strong>{urgentEvent.title}</strong> starts at {urgentEvent.time}
-                  {' — only '}<strong>{urgentEvent.spots} spots left</strong>
-                </span>
-                <span className="hero-urgency-cta">Book now <ArrowRight size={13} /></span>
-              </button>
-            ) : (
-              <p className="hero-sub">
-                Discover the best dance experiences in Bengaluru, curated for your kind of movement.
-              </p>
-            )}
-          </div>
-        </section>
       )}
 
       {spotlightEvent && (
