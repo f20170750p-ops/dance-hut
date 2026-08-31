@@ -653,7 +653,10 @@ export function DiscoverTab({
             <button
               type="button"
               className="upcoming-item"
-              onClick={onViewTicket}
+              onClick={() => {
+                const targetBooking = bookings.find((b) => b.event_id === upcomingTarget.id);
+                onViewTicket(upcomingTarget, targetBooking);
+              }}
             >
               <div className="date-block">
                 <strong>{bookedDateParts.day}</strong>
