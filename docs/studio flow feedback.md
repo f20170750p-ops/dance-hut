@@ -8,19 +8,6 @@
 
 ---
 
-## 2. 📊 Dashboard & UI Display Bugs
-
-### 2.1 Hero Banner Name Display
-* **Issue**: Studio Dashboard hero greeting says *"Good evening, [User's Personal Name]"* instead of the studio brand.
-* **Expected**: Hero banner should prominently display the **Studio Name** (e.g., *"The Movement House"* or *"Welcome back, The Movement House"*).
-* **Severity**: Medium (Branding)
-
-### 2.2 Table Horizontal Scroll on Mobile
-* **Issue**: In the **Upcoming Workshop Schedule** card on mobile, the table columns overflow and horizontal scroll does not work cleanly, clipping instructor and price/spots info (see screenshot).
-* **Expected**: Table container should support smooth horizontal swipe with a subtle visual scroll hint, or collapse into responsive stacked cards on mobile screens (≤680px).
-* **Severity**: High (Mobile Layout)
-
----
 
 ## 3. 🛠️ Workshop Creation & Management Bugs
 
@@ -80,7 +67,6 @@
 
 | ID | Title | Component | Priority | Status |
 |---|---|---|:---:|:---:|
-| S-6 | Upcoming schedule table mobile scroll | `StudioOverviewTab.tsx`, `index.css` | P1 | 🔴 Open |
 | S-7 | Poster presets multi-selection bug | `CreateWorkshopModal.tsx` | P1 | 🔴 Open |
 | S-8 | Workshop publish RLS policy error | Supabase RLS / `CreateWorkshopModal.tsx` | P0 | 🔴 Open |
 | S-9 | Workshop delete not persisting to Supabase | `events.ts`, `App.tsx` | P1 | 🔴 Open |

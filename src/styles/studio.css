@@ -1861,6 +1861,101 @@
   }
 }
 
+@media (max-width: 680px) {
+  .upcoming-classes-table-card {
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    overflow-x: visible;
+  }
+
+  .studio-mini-table,
+  .studio-mini-table thead,
+  .studio-mini-table tbody,
+  .studio-mini-table tr,
+  .studio-mini-table td {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .studio-mini-table thead {
+    display: none;
+  }
+
+  .studio-mini-table tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .studio-mini-table tr {
+    background: #fbfaf7;
+    border: 1px solid #dedbd3;
+    border-radius: 12px;
+    padding: 14px 16px;
+    box-shadow: 0 2px 8px rgba(49, 37, 26, 0.03);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px 14px;
+    align-items: center;
+  }
+
+  .studio-mini-table td {
+    padding: 0;
+    border: none;
+  }
+
+  .studio-mini-table td:nth-child(1) {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ebe8e1;
+    padding-bottom: 8px;
+  }
+
+  .studio-mini-table td:nth-child(1) .table-datetime-cell {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .studio-mini-table td:nth-child(2) {
+    grid-column: 1 / 2;
+  }
+
+  .studio-mini-table td:nth-child(3) {
+    grid-column: 1 / 2;
+    font-size: 12px;
+  }
+
+  .studio-mini-table td:nth-child(4) {
+    grid-column: 2 / 3;
+    text-align: right;
+  }
+
+  .studio-mini-table td:nth-child(5) {
+    grid-column: 1 / -1;
+    border-top: 1px solid #ebe8e1;
+    padding-top: 10px;
+    margin-top: 4px;
+    text-align: stretch !important;
+  }
+
+  .studio-mini-table td:nth-child(5) .table-roster-btn,
+  .studio-mini-table td:nth-child(5) .table-action-btns-row {
+    width: 100%;
+    justify-content: center;
+    display: flex;
+  }
+
+  .studio-mini-table td:nth-child(5) .table-roster-btn {
+    width: 100%;
+    padding: 8px 12px;
+  }
+}
+
 @media (max-width: 600px) {
   .studio-kpi-grid {
     grid-template-columns: 1fr;
